@@ -1,0 +1,15 @@
+// Formulario de edición
+if editItem
+  h2#form-editar Editar Empresa
+  form(action=`${baseUrl}/${editItem.id}?_method=PUT` method="POST")
+    each field in fields
+      - var value = editItem[field.name] || ''
+      label(for=field.name)= field.label
+      input(
+        type=field.type
+        name=field.name
+        id=field.name
+        value=value
+        required=field.required
+      )
+    button.submit-btn(type="submit") Actualizar

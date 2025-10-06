@@ -1,0 +1,36 @@
+doctype html
+html
+  head
+    title Editar Empleado
+    style.
+      body { font-family: Arial, sans-serif; margin: 20px; background-color: #f9f9f9; }
+      h1 { color: #333; }
+      form { max-width: 500px; background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,.1); }
+      label { display: block; margin-top: 10px; font-weight: bold; }
+      input, select { width: 100%; padding: 8px; margin-top: 5px; border: 1px solid #ddd; border-radius: 4px; }
+      button { margin-top: 15px; padding: 8px 15px; border: none; border-radius: 4px; cursor: pointer; }
+      .submit-btn { background-color: #2196F3; color: #fff; }
+  body
+    h1 Editar Empleado
+    
+    form(action=`/api/empleados/${empleado.id}?empresa_id=${empleado.empresa_id}` method="POST")
+
+
+      label(for="nombre") Nombre
+      input(type="text" name="nombre" id="nombre" value=empleado.nombre required)
+      
+      label(for="apellido") Apellido
+      input(type="text" name="apellido" id="apellido" value=empleado.apellido required)
+      
+      label(for="puesto") Puesto
+      input(type="text" name="puesto" id="puesto" value=empleado.puesto required)
+      
+      label(for="fecha_ingreso") Fecha de Ingreso
+      input(type="date" name="fecha_ingreso" id="fecha_ingreso" value=empleado.fecha_ingreso.toISOString().slice(0,10) required)
+      
+      label(for="activo") Activo
+      select(name="activo" id="activo")
+        option(value="1" selected=empleado.activo) Sí
+        option(value="0" selected=!empleado.activo) No
+
+      button.submit-btn(type="submit") Guardar Cambios

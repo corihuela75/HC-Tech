@@ -1,0 +1,75 @@
+doctype html
+html
+  head
+    title Empleados
+    style.
+      body { font-family: Arial, sans-serif; margin: 20px; background-color: #f9f9f9; }
+      h1 { color: #333; }
+      table { width: 100%; border-collapse: collapse; margin-top: 20px; background-color: #fff; box-shadow: 0 0 10px rgba(0,0,0,.1); }
+      th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
+      th { background-color: #4CAF50; color: #fff; }
+      tr:nth-child(even) { background-color: #f2f2f2; }
+      tr:hover { background-color: #e6f7ff; }
+      button { padding: 5px 10px; margin-right: 5px; border: none; border-radius: 4px; cursor: pointer; }
+      .edit-btn { background-color: #2196F3; color: #fff; }
+      .delete-btn { background-color: #f44336; color: #fff; }
+      .submit-btn { background-color: #4CAF50; color: #fff; margin-top: 10px; }
+      form { margin-top: 20px; padding: 10px; background-color: #fff; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,.1); max-width: 500px; }
+  body
+    h1 Empleados
+
+    //- Botón para saltar al formulario
+    a(href="#form-agregar")
+      button.submit-btn Agregar Empleado
+
+    //- Tabla de empleados
+    table
+      thead
+        tr
+          th Nombre
+          th Apellido
+          th Puesto
+          th Fecha de Ingreso
+          th Activo
+          th Acciones
+      tbody
+        each emp in empleados
+          tr
+            td #{emp.nombre}
+            td #{emp.apellido}
+            td #{emp.puesto}
+            td #{emp.fecha_ingreso.toDateString()}
+            td #{emp.activo ? 'Sí' : 'No'}
+            td
+              // Botón de editar (enlace normal)
+              a(href=`/api/empleados/${emp.id}?empresa_id=${emp.empresa_id}`)
+                button.edit-btn(type="button") Editar
+
+                // Formulario de eliminar (independiente)
+                //- form(action=`/api/empleados/${emp.id}?empresa_id=${emp.empresa_id}` method="POST" style="display:inline")
+                //-   input(type="hidden" name="_method" value="DELETE")
+                //-   button.delete-btn(type="submit") Eliminar
+                form(action=`/api/empleados/${emp.id}?empresa_id=${emp.empresa_id}&_method=DELETE` method="POST" style="display:inline")
+                  button.delete-btn(type="submit") Eliminar
+
+    //- Formulario para agregar empleado
+    h1#form-agregar Agregar Empleado
+    form(action="/api/empleados" method="POST")
+      label(for="nombre") Nombre
+      input(type="text" name="nombre" id="nombre" required)
+
+      label(for="apellido") Apellido
+      input(type="text" name="apellido" id="apellido" required)
+
+      label(for="puesto") Puesto
+      input(type="text" name="puesto" id="puesto" required)
+
+      label(for="fecha_ingreso") Fecha de Ingreso
+      input(type="date" name="fecha_ingreso" id="fecha_ingreso" required)
+
+      label(for="activo") Activo
+      select(name="activo" id="activo")
+        option(value="1") Sí
+        option(value="0") No
+
+      button.submit-btn(type="submit") Agregar
