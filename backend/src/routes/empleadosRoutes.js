@@ -15,6 +15,4 @@ router.post("/", crearEmpleado);             // POST /empleados
 router.delete("/:id", eliminarEmpleado);     // DELETE /empleados/2?empresa_id=1
 router.put("/:id", actualizarEmpleado);      // PUT /empleados/2?empresa_id=1
 
-
-
 export default router;

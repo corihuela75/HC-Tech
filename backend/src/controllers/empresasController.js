@@ -1,91 +1,137 @@
-import * as model from '../models/empresasModel.js';
+import { getEmpresas, getEmpresaById, createEmpresa, updateEmpresa, deleteEmpresa } from '../models/empresasModel.js'
 
-// Helper: render HTML o JSON
-const responder = (req, res, data, extra = {}) => {
-  if (req.accepts('html')) return res.render('empresas', { ...data, ...extra });
-  return res.json(data.items || data.item || []);
-};
+// Helper para decidir respuesta (API vs Vistas)
+const responder = (req, res, data, vista, extra = {}) => {
+  if (req.accepts('html')) {
+    return res.render(vista, {
+      titulo: 'Gestión de Empresas',
+      ...data,
+      ...extra,
+    })
+  }
+  return res.json(data)
+}
 
-// Listar + formulario (modo crear por defecto)
+// NUEVO: Helper para manejar errores 404 y 500 de forma consistente (JSON vs HTML)
+const manejarRespuestaError = (req, res, status, message) => {
+  if (req.accepts('html')) {
+    return res.status(status).send(message)
+  }
+  return res.status(status).json({
+    message,
+  })
+}
+
+// Listar empresas
 export const listarEmpresas = async (req, res) => {
   try {
-    const empresas = await model.listarEmpresas();
-    return responder(req, res, { items: empresas }, {
-      title: 'Empresas',
-      formTitle: 'Agregar Empresa',
-      formAction: '/empresas',
-      submitText: 'Crear',
-      baseUrl: '/empresas',
-      columns: ['Nombre', 'Direccion', 'Telefono', 'Email'],
-      fields: [
-        { name: 'nombre', label: 'Nombre', type: 'text', value: '', required: true },
-        { name: 'direccion', label: 'Dirección', type: 'text', value: '' },
-        { name: 'telefono', label: 'Teléfono', type: 'text', value: '' },
-        { name: 'email', label: 'Email', type: 'text', value: '' }
-      ]
-    });
-  } catch (e) {
-    console.error(e);
-    res.status(500).send('Error al listar empresas');
+    const empresas = await getEmpresas()
+    return responder(req, res, { empresas }, 'empresas')
+  } catch (error) {
+    console.error('Error en listarEmpresas:', error.message)
+    return manejarRespuestaError(req, res, 500, 'Error al obtener empresas') // Usa el helper para 500
   }
-};
+}
 
-// Formulario editar (reusa la misma vista con campos cargados)
-export const formularioEditar = async (req, res) => {
+// Mostrar formulario para editar
+export const mostrarFormularioEditar = async (req, res) => {
   try {
-    const empresas = await model.listarEmpresas(); // Para mostrar tabla igual
-    const empresa = await model.obtenerEmpresaPorId(req.params.id);
-    if (!empresa) return res.status(404).send('Empresa no encontrada');
+    const id = req.params.id
+    const empresa = await getEmpresaById(id)
 
-    return responder(req, res, { items: empresas, item: empresa }, {
-      title: 'Empresas',
-      formTitle: 'Editar Empresa',
-      formAction: `/empresas/${empresa.id}?_method=PUT`,
-      submitText: 'Guardar',
-      baseUrl: '/empresas',
-      columns: ['Nombre', 'Direccion', 'Telefono', 'Email'],
-      fields: [
-        { name: 'nombre', label: 'Nombre', type: 'text', value: empresa.nombre, required: true },
-        { name: 'direccion', label: 'Dirección', type: 'text', value: empresa.direccion },
-        { name: 'telefono', label: 'Teléfono', type: 'text', value: empresa.telefono },
-        { name: 'email', label: 'Email', type: 'text', value: empresa.email }
-      ]
-    });
-  } catch (e) {
-    console.error(e);
-    res.status(500).send('Error al cargar formulario');
+    if (!empresa) {
+      return manejarRespuestaError(req, res, 404, 'Empresa no encontrada')
+    }
+
+    const empresas = await getEmpresas()
+
+    return responder(req, res, { empresa, empresas }, 'empresas', {
+      titulo: 'Editar Empresa', // Puedes forzar el título aquí si es necesario
+    })
+  } catch (error) {
+    console.error('Error en mostrarFormularioEditar:', error.message)
+    return manejarRespuestaError(req, res, 500, 'Error al cargar el formulario de edición') // Usa el helper para 500
   }
-};
+}
+
+// Obtener empresa (solo JSON o vista detallada)
+export const obtenerEmpresa = async (req, res) => {
+  try {
+    const { id } = req.params
+    const empresa = await getEmpresaById(id)
+
+    if (!empresa) {
+      // Usa el helper para 404
+      return manejarRespuestaError(req, res, 404, 'Empresa no encontrada')
+    }
+
+    return responder(req, res, { empresa }, 'empresas/detalle')
+  } catch (error) {
+    console.error('Error en obtenerEmpresa:', error.message)
+    return manejarRespuestaError(req, res, 500, 'Error al obtener empresa') // Usa el helper para 500
+  }
+}
 
 // Crear empresa
 export const crearEmpresa = async (req, res) => {
   try {
-    await model.crearEmpresa(req.body);
-    res.redirect('/empresas');
-  } catch (e) {
-    console.error(e);
-    res.status(500).send('Error al crear empresa');
+    const nuevaEmpresa = await createEmpresa(req.body)
+
+    if (req.accepts('html')) {
+      return res.redirect('/api/empresas')
+    }
+
+    // API: 201 Created
+    res.status(201).json({ message: 'Empresa creada correctamente', empresa: nuevaEmpresa })
+  } catch (error) {
+    console.error('Error en crearEmpresa:', error.message)
+    // Usa el helper para 500
+    return manejarRespuestaError(req, res, 500, 'Error al crear empresa')
   }
-};
+}
 
 // Actualizar empresa
 export const actualizarEmpresa = async (req, res) => {
   try {
-    await model.actualizarEmpresa(req.params.id, req.body);
-    res.redirect('/empresas');
-  } catch (e) {
-    console.error(e);
-    res.status(500).send('Error al actualizar empresa');
-  }
-};
+    const { id } = req.params
+    const empresaActualizada = await updateEmpresa(id, req.body)
 
-// Borrar empresa
+    if (!empresaActualizada) {
+      // Usa el helper para 404
+      return manejarRespuestaError(req, res, 404, 'Empresa no encontrada')
+    }
+
+    if (req.accepts('html')) {
+      return res.redirect('/api/empresas')
+    }
+
+    res.json({ message: 'Empresa actualizada', empresa: empresaActualizada })
+  } catch (error) {
+    console.error('Error en actualizarEmpresa:', error.message)
+    return manejarRespuestaError(req, res, 500, 'Error al actualizar empresa') // Usa el helper para 500
+  }
+}
+
+// Eliminar empresa
 export const borrarEmpresa = async (req, res) => {
   try {
-    await model.eliminarEmpresa(req.params.id);
-    res.redirect('/empresas');
-  } catch (e) {
-    console.error(e);
-    res.status(500).send('Error al eliminar empresa');
+    const { id } = req.params
+    const resultado = await deleteEmpresa(id)
+
+    // Asumiendo que 'resultado' es un valor que indica si se eliminó algo (e.g., true/false o nro de filas afectadas > 0)
+    if (!resultado) {
+      return manejarRespuestaError(req, res, 404, 'Empresa no encontrada para eliminar') // Usa el helper para 404
+    }
+
+    if (req.accepts('html')) {
+      return res.redirect('/api/empresas')
+    }
+
+    res.json({
+      message: 'Empresa eliminada',
+    })
+  } catch (error) {
+    console.error('Error en borrarEmpresa:', error.message)
+    return manejarRespuestaError(req, res, 500, 'Error al eliminar empresa') // Usa el helper para 500
   }
-};
+}

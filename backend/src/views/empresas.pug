@@ -1,0 +1,151 @@
+doctype html
+html
+  head
+    meta(charset="utf-8")
+    meta(name="viewport" content="width=device-width, initial-scale=1")
+    title Gestión de Empresas
+    style.
+      body {
+        font-family: Arial, sans-serif;
+        margin: 20px;
+        background-color: #f9f9f9;
+      }
+      h1 {
+        color: #333;
+      }
+      a {
+        text-decoration: none;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+        background-color: #fff;
+        box-shadow: 0 0 10px rgba(0,0,0,.1);
+      }
+      th, td {
+        border: 1px solid #ddd;
+        padding: 10px;
+        text-align: left;
+      }
+      th {
+        background-color: #4CAF50;
+        color: #fff;
+      }
+      tr:nth-child(even) {
+        background-color: #f2f2f2;
+      }
+      tr:hover {
+        background-color: #e6f7ff;
+      }
+      button {
+        padding: 5px 10px;
+        margin-right: 5px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 0.9rem;
+      }
+      .edit-btn {
+        background-color: #2196F3;
+        color: #fff;
+      }
+      .delete-btn {
+        background-color: #f44336;
+        color: #fff;
+      }
+      .submit-btn {
+        background-color: #4CAF50;
+        color: #fff;
+        margin-top: 10px;
+      }
+      form {
+        margin-top: 20px;
+        padding: 15px;
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0,0,0,.1);
+        max-width: 500px;
+      }
+      label {
+        display: block;
+        margin-top: 10px;
+        font-weight: bold;
+      }
+      input {
+        width: 100%;
+        padding: 8px;
+        margin-top: 4px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+      }
+
+  body
+    h1 Gestión de Empresas
+
+    // Botón ancla al formulario
+    a(href="#form-agregar")
+      button.submit-btn(type="button") + Agregar Empresa
+
+    // Tabla de empresas
+    if empresas && empresas.length
+      table
+        thead
+          tr
+            th ID
+            th Nombre
+            th Dirección
+            th Teléfono
+            th Email
+            th Acciones
+        tbody
+          each emp in empresas
+            tr
+              td #{emp.id}
+              td #{emp.nombre}
+              td #{emp.direccion || '-'}
+              td #{emp.telefono || '-'}
+              td #{emp.email || '-'}
+              td
+                a(href=`/api/empresas/${emp.id}/edit`)
+                  button.edit-btn(type="button") Editar
+                form(action=`/api/empresas/${emp.id}?_method=DELETE` method="POST" style="display:inline")
+                  button.delete-btn(type="submit") Eliminar
+    else
+      p No hay registros para mostrar.
+  
+    // --- FORMULARIO CREAR / EDITAR ---
+    if empresa
+      h1#form-agregar Editar Empresa
+      form(action=`/api/empresas/${empresa.id}?_method=PUT` method="POST")
+        label(for="nombre") Nombre
+        input(type="text" name="nombre" id="nombre" required value=empresa.nombre)
+
+        label(for="direccion") Dirección
+        input(type="text" name="direccion" id="direccion" value=empresa.direccion)
+
+        label(for="telefono") Teléfono
+        input(type="text" name="telefono" id="telefono" value=empresa.telefono)
+
+        label(for="email") Email
+        input(type="text" name="email" id="email" value=empresa.email)
+
+        button.submit-btn(type="submit") Actualizar
+        a(href="/api/empresas")
+          button(type="button") Cancelar
+    else
+      h1#form-agregar Nueva Empresa
+      form(action="/api/empresas" method="POST")
+        label(for="nombre") Nombre
+        input(type="text" name="nombre" id="nombre" required)
+
+        label(for="direccion") Dirección
+        input(type="text" name="direccion" id="direccion")
+
+        label(for="telefono") Teléfono
+        input(type="text" name="telefono" id="telefono")
+
+        label(for="email") Email
+        input(type="text" name="email" id="email")
+
+        button.submit-btn(type="submit") Guardar
