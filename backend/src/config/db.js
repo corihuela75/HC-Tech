@@ -1,3 +1,8 @@
+/**
+ * Archivo: db.js
+ * Descripción: Configuración de la conexión a la base de datos
+ */
+
 import mysql from "mysql2/promise";
 import dotenv from "dotenv";
 

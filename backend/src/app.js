@@ -1,3 +1,9 @@
+/**
+ * Archivo: app.js
+ * Descripción: Define la configuración y las rutas de la aplicación.
+ */
+
+
 // src/app.js
 import express from "express";
 import methodOverride from "method-override";

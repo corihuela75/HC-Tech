@@ -1,3 +1,9 @@
+/**
+ * Archivo: empresasController.js
+ * Descripción: Controlador para gestionar las operaciones CRUD de empresas.
+ */
+
+
 import { getEmpresas, getEmpresaById, createEmpresa, updateEmpresa, deleteEmpresa } from '../models/empresasModel.js'
 
 // Helper para decidir respuesta (API vs Vistas)

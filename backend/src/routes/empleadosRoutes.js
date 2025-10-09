@@ -1,3 +1,9 @@
+/**
+ * Archivo: empleadosRoutes.js
+ * Descripción: Define las rutas para las operaciones CRUD de empleados.
+ */
+
+
 import { Router } from "express";
 import {
   listarEmpleados,

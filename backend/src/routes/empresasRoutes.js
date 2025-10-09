@@ -1,3 +1,9 @@
+/**
+ * Archivo: empresasRoutes.js
+ * Descripción: Define las rutas para las operaciones CRUD de empresas.
+ */
+
+
 import { Router } from 'express';
 import {
   listarEmpresas,

@@ -1,3 +1,9 @@
+/**
+ * Archivo: empresasModel.js
+ * Descripción: Modelo para gestionar la base de datos de empresas.
+ */
+
+
 import pool from "../config/db.js";
 
 export const getEmpresas = async () => {

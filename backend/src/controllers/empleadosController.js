@@ -1,3 +1,9 @@
+/**
+ * Archivo: empleadosController.js
+ * Descripción: Controlador para gestionar las operaciones CRUD de empleados.
+ */
+
+
 import {
   getEmpleadosByEmpresa,
   getEmpleadoById,
