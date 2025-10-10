@@ -3,13 +3,7 @@
  * Descripción: Controlador para gestionar las operaciones CRUD de usuarios.
  */
 
-import {
-  getUsuariosByEmpresa,
-  getUsuarioById,
-  createUsuario,
-  updateUsuario,
-  deleteUsuario, 
-} from '../models/UsuariosModel.js'
+import { getUsuariosByEmpresa, getUsuarioById, createUsuario, updateUsuario, deleteUsuario } from '../models/UsuariosModel.js'
 
 // Helper para manejar y reportar errores de manera consistente
 const manejarError = (res, funcion, error) => {
@@ -26,17 +20,25 @@ const manejarError = (res, funcion, error) => {
   }
 }
 
+const esPeticionAPI = (req) => {
+  const accept = req.headers.accept || ''
+  const userAgent = req.headers['user-agent'] || ''
+
+  // Si pide JSON explícitamente o NO parece un navegador → API
+  return accept.includes('application/json') || !userAgent.includes('Mozilla')
+}
+
 // Listar Usuarios
 export const listarUsuarios = async (req, res) => {
   try {
     const empresa_id = req.query.empresa_id || 1 // fijo en 1 para vistas
-    const Usuarios = await getUsuariosByEmpresa(empresa_id)
+    const usuarios = await getUsuariosByEmpresa(empresa_id)
 
-    if (req.accepts('html')) {
-      return res.render('Usuarios', { titulo: 'Gestión de Usuarios', Usuarios })
+    if (!esPeticionAPI(req)) {
+      return res.render('Usuarios', { titulo: 'Gestión de Usuarios', usuarios })
     }
 
-    res.json(Usuarios)
+    res.json(usuarios)
   } catch (error) {
     manejarError(res, 'listarUsuarios', error)
   }
@@ -47,10 +49,10 @@ export const obtenerUsuario = async (req, res) => {
   try {
     const empresa_id = req.query.empresa_id || 1
     const { id } = req.params
-    const Usuario = await getUsuarioById(id, empresa_id)
+    const usuario = await getUsuarioById(id, empresa_id)
 
-    if (!Usuario) {
-      if (req.accepts('html')) {
+    if (!usuario) {
+      if (!esPeticionAPI(req)) {
         return res.status(404).send('Usuario no encontrado')
       }
       return res.status(404).json({
@@ -59,13 +61,13 @@ export const obtenerUsuario = async (req, res) => {
     }
 
     // 💡 PASO CLAVE: Cargamos la lista completa de Usuarios
-    const Usuarios = await getUsuariosByEmpresa(empresa_id)
+    const usuarios = await getUsuariosByEmpresa(empresa_id)
 
-    if (req.accepts('html')) {
-      return res.render('Usuarios', { titulo: 'Editar Usuario', Usuario, Usuarios })
+    if (!esPeticionAPI(req)) {
+      return res.render('Usuarios', { titulo: 'Editar Usuario', usuario, usuarios })
     }
 
-    res.json(Usuario)
+    res.json(usuario)
   } catch (error) {
     manejarError(res, 'obtenerUsuario', error)
   }
@@ -77,7 +79,7 @@ export const crearUsuario = async (req, res) => {
     const empresa_id = req.query.empresa_id || 1
     const nuevoUsuario = await createUsuario({ ...req.body, empresa_id })
 
-    if (req.accepts('html')) {
+    if (!esPeticionAPI(req)) {
       return res.redirect(`/api/Usuarios?empresa_id=${empresa_id}`)
     }
 
@@ -97,7 +99,7 @@ export const actualizarUsuario = async (req, res) => {
     const filasAfectadas = await updateUsuario(id, empresa_id, req.body)
 
     if (filasAfectadas === 0) {
-      if (req.accepts('html')) {
+      if (!esPeticionAPI(req)) {
         return res.status(404).send('Usuario no encontrado para actualizar')
       }
       return res.status(404).json({
@@ -105,13 +107,13 @@ export const actualizarUsuario = async (req, res) => {
       })
     }
 
-    if (req.accepts('html')) {
+    if (!esPeticionAPI(req)) {
       return res.redirect(`/api/Usuarios?empresa_id=${empresa_id}`)
     }
 
     // Opcional: devolver los datos actualizados
-    const UsuarioActualizado = await getUsuarioById(id, empresa_id)
-    res.json(UsuarioActualizado)
+    const usuarioActualizado = await getUsuarioById(id, empresa_id)
+    res.json(usuarioActualizado)
   } catch (error) {
     manejarError(res, 'actualizarUsuario', error)
   }
@@ -129,7 +131,7 @@ export const eliminarUsuario = async (req, res) => {
 
     // 2. Verifica si la eliminación tuvo efecto
     if (filasAfectadas === 0) {
-      if (req.accepts('html')) {
+      if (!esPeticionAPI(req)) {
         return res.status(404).send('Usuario no encontrado para eliminar')
       }
       return res.status(404).json({
@@ -138,7 +140,7 @@ export const eliminarUsuario = async (req, res) => {
     }
 
     // 3. Éxito:
-    if (req.accepts('html')) {
+    if (!esPeticionAPI(req)) {
       return res.redirect(`/api/Usuarios?empresa_id=${empresa_id}`)
     }
 

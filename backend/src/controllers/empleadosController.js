@@ -3,7 +3,6 @@
  * Descripción: Controlador para gestionar las operaciones CRUD de empleados.
  */
 
-
 import {
   getEmpleadosByEmpresa,
   getEmpleadoById,
@@ -11,6 +10,15 @@ import {
   updateEmpleado,
   deleteEmpleado, // ¡Importamos la función limpia del modelo!
 } from '../models/empleadosModel.js'
+
+const esPeticionAPI = (req) => {
+  const accept = req.headers.accept || ''
+  const userAgent = req.headers['user-agent'] || ''
+
+  // Si pide JSON explícitamente o NO parece un navegador → API
+  return accept.includes('application/json') || !userAgent.includes('Mozilla')
+}
+
 
 // Helper para manejar y reportar errores de manera consistente
 const manejarError = (res, funcion, error) => {
@@ -33,7 +41,7 @@ export const listarEmpleados = async (req, res) => {
     const empresa_id = req.query.empresa_id || 1 // fijo en 1 para vistas
     const empleados = await getEmpleadosByEmpresa(empresa_id)
 
-    if (req.accepts('html')) {
+    if (!esPeticionAPI(req)) {
       return res.render('empleados', { titulo: 'Gestión de Empleados', empleados })
     }
 
@@ -51,7 +59,7 @@ export const obtenerEmpleado = async (req, res) => {
     const empleado = await getEmpleadoById(id, empresa_id)
 
     if (!empleado) {
-      if (req.accepts('html')) {
+      if (!esPeticionAPI(req)) {
         return res.status(404).send('Empleado no encontrado')
       }
       return res.status(404).json({
@@ -62,7 +70,7 @@ export const obtenerEmpleado = async (req, res) => {
     // 💡 PASO CLAVE: Cargamos la lista completa de empleados
     const empleados = await getEmpleadosByEmpresa(empresa_id)
 
-    if (req.accepts('html')) {
+    if (!esPeticionAPI(req)) {
       return res.render('empleados', { titulo: 'Editar Empleado', empleado, empleados })
     }
 
@@ -78,7 +86,7 @@ export const crearEmpleado = async (req, res) => {
     const empresa_id = req.query.empresa_id || 1
     const nuevoEmpleado = await createEmpleado({ ...req.body, empresa_id })
 
-    if (req.accepts('html')) {
+    if (!esPeticionAPI(req)) {
       return res.redirect(`/api/empleados?empresa_id=${empresa_id}`)
     }
 
@@ -98,7 +106,7 @@ export const actualizarEmpleado = async (req, res) => {
     const filasAfectadas = await updateEmpleado(id, empresa_id, req.body)
 
     if (filasAfectadas === 0) {
-      if (req.accepts('html')) {
+      if (!esPeticionAPI(req)) {
         return res.status(404).send('Empleado no encontrado para actualizar')
       }
       return res.status(404).json({
@@ -106,7 +114,7 @@ export const actualizarEmpleado = async (req, res) => {
       })
     }
 
-    if (req.accepts('html')) {
+    if (!esPeticionAPI(req)) {
       return res.redirect(`/api/empleados?empresa_id=${empresa_id}`)
     }
 
@@ -130,7 +138,7 @@ export const eliminarEmpleado = async (req, res) => {
 
     // 2. Verifica si la eliminación tuvo efecto
     if (filasAfectadas === 0) {
-      if (req.accepts('html')) {
+      if (!esPeticionAPI(req)) {
         return res.status(404).send('Empleado no encontrado para eliminar')
       }
       return res.status(404).json({
@@ -139,7 +147,7 @@ export const eliminarEmpleado = async (req, res) => {
     }
 
     // 3. Éxito:
-    if (req.accepts('html')) {
+    if (!esPeticionAPI(req)) {
       return res.redirect(`/api/empleados?empresa_id=${empresa_id}`)
     }
 

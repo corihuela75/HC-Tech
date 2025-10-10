@@ -3,7 +3,7 @@ html
   head
     meta(charset="utf-8")
     meta(name="viewport" content="width=device-width, initial-scale=1")
-    title= titulo || "Gestión de Empleados"
+    title= titulo || "Gestión de Usuarios"
     // El CSS DE EMPRESAS INTEGRADO A CONTINUACIÓN
     style.
       body {
@@ -82,102 +82,84 @@ html
       }
 
   body
-    h1= titulo || "Gestión de Empleados"
+    h1= titulo || "Gestión de Usuarios"
     
     // Botón ancla al formulario
     a(href="#form-agregar")
-      button.submit-btn(type="button") + Agregar Empleado
+      button.submit-btn(type="button") + Agregar Usuario
 
-    // --- TABLA DE EMPLEADOS (Siempre visible si hay datos) ---
-    // NOTA: Si 'empleado' existe (modo edición), 'empleados' suele estar vacío, 
+    // --- TABLA DE USUARIOS (Siempre visible si hay datos) ---
+    // NOTA: Si 'usuario' existe (modo edición), 'usuarios' suele estar vacío, 
     // pero la estructura HTML se renderiza igual, mostrando el mensaje "No hay registros..." si no hay lista.
-    if empleados && empleados.length
+    if usuarios && usuarios.length
       table
         thead
           tr
             th ID
             th Nombre 
-            th Apellido 
-            th Puesto
-            th Ingreso
-            th DNI
-            th Activo
+            th Email 
+            th Rol 
             th Acciones
         tbody
-          each emp in empleados
+          each usr in usuarios
             tr
-              td #{emp.id}
-              td #{emp.nombre} 
-              td #{emp.apellido} 
-              td #{emp.puesto || '-'}
-              td #{emp.fecha_ingreso ? emp.fecha_ingreso.toISOString().split('T')[0] : '-'}
-              td #{emp.dni || '-'}
-              td #{emp.activo ? 'Sí' : 'No'}
+              td #{usr.id}
+              td #{usr.nombre} 
+              td #{usr.email} 
+              td #{usr.rol}
               td
                 // Enlace de edición (usa el ID y el empresa_id)
-                a(href=`/api/empleados/${emp.id}?empresa_id=${emp.empresa_id}`)
+                a(href=`/api/usuarios/${usr.id}?empresa_id=${usr.empresa_id}`)
                   button.edit-btn(type="button") Editar
                 
                 // Formulario de eliminación (usa el ID y el empresa_id para el DELETE)
-                form(action=`/api/empleados/${emp.id}?empresa_id=${emp.empresa_id}&_method=DELETE` method="POST" style="display:inline")
+                form(action=`/api/usuarios/${usr.id}?empresa_id=${usr.empresa_id}&_method=DELETE` method="POST" style="display:inline")
                   button.delete-btn(type="submit") Eliminar
-    else if !empleado
-      // Solo mostramos este mensaje si NO estamos en modo edición (empleado existe)
-      p No hay registros de empleados para mostrar.
+    else if !usuario
+      // Solo mostramos este mensaje si NO estamos en modo edición (usuario existe)
+      p No hay registros de usuarios para mostrar.
 
     // --- FORMULARIO CREAR / EDITAR ---
     
     // El formulario de edición se mostrará debajo de la lista
-    if empleado
-      h1#form-agregar Editar Empleado
+    if usuario
+      h1#form-agregar Editar Usuario
       // La acción es PUT usando method-override
-      form(action=`/api/empleados/${empleado.id}?empresa_id=${empleado.empresa_id}&_method=PUT` method="POST")
+      form(action=`/api/usuarios/${usuario.id}?empresa_id=${usuario.empresa_id}&_method=PUT` method="POST")
         label(for="nombre") Nombre
-        input(type="text" name="nombre" id="nombre" required value=empleado.nombre)
+        input(type="text" name="nombre" id="nombre" required value=usuario.nombre)
 
-        label(for="apellido") Apellido
-        input(type="text" name="apellido" id="apellido" required value=empleado.apellido)
+        label(for="password") Contraseña
+        input(type="password" name="password" id="password" required)
 
-        label(for="dni") DNI
-        input(type="text" name="dni" id="dni" value=empleado.dni)
+        label(for="email") Email
+        input(type="text" name="email" id="email" required value=usuario.email)
 
-        label(for="puesto") Puesto
-        input(type="text" name="puesto" id="puesto" required value=empleado.puesto)
-
-        label(for="fecha_ingreso") Fecha de Ingreso
-        input(type="date" name="fecha_ingreso" id="fecha_ingreso" required value=empleado.fecha_ingreso.toISOString().split('T')[0])
-
-        label(for="activo") Activo
-        select(name="activo" id="activo")
-          option(value="1" selected=empleado.activo) Sí
-          option(value="0" selected=!empleado.activo) No
+        label(for="rol") Rol
+        select(name="rol" id="rol")
+          option(value="empleado" selected) Empleado
+          option(value="admin") Admin
 
         button.submit-btn(type="submit") Actualizar
-        a(href=`/api/empleados?empresa_id=${empleado.empresa_id}`)
+        a(href=`/api/usuarios?empresa_id=${usuario.empresa_id}`)
           button(type="button") Cancelar
     else
       // El formulario de creación se mostrará debajo de la lista
-      h1#form-agregar Nuevo Empleado
+      h1#form-agregar Nuevo Usuario
       // Acción de creación (POST normal)
-      form(action="/api/empleados" method="POST")
+      form(action="/api/usuarios" method="POST")
         label(for="nombre") Nombre
         input(type="text" name="nombre" id="nombre" required)
 
-        label(for="apellido") Apellido
-        input(type="text" name="apellido" id="apellido" required)
+        label(for="password") Contraseña
+        input(type="password" name="password" id="password" required)
 
-        label(for="dni") DNI
-        input(type="text" name="dni" id="dni")
+        label(for="email") Email
+        input(type="text" name="email" id="email" required)
+
+        label(for="rol") Rol
+        select(name="rol" id="rol")
+          option(value="empleado" selected) Empleado
+          option(value="admin") Admin
         
-        label(for="puesto") Puesto
-        input(type="text" name="puesto" id="puesto" required)
-
-        label(for="fecha_ingreso") Fecha de Ingreso
-        input(type="date" name="fecha_ingreso" id="fecha_ingreso" required)
-
-        label(for="activo") Activo
-        select(name="activo" id="activo")
-          option(value="1") Sí
-          option(value="0" selected) No
-
         button.submit-btn(type="submit") Guardar

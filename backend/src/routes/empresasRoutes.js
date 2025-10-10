@@ -1,6 +1,6 @@
 /**
  * Archivo: empresasRoutes.js
- * Descripción: Define las rutas para las operaciones CRUD de empresas.
+ * Descripción: Define las rutas para la gestión de empresas en la aplicación.
  */
 
 

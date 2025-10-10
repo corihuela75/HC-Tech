@@ -8,7 +8,7 @@ import { getEmpresas, getEmpresaById, createEmpresa, updateEmpresa, deleteEmpres
 
 // Helper para decidir respuesta (API vs Vistas)
 const responder = (req, res, data, vista, extra = {}) => {
-  if (req.accepts('html')) {
+  if (!esPeticionAPI(req)) {
     return res.render(vista, {
       titulo: 'Gestión de Empresas',
       ...data,
@@ -18,9 +18,18 @@ const responder = (req, res, data, vista, extra = {}) => {
   return res.json(data)
 }
 
+const esPeticionAPI = (req) => {
+  const accept = req.headers.accept || ''
+  const userAgent = req.headers['user-agent'] || ''
+
+  // Si pide JSON explícitamente o NO parece un navegador → API
+  return accept.includes('application/json') || !userAgent.includes('Mozilla')
+}
+
+
 // NUEVO: Helper para manejar errores 404 y 500 de forma consistente (JSON vs HTML)
 const manejarRespuestaError = (req, res, status, message) => {
-  if (req.accepts('html')) {
+  if (!esPeticionAPI(req)) {
     return res.status(status).send(message)
   }
   return res.status(status).json({
@@ -83,7 +92,7 @@ export const crearEmpresa = async (req, res) => {
   try {
     const nuevaEmpresa = await createEmpresa(req.body)
 
-    if (req.accepts('html')) {
+    if (!esPeticionAPI(req)) {
       return res.redirect('/api/empresas')
     }
 
@@ -107,7 +116,7 @@ export const actualizarEmpresa = async (req, res) => {
       return manejarRespuestaError(req, res, 404, 'Empresa no encontrada')
     }
 
-    if (req.accepts('html')) {
+    if (!esPeticionAPI(req)) {
       return res.redirect('/api/empresas')
     }
 
@@ -129,7 +138,7 @@ export const borrarEmpresa = async (req, res) => {
       return manejarRespuestaError(req, res, 404, 'Empresa no encontrada para eliminar') // Usa el helper para 404
     }
 
-    if (req.accepts('html')) {
+    if (!esPeticionAPI(req)) {
       return res.redirect('/api/empresas')
     }
 

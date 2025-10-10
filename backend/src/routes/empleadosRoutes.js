@@ -1,6 +1,6 @@
 /**
  * Archivo: empleadosRoutes.js
- * Descripción: Define las rutas para las operaciones CRUD de empleados.
+ * Descripción: Define las rutas para la gestión de empleados en la aplicación.
  */
 
 

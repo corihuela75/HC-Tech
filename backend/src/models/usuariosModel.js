@@ -1,9 +1,9 @@
 /**
- * Archivo: usuarios.Model.js
+ * Archivo: usuariosModel.js
  * Descripción: Modelo para gestionar la base de datos de usuarios.
  */
 
-import pool from '../db.js'
+import pool from '../config/db.js'
 
 // Listar usuarios por empresa
 
