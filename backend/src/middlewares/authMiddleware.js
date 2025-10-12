@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken'
 
-const JWT_SECRET = process.env.JWT_SECRET || 'clave_secreta_cambiar'
+const JWT_SECRET = process.env.JWT_SECRET
 
 export const verificarToken = (req, res, next) => {
   const authHeader = req.headers.authorization
@@ -10,7 +10,7 @@ export const verificarToken = (req, res, next) => {
   }
 
   const token = authHeader.split(' ')[1]
-
+  //console.log('Usuario verificado:', token)
   try {
     const decoded = jwt.verify(token, JWT_SECRET)
     req.user = decoded // guarda los datos del usuario en la request

@@ -158,8 +158,7 @@ export const eliminarUsuario = async (req, res) => {
 
 // Login Usuario
 
-// Clave secreta (idealmente usar variable de entorno)
-const JWT_SECRET = 'clave_super_secreta'
+const JWT_SECRET = process.env.JWT_SECRET
 
 // Mostrar formulario de login
 export const mostrarLogin = (req, res) => {

@@ -20,10 +20,8 @@ const router = Router()
 router.get('/login', mostrarLogin)
 router.post('/login', procesarLogin)
 
-// OJO QUE LE FALTA VERIFICAR TOKEN
-router.get('/', listarUsuarios) // GET /usuarios?empresa_id=1
 
-
+router.get('/', verificarToken, listarUsuarios) // GET /usuarios?empresa_id=1
 router.get('/:id', verificarToken, obtenerUsuario) // GET /usuarios/2?empresa_id=1
 router.post('/', verificarToken, crearUsuario) // POST /usuarios
 router.delete('/:id', verificarToken, eliminarUsuario) // DELETE /usuarios/2?empresa_id=1
