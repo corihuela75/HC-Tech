@@ -3,7 +3,9 @@
  * Descripción: Controlador para gestionar las operaciones CRUD de usuarios.
  */
 
-import { getUsuariosByEmpresa, getUsuarioById, createUsuario, updateUsuario, deleteUsuario } from '../models/UsuariosModel.js'
+import { getUsuariosByEmpresa, getUsuarioById, createUsuario, updateUsuario, deleteUsuario, getUsuarioByEmail } from '../models/UsuariosModel.js'
+import bcrypt from 'bcryptjs'
+import jwt from 'jsonwebtoken'
 
 // Helper para manejar y reportar errores de manera consistente
 const manejarError = (res, funcion, error) => {
@@ -151,5 +153,88 @@ export const eliminarUsuario = async (req, res) => {
     })
   } catch (error) {
     manejarError(res, 'eliminarUsuario', error)
+  }
+}
+
+// Login Usuario
+
+// Clave secreta (idealmente usar variable de entorno)
+const JWT_SECRET = 'clave_super_secreta'
+
+// Mostrar formulario de login
+export const mostrarLogin = (req, res) => {
+  res.render('Login', { titulo: 'Login de Usuarios' })
+}
+
+// Procesar login
+export const procesarLogin = async (req, res) => {
+  const { email, password } = req.body
+
+  try {
+    const isApiCall = req.get('User-Agent')?.includes('Thunder') || req.get('User-Agent')?.includes('Postman')
+    const user = await getUsuarioByEmail(email)
+
+    // 1: Usuario no encontrado
+
+    if (!user) {
+      if (isApiCall) {
+        return res.status(401).json({ error: 'Usuario no encontrado' })
+      }
+      return res.status(401).render('Login', { error: 'Usuario no encontrado' })
+    }
+
+    // 2: Verificar contraseña
+
+    const match = await bcrypt.compare(password, user.password)
+    if (!match) {
+      if (isApiCall) {
+        return res.status(401).json({ error: 'Contraseña incorrecta' })
+      }
+      return res.status(401).render('Login', { error: 'Contraseña incorrecta' })
+    }
+
+    // 3: Crear token JWT
+    const token = jwt.sign(
+      {
+        id: user.id,
+        empresa_id: user.empresa_id,
+        rol: user.rol,
+      },
+      JWT_SECRET,
+      { expiresIn: '2h' }
+    )
+
+    // 4: RESPUESTA: Según el tipo de cliente
+
+    if (isApiCall) {
+      // Si viene de Thunder/Postman → devolver JSON
+      return res.json({
+        message: 'Login exitoso',
+        token,
+        usuario: {
+          id: user.id,
+          nombre: user.nombre,
+          email: user.email,
+          rol: user.rol,
+        },
+      })
+    }
+
+    // Si viene de navegador → guardar cookie y redirigir
+    res.cookie('token', token, { httpOnly: true })
+
+    return res.render('Dashboard', {
+      titulo: 'Panel de control',
+      usuario: user.nombre,
+      rol: user.rol,
+    })
+  } catch (error) {
+    console.error('Error en login:', error)
+
+    // Manejo de errores internos del servidor
+    if (isApiCall) {
+      return res.status(500).json({ error: 'Error interno del servidor' })
+    }
+    return res.status(500).render('Login', { error: 'Error interno del servidor' })
   }
 }

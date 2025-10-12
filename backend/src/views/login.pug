@@ -1,0 +1,77 @@
+doctype html
+html
+  head
+    meta(charset="utf-8")
+    meta(name="viewport" content="width=device-width, initial-scale=1")
+    title= titulo || "Inicio de Sesión"
+
+    style.
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f0f2f5;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+      }
+      .login-container {
+        background-color: #fff;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 0 15px rgba(0,0,0,0.1);
+        width: 100%;
+        max-width: 400px;
+      }
+      h1 {
+        text-align: center;
+        color: #333;
+        margin-bottom: 20px;
+      }
+      label {
+        display: block;
+        margin-top: 10px;
+        font-weight: bold;
+      }
+      input {
+        width: 100%;
+        padding: 10px;
+        margin-top: 5px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+      }
+      button {
+        margin-top: 20px;
+        width: 100%;
+        background-color: #4CAF50;
+        color: #fff;
+        border: none;
+        padding: 10px;
+        font-size: 1rem;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+      button:hover {
+        background-color: #45a049;
+      }
+      .error {
+        color: red;
+        text-align: center;
+        margin-top: 10px;
+      }
+
+  body
+    .login-container
+      h1 Iniciar Sesión
+
+      if error
+        p.error #{error}
+
+      form(action="/api/usuarios/login" method="POST")
+        label(for="email") Email
+        input(type="text" name="email" id="email" required placeholder="usuario@empresa.com")
+
+        label(for="password") Contraseña
+        input(type="password" name="password" id="password" required placeholder="••••••••")
+
+        button(type="submit") Ingresar
+
