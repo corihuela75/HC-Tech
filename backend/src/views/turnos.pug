@@ -1,0 +1,152 @@
+doctype html
+html
+  head
+    meta(charset="utf-8")
+    meta(name="viewport" content="width=device-width, initial-scale=1")
+    title= titulo || "Gestión de Turnos"
+    // El CSS DE EMPRESAS INTEGRADO A CONTINUACIÓN
+    style.
+      body {
+        font-family: Arial, sans-serif;
+        margin: 20px;
+        background-color: #f9f9f9;
+      }
+      h1 {
+        color: #333;
+      }
+      a {
+        text-decoration: none;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+        background-color: #fff;
+        box-shadow: 0 0 10px rgba(0,0,0,.1);
+      }
+      th, td {
+        border: 1px solid #ddd;
+        padding: 10px;
+        text-align: left;
+      }
+      th {
+        background-color: #4CAF50;
+        color: #fff;
+      }
+      tr:nth-child(even) {
+        background-color: #f2f2f2;
+      }
+      tr:hover {
+        background-color: #e6f7ff;
+      }
+      button {
+        padding: 5px 10px;
+        margin-right: 5px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 0.9rem;
+      }
+      .edit-btn {
+        background-color: #2196F3;
+        color: #fff;
+      }
+      .delete-btn {
+        background-color: #f44336;
+        color: #fff;
+      }
+      .submit-btn {
+        background-color: #4CAF50;
+        color: #fff;
+        margin-top: 10px;
+      }
+      form {
+        margin-top: 20px;
+        padding: 15px;
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0,0,0,.1);
+        max-width: 500px;
+      }
+      label {
+        display: block;
+        margin-top: 10px;
+        font-weight: bold;
+      }
+      input, select {
+        width: 100%;
+        padding: 8px;
+        margin-top: 4px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+      }
+
+  body
+    h1= titulo || "Gestión de Turnos"
+    
+    // Botón ancla al formulario
+    a(href="#form-agregar")
+      button.submit-btn(type="button") + Agregar Turno
+
+    if turnos && turnos.length
+      table
+        thead
+          tr
+            th ID
+            th Nombre 
+            th Hora de Inicio 
+            th Hora de Fin
+            th Acciones
+        tbody
+          each tur in turnos
+            tr
+              td #{tur.id}
+              td #{tur.nombre} 
+              td #{tur.hora_inicio} 
+              td #{tur.hora_fin}
+              td
+                // Enlace de edición (usa el ID y el empresa_id)
+                a(href=`/api/turnos/${tur.id}?empresa_id=${tur.empresa_id}`)
+                  button.edit-btn(type="button") Editar
+                
+                // Formulario de eliminación (usa el ID y el empresa_id para el DELETE)
+                form(action=`/api/turnos/${tur.id}?empresa_id=${tur.empresa_id}&_method=DELETE` method="POST" style="display:inline")
+                  button.delete-btn(type="submit") Eliminar
+    else if !turno
+      // Solo mostramos este mensaje si NO estamos en modo edición (turno existe)
+      p No hay registros de turnos para mostrar.
+
+    // --- FORMULARIO CREAR / EDITAR ---
+    
+    if turno
+      h1#form-agregar Editar Turno: #{turno.nombre}
+      // La acción es PUT usando method-override
+      form(action=`/api/turnos/${turno.id}?empresa_id=${turno.empresa_id}&_method=PUT` method="POST")
+        
+        label(for="nombre") Nombre del Turno
+        input(type="text" name="nombre" id="nombre" required value=turno.nombre)
+
+        label(for="hora_inicio") Hora de Inicio
+        input(type="time" name="hora_inicio" id="hora_inicio" required value=turno.hora_inicio)
+
+        label(for="hora_fin") Hora de Fin
+        input(type="time" name="hora_fin" id="hora_fin" required value=turno.hora_fin)
+
+        button.submit-btn(type="submit") Actualizar
+        a(href=`/api/turnos?empresa_id=${turno.empresa_id}`)
+          button(type="button") Cancelar
+    else
+      // El formulario de creación se mostrará debajo de la lista
+      h1#form-agregar Nuevo Turno
+      // Acción de creación (POST normal)
+      form(action="/api/turnos" method="POST")
+        label(for="nombre") Nombre del Turno
+        input(type="text" name="nombre" id="nombre" required)
+
+        label(for="hora_inicio") Hora de Inicio
+        input(type="time" name="hora_inicio" id="hora_inicio" required)
+
+        label(for="hora_fin") Hora de Fin
+        input(type="time" name="hora_fin" id="hora_fin" required)
+
+        button.submit-btn(type="submit") Guardar

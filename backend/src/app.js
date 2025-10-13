@@ -11,6 +11,7 @@ import createError from "http-errors";
 import empleadosRoutes from "./routes/empleadosRoutes.js";
 import empresasRoutes from "./routes/empresasRoutes.js";
 import usuariosRoutes from "./routes/usuariosRoutes.js";
+import turnosRoutes from "./routes/turnosRoutes.js";
 
 const app = express();
 const PORT = 3000;
@@ -33,6 +34,8 @@ app.get("/", (req, res) => res.redirect("/api/empresas"));
 app.use("/api/empleados", empleadosRoutes);
 app.use('/api/empresas', empresasRoutes);
 app.use('/api/usuarios', usuariosRoutes);
+app.use("/api/turnos", turnosRoutes);
+
 
 // 404
 app.use((req, res, next) => next(createError(404)));
