@@ -70,10 +70,18 @@ CREATE TABLE
     asignaciones_turnos (
         id INT AUTO_INCREMENT PRIMARY KEY,
         empleado_id INT NOT NULL,
-        turno_id INT NOT NULL,
+        -- turno_id ahora es NULLable, permitiendo asignaciones manuales
+        turno_id INT NULL,
         fecha DATE NOT NULL,
+        
+        -- Nuevos campos para registrar el horario si no se usa un turno predefinido
+        hora_inicio_manual TIME DEFAULT NULL,
+        hora_fin_manual TIME DEFAULT NULL,
+        
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        
         FOREIGN KEY (empleado_id) REFERENCES empleados (id) ON DELETE CASCADE,
+        -- La clave foránea sigue existiendo, pero ahora se permite NULL
         FOREIGN KEY (turno_id) REFERENCES turnos (id) ON DELETE CASCADE
     );
 
@@ -185,20 +193,75 @@ VALUES
         '27555666',
         'Gobernanta',
         '2018-11-22'
-    );
+    ),
+    (
+        1,
+        'Roberto',
+        'Sosa',
+        '29333444',
+        'Mantenimiento',
+        '2022-05-10'
+    ), -- ID 5
+    (
+        1,
+        'Julia',
+        'Ramos',
+        '33444555',
+        'Barman',
+        '2023-08-01'
+    ), -- ID 6
+    (
+        1,
+        'Martín',
+        'Vega',
+        '34555666',
+        'Portero',
+        '2024-01-20'
+    ), -- ID 7
+    (
+        1,
+        'Sofia',
+        'Díaz',
+        '35666777',
+        'Recepcionista',
+        '2023-04-10'
+    ), -- ID 8
+    (
+        1,
+        'Andrés',
+        'Castro',
+        '36777888',
+        'Camarero',
+        '2022-11-11'
+    ), -- ID 9
+    (
+        1,
+        'Paula',
+        'Luna',
+        '37888999',
+        'Limpieza',
+        '2024-06-01'
+    ); -- ID 10
 
 -- ==============================
 -- Asignación de turnos
 -- ==============================
 INSERT INTO
-    asignaciones_turnos (empleado_id, turno_id, fecha)
+    asignaciones_turnos (empleado_id, turno_id, fecha, hora_inicio_manual, hora_fin_manual)
 VALUES
-    (1, 1, '2025-09-01'), -- Juan → Mañana
-    (2, 2, '2025-09-01'), -- Ana → Tarde
-    (3, 3, '2025-09-01'), -- Carlos → Noche
-    (4, 1, '2025-09-01');
+    
+    (1, 1, '2025-10-21', NULL, NULL), -- 1. Predefinido: Empleado 1, Turno 1 (Mañana)
+    (2, NULL, '2025-10-21', '07:30:00', '15:30:00'), -- 2. Manual: Empleado 2, Horario ad-hoc
+    (3, 2, '2025-10-21', NULL, NULL), -- 3. Predefinido: Empleado 3, Turno 2 (Tarde)
 
--- María → Mañana
+    (4, NULL, '2025-10-21', '09:00:00', '13:00:00'), -- 4. Manual: Empleado 4, Turno de media jornada
+    (5, 3, '2025-10-21', NULL, NULL), -- 5. Predefinido: Empleado 5, Turno 3 (Noche)
+    (6, NULL, '2025-10-22', '10:00:00', '19:00:00'), -- 6. Manual: Empleado 6, Horario extendido
+    (7, 1, '2025-10-22', NULL, NULL), -- 7. Predefinido: Empleado 7, Turno 1, para el día siguiente
+    (8, NULL, '2025-10-22', '22:00:00', '06:00:00'),     -- 8. Manual: Empleado 8, Turno que cruza la medianoche (típico turno nocturno)
+    (9, 2, '2025-10-22', NULL, NULL), -- 9. Predefinido: Empleado 9, Turno 2, para el día siguiente
+    (10, NULL, '2025-10-23', '14:00:00', '17:00:00'); -- 10. Manual: Empleado 10, Turno de capacitación corto
+
 -- ==============================
 -- Marcajes (entradas/salidas)
 -- ==============================

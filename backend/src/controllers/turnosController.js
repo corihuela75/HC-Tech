@@ -100,7 +100,7 @@ export const crearTurno = async (req, res) => {
 // Actualizar turno
 export const actualizarTurno = async (req, res) => {
   try {
-    const empresa_id = req.query.empresa_id || 1
+    const empresa_id = req.query.empresa_id || 1 // fijo en 1 para vistas
     const { id } = req.params
 
     const filasAfectadas = await updateTurno(id, empresa_id, req.body)

@@ -12,6 +12,7 @@ import empleadosRoutes from "./routes/empleadosRoutes.js";
 import empresasRoutes from "./routes/empresasRoutes.js";
 import usuariosRoutes from "./routes/usuariosRoutes.js";
 import turnosRoutes from "./routes/turnosRoutes.js";
+import asignacionesRoutes from "./routes/asignacionesRoutes.js";
 
 const app = express();
 const PORT = 3000;
@@ -35,6 +36,7 @@ app.use("/api/empleados", empleadosRoutes);
 app.use('/api/empresas', empresasRoutes);
 app.use('/api/usuarios', usuariosRoutes);
 app.use("/api/turnos", turnosRoutes);
+app.use("/api/asignaciones", asignacionesRoutes);
 
 
 // 404
