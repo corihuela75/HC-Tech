@@ -1,0 +1,290 @@
+openapi: 3.0.0
+info:
+  title: API de Gestión de Usuarios y Autenticación
+  version: 1.0.0
+  description: |
+    API para la administración de usuarios (CRUD) y el sistema de autenticación basado en JWT.
+    
+    Todas las rutas de gestión de usuarios (excepto el login) requieren un token JWT válido.
+
+servers:
+  - url: /
+    description: URL Base de la API
+
+# ----------------------------------------------------
+# 1. ESQUEMAS DE SEGURIDAD (AUTENTICACIÓN)
+# ----------------------------------------------------
+security:
+  # Aplica este esquema a todas las rutas que lo referencien
+  - bearerAuth: []
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: Coloca el token JWT en el encabezado Authorization como 'Bearer <token>'.
+
+  # ----------------------------------------------------
+  # 3. ESQUEMAS DE DATOS (CORREGIDO: DENTRO DE components)
+  # ----------------------------------------------------
+  schemas:
+    # 3.1. Esquemas de Autenticación
+    LoginInput:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          format: password
+      required:
+        - email
+        - password
+
+    LoginResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: Login exitoso
+        token:
+          type: string
+          description: Token JWT a utilizar en el encabezado Authorization.
+        usuario:
+          $ref: '#/components/schemas/UsuarioBase'
+
+    # 3.2. Esquemas de Usuarios (CRUD)
+    Usuario:
+      allOf:
+        - $ref: '#/components/schemas/UsuarioBase'
+        - type: object
+          properties:
+            id:
+              type: integer
+              description: ID único del usuario.
+              readOnly: true
+            empresa_id:
+              type: integer
+              description: ID de la empresa a la que pertenece el usuario.
+
+    UsuarioBase:
+      type: object
+      properties:
+        nombre:
+          type: string
+        email:
+          type: string
+          format: email
+        rol:
+          type: string
+          enum: [administrador, supervisor, empleado] # Asumiendo posibles roles
+          description: Rol del usuario dentro de la empresa.
+      required:
+        - nombre
+        - email
+        - rol
+
+    UsuarioCreateInput:
+      allOf:
+        - $ref: '#/components/schemas/UsuarioBase'
+        - type: object
+          properties:
+            password:
+              type: string
+              format: password
+              description: Contraseña del nuevo usuario (será hasheada en el backend).
+            empresa_id:
+              type: integer
+          required:
+            - password
+            - empresa_id
+
+    UsuarioUpdateInput:
+      type: object
+      description: Campos para actualizar un usuario. La contraseña es opcional.
+      properties:
+        nombre:
+          type: string
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          format: password
+          description: Nueva contraseña (opcional).
+        rol:
+          type: string
+          enum: [administrador, supervisor, empleado]
+      required:
+        - nombre
+        - email
+        - rol
+
+    # 3.3. Esquema de Error General
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+          description: Mensaje de error detallado.
+          
+# ----------------------------------------------------
+# 2. RUTAS (ENDPOINTS)
+# ----------------------------------------------------
+paths:
+  /usuarios/login:
+    post:
+      summary: Procesa el inicio de sesión y devuelve un token JWT.
+      operationId: procesarLogin
+      tags:
+        - Autenticación
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginInput'
+      responses:
+        '200':
+          description: Login exitoso. Devuelve el token JWT y los datos básicos del usuario.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginResponse'
+        '401':
+          description: No autorizado. Usuario o contraseña incorrectos.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /usuarios:
+    get:
+      summary: Lista todos los usuarios de una empresa.
+      operationId: listarUsuarios
+      security:
+        - bearerAuth: [] # Requiere JWT
+      tags:
+        - Usuarios
+      parameters:
+        - in: query
+          name: empresa_id
+          schema:
+            type: integer
+          required: true
+          description: ID de la empresa para filtrar los usuarios.
+      responses:
+        '200':
+          description: Lista de usuarios (sin incluir el hash de la contraseña).
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Usuario'
+        '401':
+          description: No autorizado. Token JWT inválido o ausente.
+
+    post:
+      summary: Crea un nuevo usuario.
+      operationId: crearUsuario
+      security:
+        - bearerAuth: []
+      tags:
+        - Usuarios
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UsuarioCreateInput'
+      responses:
+        '201':
+          description: Usuario creado exitosamente.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Usuario'
+        '400':
+          description: Datos de entrada no válidos o campos faltantes.
+
+  /usuarios/{id}:
+    parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+        description: ID del usuario específico.
+      - in: query
+        name: empresa_id
+        schema:
+          type: integer
+        required: true
+        description: ID de la empresa a la que pertenece el usuario.
+
+    get:
+      summary: Obtiene un usuario específico por ID.
+      operationId: obtenerUsuario
+      security:
+        - bearerAuth: []
+      tags:
+        - Usuarios
+      responses:
+        '200':
+          description: Detalles del usuario.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Usuario'
+        '404':
+          description: Usuario no encontrado.
+
+    put:
+      summary: Actualiza un usuario (permite cambiar o no la contraseña).
+      operationId: actualizarUsuario
+      security:
+        - bearerAuth: []
+      tags:
+        - Usuarios
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UsuarioUpdateInput'
+      responses:
+        '200':
+          description: Usuario actualizado exitosamente (devuelve el objeto actualizado).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Usuario'
+        '404':
+          description: Usuario no encontrado para actualizar.
+
+    delete:
+      summary: Elimina un usuario por ID.
+      operationId: eliminarUsuario
+      security:
+        - bearerAuth: []
+      tags:
+        - Usuarios
+      responses:
+        '200':
+          description: Usuario eliminado correctamente.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Usuario eliminado correctamente
+                  id:
+                    type: integer
+        '404':
+          description: Usuario no encontrado para eliminar.

@@ -1,0 +1,165 @@
+openapi: 3.0.0
+info:
+  title: API de Gestión de Turnos Predefinidos
+  version: 1.0.0
+  description: API para administrar los horarios de turnos predefinidos por empresa.
+
+servers:
+  - url: /turnos
+    description: URL Base para los endpoints de Turnos
+
+paths:
+  /:
+    get:
+      summary: Lista todos los turnos predefinidos de una empresa.
+      operationId: listarTurnos
+      parameters:
+        - in: query
+          name: empresa_id
+          schema:
+            type: integer
+          required: true
+          description: ID de la empresa para filtrar los turnos.
+      responses:
+        '200':
+          description: Lista de turnos.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Turno'
+        '400':
+          description: Solicitud incorrecta, falta el 'empresa_id'.
+
+    post:
+      summary: Crea un nuevo turno predefinido.
+      operationId: crearTurno
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TurnoInput'
+      responses:
+        '201':
+          description: Turno creado exitosamente.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Turno'
+        '400':
+          description: Datos de entrada no válidos o campos faltantes.
+
+  /{id}:
+    parameters:
+      # Parámetros de Ruta y Consulta que definen el alcance
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+        description: ID único del turno.
+      - in: query
+        name: empresa_id
+        schema:
+          type: integer
+        required: true
+        description: ID de la empresa a la que pertenece el turno.
+
+    get:
+      summary: Obtiene los detalles de un turno específico.
+      operationId: obtenerTurno
+      responses:
+        '200':
+          description: Detalles del turno.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Turno'
+        '404':
+          description: Turno no encontrado para ese ID y empresa.
+
+    put:
+      summary: Actualiza completamente un turno existente.
+      operationId: actualizarTurno
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TurnoInput' # PUT completo, usa el mismo esquema de entrada
+      responses:
+        '200':
+          description: Turno actualizado exitosamente.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  affectedRows:
+                    type: integer
+                    description: Número de filas afectadas (1 si fue exitoso, 0 si no).
+        '404':
+          description: Turno no encontrado para actualizar.
+
+    delete:
+      summary: Elimina un turno predefinido por ID.
+      operationId: eliminarTurno
+      responses:
+        '204':
+          description: Turno eliminado exitosamente.
+        '404':
+          description: Turno no encontrado para eliminar.
+
+components:
+  schemas:
+    # Esquema completo del Turno devuelto por GET y POST
+    Turno:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: ID único del turno.
+          readOnly: true
+        empresa_id:
+          type: integer
+          description: ID de la empresa a la que pertenece el turno.
+        nombre:
+          type: string
+          description: Nombre descriptivo del turno (Ej. "Mañana", "Noche").
+        hora_inicio:
+          type: string
+          format: time
+          description: Hora de inicio del turno (Ej "08:00:00").
+        hora_fin:
+          type: string
+          format: time
+          description: Hora de fin del turno (Ej "17:00:00").
+      required:
+        - empresa_id
+        - nombre
+        - hora_inicio
+        - hora_fin
+
+    # Esquema para el cuerpo de la solicitud POST y PUT
+    TurnoInput:
+      type: object
+      description: Campos requeridos para crear o actualizar un turno.
+      properties:
+        empresa_id:
+          type: integer
+          description: ID de la empresa.
+        nombre:
+          type: string
+        hora_inicio:
+          type: string
+          format: time
+        hora_fin:
+          type: string
+          format: time
+      required:
+        - empresa_id
+        - nombre
+        - hora_inicio
+        - hora_fin

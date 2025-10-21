@@ -1,0 +1,202 @@
+openapi: 3.0.0
+info:
+  title: API de Gestión de Asignaciones de Turnos
+  version: 1.0.0
+  description: API para crear, consultar, actualizar y eliminar asignaciones de turnos por empleado.
+
+servers:
+  - url: /asignaciones
+    description: URL Base para los endpoints de Asignaciones
+
+paths:
+  /:
+    get:
+      summary: Lista todas las asignaciones de turnos de un empleado.
+      operationId: listarAsignaciones
+      parameters:
+        - in: query
+          name: empleado_id
+          schema:
+            type: integer
+          required: true
+          description: ID del empleado para el cual se listan las asignaciones.
+      responses:
+        '200':
+          description: Lista de asignaciones de turnos.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Asignacion'
+        '400':
+          description: Solicitud incorrecta, falta el 'empleado_id'.
+    
+    post:
+      summary: Crea una nueva asignación de turno.
+      operationId: crearAsignacion
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AsignacionInput'
+      responses:
+        '201':
+          description: Asignación creada exitosamente.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Asignacion'
+        '400':
+          description: Datos de entrada no válidos.
+
+  /{id}:
+    parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+        description: ID de la asignación específica.
+      - in: query
+        name: empleado_id
+        schema:
+          type: integer
+        required: true
+        description: ID del empleado propietario de la asignación.
+
+    get:
+      summary: Obtiene los detalles de una asignación específica.
+      operationId: obtenerAsignacion
+      responses:
+        '200':
+          description: Detalles de la asignación.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Asignacion'
+        '404':
+          description: Asignación no encontrada para ese ID y empleado.
+
+    put:
+      summary: Actualiza una asignación de turno existente.
+      operationId: actualizarAsignacion
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AsignacionUpdateInput'
+      responses:
+        '200':
+          description: Asignación actualizada exitosamente.
+        '404':
+          description: Asignación no encontrada para actualizar.
+        '400':
+          description: Datos de entrada no válidos.
+
+    delete:
+      summary: Elimina una asignación de turno.
+      operationId: eliminarAsignacion
+      responses:
+        '204':
+          description: Asignación eliminada exitosamente.
+        '404':
+          description: Asignación no encontrada para eliminar.
+
+components:
+  schemas:
+    # Esquema completo de la Asignación devuelta por GET y POST (incluye ID)
+    Asignacion:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: ID único de la asignación.
+          readOnly: true
+        empleado_id:
+          type: integer
+          description: ID del empleado asignado.
+        turno_id:
+          type: integer
+          description: ID del turno predefinido.
+          nullable: true # Asumiendo que puede ser null si se usa manual
+        fecha:
+          type: string
+          format: date
+          description: Fecha en la que aplica la asignación (YYYY-MM-DD).
+        hora_inicio_manual:
+          type: string
+          format: time
+          description: Hora de inicio si no usa un turno_id predefinido.
+          nullable: true
+        hora_fin_manual:
+          type: string
+          format: time
+          description: Hora de fin si no usa un turno_id predefinido.
+          nullable: true
+      required:
+        - empleado_id
+        - fecha
+
+    # Esquema para el cuerpo de la solicitud POST
+    AsignacionInput:
+      type: object
+      description: Campos requeridos para crear una nueva asignación.
+      properties:
+        empleado_id:
+          type: integer
+          description: ID del empleado.
+        turno_id:
+          type: integer
+          description: ID del turno predefinido.
+          nullable: true
+        fecha:
+          type: string
+          format: date
+          description: Fecha de la asignación.
+        hora_inicio_manual:
+          type: string
+          format: time
+          description: Hora de inicio manual.
+          nullable: true
+        hora_fin_manual:
+          type: string
+          format: time
+          description: Hora de fin manual.
+          nullable: true
+      required:
+        - empleado_id
+        - fecha
+        # Nota: Asumo que al menos 'turno_id' O 'hora_inicio/fin_manual' deben estar presentes, pero la especificación OpenAPI no impone lógica OR fácilmente. Se marcan como requeridos los campos base.
+
+    # Esquema para el cuerpo de la solicitud PUT (solo los campos modificables)
+    AsignacionUpdateInput:
+      type: object
+      description: Campos para actualizar una asignación existente.
+      properties:
+        turno_id:
+          type: integer
+          description: Nuevo ID del turno.
+          nullable: true
+        fecha:
+          type: string
+          format: date
+          description: Nueva fecha de la asignación.
+        hora_inicio_manual:
+          type: string
+          format: time
+          description: Nueva hora de inicio manual.
+          nullable: true
+        hora_fin_manual:
+          type: string
+          format: time
+          description: Nueva hora de fin manual.
+          nullable: true
+      # Nota: Ningún campo es 'required' en un PUT parcial, pero tu modelo parece requerir todos los campos en 'data'. Se asume un PUT completo.
+      required:
+        - turno_id
+        - fecha
+        - hora_inicio_manual
+        - hora_fin_manual

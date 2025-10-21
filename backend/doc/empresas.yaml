@@ -1,0 +1,155 @@
+openapi: 3.0.0
+info:
+  title: API de Gestión de Empresas
+  version: 1.0.0
+  description: API para administrar la información de las empresas registradas.
+
+servers:
+  - url: /api
+    description: URL Base de la API
+    
+paths:
+  /empresas:
+    get:
+      summary: Lista todas las empresas.
+      operationId: listarEmpresas
+      responses:
+        '200':
+          description: Lista de empresas ordenada por ID de forma descendente.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Empresa'
+    
+    post:
+      summary: Crea una nueva empresa.
+      operationId: crearEmpresa
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EmpresaInput'
+      responses:
+        '201':
+          description: Empresa creada exitosamente. Devuelve el ID de la nueva empresa.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    description: ID de la empresa recién creada.
+        '400':
+          description: Datos de entrada no válidos o nombre de empresa faltante.
+
+  /empresas/{id}:
+    parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+        description: ID de la empresa a consultar o modificar.
+
+    get:
+      summary: Obtiene los detalles de una empresa por ID.
+      operationId: obtenerEmpresa
+      responses:
+        '200':
+          description: Detalles de la empresa.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Empresa'
+        '404':
+          description: Empresa no encontrada.
+
+    put:
+      summary: Actualiza completamente una empresa por ID.
+      operationId: actualizarEmpresa
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EmpresaInput'
+      responses:
+        '200':
+          description: Empresa actualizada exitosamente.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+        '404':
+          description: Empresa no encontrada para actualizar.
+          
+    delete:
+      summary: Elimina una empresa por ID.
+      operationId: borrarEmpresa
+      responses:
+        '204':
+          description: Empresa eliminada exitosamente (No Content).
+        '404':
+          description: Empresa no encontrada para eliminar.
+
+components:
+  schemas:
+    # Esquema completo de la Empresa devuelto por GET
+    Empresa:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: ID único de la empresa.
+          readOnly: true
+        nombre:
+          type: string
+          description: Nombre legal o comercial de la empresa.
+        direccion:
+          type: string
+          description: Dirección física.
+          nullable: true
+        telefono:
+          type: string
+          description: Número de teléfono de contacto.
+          nullable: true
+        email:
+          type: string
+          format: email
+          description: Correo electrónico de contacto.
+          nullable: true
+      required:
+        - id
+        - nombre
+
+    # Esquema para el cuerpo de la solicitud POST y PUT
+    EmpresaInput:
+      type: object
+      description: Campos requeridos para crear o actualizar una empresa.
+      properties:
+        nombre:
+          type: string
+          description: Nombre legal o comercial de la empresa.
+        direccion:
+          type: string
+          description: Dirección física.
+          nullable: true
+        telefono:
+          type: string
+          description: Número de teléfono de contacto.
+          nullable: true
+        email:
+          type: string
+          format: email
+          description: Correo electrónico de contacto.
+          nullable: true
+      required:
+        - nombre

@@ -1,0 +1,196 @@
+openapi: 3.0.0
+info:
+  title: API de Gestión de Empleados
+  version: 1.0.0
+  description: API para administrar el ciclo de vida de los empleados dentro de una empresa.
+
+servers:
+  - url: /empleados
+    description: URL Base para los endpoints de Empleados
+
+paths:
+  /:
+    get:
+      summary: Lista los empleados de una empresa.
+      operationId: listarEmpleados
+      parameters:
+        - in: query
+          name: empresa_id
+          schema:
+            type: integer
+          required: true
+          description: ID de la empresa para filtrar los empleados.
+      responses:
+        '200':
+          description: Lista de empleados.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Empleado'
+        '400':
+          description: Solicitud incorrecta, falta el 'empresa_id'.
+
+    post:
+      summary: Crea un nuevo empleado en la empresa.
+      operationId: crearEmpleado
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EmpleadoInput'
+      responses:
+        '201':
+          description: Empleado creado exitosamente.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Empleado'
+        '400':
+          description: Datos de entrada no válidos o campos faltantes.
+
+  /{id}:
+    parameters:
+      # Parámetros de Ruta y Consulta que definen el alcance (según tus rutas: /:id?empresa_id=X)
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+        description: ID único del empleado.
+      - in: query
+        name: empresa_id
+        schema:
+          type: integer
+        required: true
+        description: ID de la empresa a la que pertenece el empleado.
+
+    get:
+      summary: Obtiene los detalles de un empleado específico.
+      operationId: obtenerEmpleado
+      responses:
+        '200':
+          description: Detalles del empleado.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Empleado'
+        '404':
+          description: Empleado no encontrado para ese ID y empresa.
+
+    put:
+      summary: Actualiza completamente un empleado existente.
+      operationId: actualizarEmpleado
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EmpleadoUpdateInput'
+      responses:
+        '200':
+          description: Empleado actualizado exitosamente.
+        '404':
+          description: Empleado no encontrado para actualizar.
+
+    delete:
+      summary: Elimina un empleado por ID.
+      operationId: eliminarEmpleado
+      responses:
+        '204':
+          description: Empleado eliminado exitosamente (No Content).
+        '404':
+          description: Empleado no encontrado para eliminar.
+
+components:
+  schemas:
+    # Esquema completo del Empleado devuelto por GET y POST
+    Empleado:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: ID único del empleado.
+          readOnly: true
+        empresa_id:
+          type: integer
+          description: ID de la empresa a la que pertenece.
+        nombre:
+          type: string
+        apellido:
+          type: string
+        dni:
+          type: string
+          description: Número de identificación (DNI/Cédula).
+        puesto:
+          type: string
+        fecha_ingreso:
+          type: string
+          format: date
+          description: Fecha de ingreso a la empresa (YYYY-MM-DD).
+        activo:
+          type: boolean
+          description: Estado actual del empleado (true=activo, false=inactivo).
+          default: true
+      required:
+        - empresa_id
+        - nombre
+        - apellido
+        - dni
+        - puesto
+        - fecha_ingreso
+
+    # Esquema para el cuerpo de la solicitud POST (Creación)
+    EmpleadoInput:
+      type: object
+      description: Campos requeridos para crear un nuevo empleado.
+      properties:
+        empresa_id:
+          type: integer
+          description: ID de la empresa.
+        nombre:
+          type: string
+        apellido:
+          type: string
+        dni:
+          type: string
+        puesto:
+          type: string
+        fecha_ingreso:
+          type: string
+          format: date # Nota: Tu modelo maneja un formato ISO que se trunca a YYYY-MM-DD. Documentamos el formato final.
+      required:
+        - empresa_id
+        - nombre
+        - apellido
+        - dni
+        - puesto
+        - fecha_ingreso
+
+    # Esquema para el cuerpo de la solicitud PUT (Actualización)
+    EmpleadoUpdateInput:
+      type: object
+      description: Campos para actualizar completamente un empleado existente.
+      properties:
+        nombre:
+          type: string
+        apellido:
+          type: string
+        dni:
+          type: string
+        puesto:
+          type: string
+        fecha_ingreso:
+          type: string
+          format: date
+        activo:
+          type: boolean
+      required:
+        - nombre
+        - apellido
+        - dni
+        - puesto
+        - fecha_ingreso
+        - activo
