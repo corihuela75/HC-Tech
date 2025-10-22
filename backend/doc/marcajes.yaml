@@ -1,0 +1,333 @@
+openapi: 3.0.3
+info:
+  title: API de Gestión de Marcajes
+  description: API para gestionar las operaciones CRUD de los marcajes de empleados, incluyendo soporte para respuestas de API (JSON) y respuestas de vistas (HTML).
+  version: 1.0.0
+servers:
+  - url: /api/marcajes
+    description: Rutas base de la API de Marcajes
+tags:
+  - name: Marcajes
+    description: Operaciones sobre marcajes de entrada/salida de empleados
+paths:
+  /:
+    get:
+      tags:
+        - Marcajes
+      summary: Lista todos los marcajes de una empresa o de un empleado específico.
+      operationId: listarMarcajes
+      parameters:
+        - name: empresa_id
+          in: query
+          description: ID de la empresa para filtrar los marcajes. Por defecto es 1.
+          required: false
+          schema:
+            type: integer
+            default: 1
+        - name: empleado_id
+          in: query
+          description: ID del empleado para filtrar los marcajes. Si se proporciona, anula el filtro por empresa_id.
+          required: false
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Lista de marcajes (JSON) o vista HTML con los marcajes.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Marcaje'
+            text/html:
+              schema:
+                type: string
+                description: Renderizado de la plantilla 'marcajes' con la lista.
+        '500':
+          description: Error al procesar la solicitud.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+            text/plain:
+              schema:
+                type: string
+                example: Error al procesar la solicitud en listarMarcajes
+    post:
+      tags:
+        - Marcajes
+      summary: Crea un nuevo marcaje.
+      operationId: crearMarcaje
+      parameters:
+        - name: empresa_id
+          in: query
+          description: ID de la empresa a la que pertenece el nuevo marcaje. Por defecto es 1.
+          required: false
+          schema:
+            type: integer
+            default: 1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NuevoMarcaje'
+      responses:
+        '201':
+          description: Marcaje creado exitosamente (JSON) o redirección a la lista.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Marcaje'
+        '302':
+          description: Redirección a `/api/marcajes?empresa_id={empresa_id}` después de la creación (No-API).
+        '500':
+          description: Error al crear el marcaje.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+            text/plain:
+              schema:
+                type: string
+                example: Error al procesar la solicitud en crearMarcaje
+
+  /{id}:
+    parameters:
+      - name: id
+        in: path
+        description: ID del marcaje a consultar, actualizar o eliminar.
+        required: true
+        schema:
+          type: integer
+    get:
+      tags:
+        - Marcajes
+      summary: Obtiene un marcaje por su ID.
+      operationId: obtenerMarcaje
+      parameters:
+        - name: empresa_id
+          in: query
+          description: ID de la empresa para el ámbito de la búsqueda.
+          required: false
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Marcaje encontrado (JSON) o vista HTML de edición.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Marcaje'
+            text/html:
+              schema:
+                type: string
+                description: Renderizado de la plantilla 'marcajes' para edición.
+        '404':
+          description: Marcaje no encontrado.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Mensaje'
+                example:
+                  mensaje: Marcaje no encontrado
+            text/html:
+              schema:
+                type: string
+                example: Renderizado de la plantilla 'error'
+        '500':
+          description: Error interno del servidor.
+    put:
+      tags:
+        - Marcajes
+      summary: Actualiza un marcaje existente.
+      operationId: actualizarMarcaje
+      parameters:
+        - name: empresa_id
+          in: query
+          description: ID de la empresa para el ámbito de la actualización. Por defecto es 1.
+          required: false
+          schema:
+            type: integer
+            default: 1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DatosActualizacionMarcaje'
+      responses:
+        '200':
+          description: Marcaje actualizado exitosamente (JSON).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Marcaje'
+        '302':
+          description: Redirección a `/api/marcajes?empresa_id={empresa_id}` después de la actualización (No-API).
+        '404':
+          description: Marcaje no encontrado para actualizar.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Mensaje'
+                example:
+                  message: Marcaje no encontrado para actualizar
+            text/plain:
+              schema:
+                type: string
+                example: Marcaje no encontrado para actualizar
+        '500':
+          description: Error al actualizar el marcaje.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+            text/plain:
+              schema:
+                type: string
+                example: Error al procesar la solicitud en actualizarMarcaje
+    delete:
+      tags:
+        - Marcajes
+      summary: Elimina un marcaje por su ID.
+      operationId: eliminarMarcaje
+      parameters:
+        - name: empresa_id
+          in: query
+          description: ID de la empresa para el ámbito de la eliminación. Por defecto es 1.
+          required: false
+          schema:
+            type: integer
+            default: 1
+      responses:
+        '200':
+          description: Marcaje eliminado correctamente (JSON).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MensajeConId'
+                example:
+                  message: Marcaje eliminado correctamente
+                  id: 5
+        '302':
+          description: Redirección a `/api/marcajes?empresa_id={empresa_id}` después de la eliminación (No-API).
+        '404':
+          description: Marcaje no encontrado para eliminar.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Mensaje'
+                example:
+                  message: Marcaje no encontrado para eliminar
+            text/plain:
+              schema:
+                type: string
+                example: Marcaje no encontrado para eliminar
+        '500':
+          description: Error al eliminar el marcaje.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+            text/plain:
+              schema:
+                type: string
+                example: Error al procesar la solicitud en eliminarMarcaje
+
+components:
+  schemas:
+    Marcaje:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: ID único del marcaje.
+          example: 5
+        empleado_id:
+          type: integer
+          description: ID del empleado.
+          example: 101
+        empresa_id:
+          type: integer
+          description: ID de la empresa.
+          example: 1
+        fecha_hora:
+          type: string
+          format: date-time
+          description: Marca de tiempo del marcaje. En la vista puede ser formato `datetime-local` (YYYY-MM-DDThh:mm).
+          example: '2025-10-22T14:30:00'
+        tipo:
+          type: string
+          enum: [Entrada, Salida]
+          description: Tipo de marcaje (Entrada o Salida).
+          example: Entrada
+      required:
+        - id
+        - empleado_id
+        - empresa_id
+        - fecha_hora
+        - tipo
+    NuevoMarcaje:
+      type: object
+      properties:
+        empleado_id:
+          type: integer
+          description: ID del empleado.
+          example: 102
+        fecha_hora:
+          type: string
+          format: date-time
+          description: Marca de tiempo del marcaje.
+          example: '2025-10-22T15:00:00Z'
+        tipo:
+          type: string
+          enum: [Entrada, Salida]
+          description: Tipo de marcaje.
+          example: Salida
+      required:
+        - empleado_id
+        - fecha_hora
+        - tipo
+    DatosActualizacionMarcaje:
+      type: object
+      properties:
+        empleado_id:
+          type: integer
+          description: Nuevo ID del empleado (opcional).
+          example: 102
+        fecha_hora:
+          type: string
+          format: date-time
+          description: Nueva marca de tiempo del marcaje (opcional).
+          example: '2025-10-22T15:05:00Z'
+        tipo:
+          type: string
+          enum: [Entrada, Salida]
+          description: Nuevo tipo de marcaje (opcional).
+          example: Entrada
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+          description: Descripción del error interno.
+          example: Error al procesar la solicitud en listarMarcajes
+    Mensaje:
+      type: object
+      properties:
+        message:
+          type: string
+          description: Mensaje descriptivo.
+          example: Marcaje no encontrado
+    MensajeConId:
+      type: object
+      properties:
+        message:
+          type: string
+          description: Mensaje descriptivo.
+          example: Marcaje eliminado correctamente
+        id:
+          type: integer
+          description: ID del recurso afectado.
+          example: 5
