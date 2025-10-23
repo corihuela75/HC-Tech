@@ -53,7 +53,7 @@ export const obtenerAsignacion = async (req, res) => {
       return res.status(400).json({ message: 'Falta el parámetro id' })
     }
 
-    // ✅ Buscar la asignación individual
+    //Buscar la asignación individual
     const asignacion = await getAsignacionById(id)
 
     if (!asignacion) {
@@ -61,12 +61,12 @@ export const obtenerAsignacion = async (req, res) => {
       return esPeticionAPI(req) ? res.status(404).json({ message: mensaje }) : res.status(404).send(mensaje)
     }
 
-    // 🧠 Formatear fecha para que el input type="date" la entienda
+    //Formatear fecha para que el input type="date" la entienda
     if (asignacion.fecha) {
       asignacion.fecha = new Date(asignacion.fecha).toISOString().split('T')[0]
     }
 
-    // ✅ Cargar también todas las asignaciones del mismo empleado
+    //Cargar también todas las asignaciones del mismo empleado
     const asignaciones = await getAsignacionesByEmpleado(asignacion.empleado_id)
 
     if (!esPeticionAPI(req)) {

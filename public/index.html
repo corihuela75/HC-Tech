@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HC Tech Solutions - Desarrollo de Software a Medida</title>
+    <style>
+        /* Estilos generales */
+        :root {
+            --color-primary: #2c3e50;
+            --color-secondary: #3498db;
+            --color-accent: #e74c3c;
+            --color-light: #ecf0f1;
+            --color-dark: #2c3e50;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        section {
+            padding: 5rem 0;
+        }
+        
+        .btn {
+            display: inline-block;
+            background: var(--color-secondary);
+            color: white;
+            padding: 0.8rem 1.8rem;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .btn:hover {
+            background: #2980b9;
+            transform: translateY(-3px);
+        }
+        
+        .section-title {
+            text-align: center;
+            margin-bottom: 3rem;
+            color: var(--color-primary);
+        }
+        
+        .section-title h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .section-title p {
+            font-size: 1.2rem;
+            color: #777;
+        }
+        
+        /* Header y navegación */
+        header {
+            background: white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+        }
+        
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.2rem 0;
+        }
+        
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--color-primary);
+            text-decoration: none;
+        }
+        
+        .logo span {
+            color: var(--color-secondary);
+        }
+        
+        nav ul {
+            display: flex;
+            list-style: none;
+        }
+        
+        nav ul li {
+            margin-left: 2rem;
+        }
+        
+        nav ul li a {
+            text-decoration: none;
+            color: var(--color-dark);
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+        
+        nav ul li a:hover {
+            color: var(--color-secondary);
+        }
+        
+        /* Hero section */
+        .hero {
+            background: linear-gradient(rgba(44, 62, 80, 0.8), rgba(44, 62, 80, 0.8)), url('https://images.unsplash.com/photo-1555066931-4365d14bab8c?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');
+            background-size: cover;
+            background-position: center;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            color: white;
+            text-align: center;
+            margin-top: 80px;
+        }
+        
+        .hero-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .hero p {
+            font-size: 1.3rem;
+            margin-bottom: 2.5rem;
+        }
+        
+        /* Servicios */
+        .services {
+            background: var(--color-light);
+        }
+        
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+        
+        .service-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            transition: transform 0.3s;
+        }
+        
+        .service-card:hover {
+            transform: translateY(-10px);
+        }
+        
+        .service-icon {
+            font-size: 3rem;
+            color: var(--color-secondary);
+            margin-bottom: 1.5rem;
+        }
+        
+        .service-card h3 {
+            margin-bottom: 1rem;
+            color: var(--color-primary);
+        }
+        
+        /* Proyectos */
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+        
+        .project-card {
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            position: relative;
+        }
+        
+        .project-card img {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+            transition: transform 0.5s;
+        }
+        
+        .project-card:hover img {
+            transform: scale(1.1);
+        }
+        
+        .project-info {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(44, 62, 80, 0.9);
+            color: white;
+            padding: 1.5rem;
+            transform: translateY(100%);
+            transition: transform 0.5s;
+        }
+        
+        .project-card:hover .project-info {
+            transform: translateY(0);
+        }
+        
+        /* Sobre nosotros */
+        .about {
+            background: var(--color-light);
+        }
+        
+        .about-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+        }
+        
+        .about-image img {
+            width: 100%;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .about-text h3 {
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+            color: var(--color-primary);
+        }
+        
+        /* Testimonios */
+        .testimonials-container {
+            max-width: 800px;
+            margin: 0 auto;
+            position: relative;
+        }
+        
+        .testimonial {
+            background: white;
+            padding: 2.5rem;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            display: none;
+        }
+        
+        .testimonial.active {
+            display: block;
+        }
+        
+        .testimonial-text {
+            font-style: italic;
+            margin-bottom: 1.5rem;
+            font-size: 1.1rem;
+        }
+        
+        .testimonial-author {
+            font-weight: 600;
+            color: var(--color-primary);
+        }
+        
+        .testimonial-role {
+            color: #777;
+            font-size: 0.9rem;
+        }
+        
+        /* Contacto */
+        .contact {
+            background: var(--color-primary);
+            color: white;
+        }
+        
+        .contact-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+        }
+        
+        .contact-info h3 {
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .contact-details {
+            margin-bottom: 2rem;
+        }
+        
+        .contact-details p {
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+        }
+        
+        .contact-form input,
+        .contact-form textarea {
+            width: 100%;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            border: none;
+            border-radius: 5px;
+        }
+        
+        .contact-form textarea {
+            height: 150px;
+            resize: vertical;
+        }
+        
+        .contact-form button {
+            background: var(--color-secondary);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background 0.3s;
+        }
+        
+        .contact-form button:hover {
+            background: #2980b9;
+        }
+        
+        /* Footer */
+        footer {
+            background: #1a252f;
+            color: white;
+            padding: 3rem 0;
+            text-align: center;
+        }
+        
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        
+        .footer-logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+        
+        .footer-logo span {
+            color: var(--color-secondary);
+        }
+        
+        .footer-links ul {
+            display: flex;
+            list-style: none;
+            margin-bottom: 1rem;
+        }
+        
+        .footer-links ul li {
+            margin-right: 1.5rem;
+        }
+        
+        .footer-links ul li a {
+            color: white;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        .footer-links ul li a:hover {
+            color: var(--color-secondary);
+        }
+        
+        .social-icons a {
+            color: white;
+            font-size: 1.5rem;
+            margin-right: 1rem;
+            transition: color 0.3s;
+        }
+        
+        .social-icons a:hover {
+            color: var(--color-secondary);
+        }
+        
+        .copyright {
+            margin-top: 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding-top: 2rem;
+            width: 100%;
+        }
+        
+        /* Responsive */
+        @media (max-width: 992px) {
+            .about-content,
+            .contact-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .nav-container {
+                flex-direction: column;
+            }
+            
+            nav ul {
+                margin-top: 1.5rem;
+            }
+            
+            nav ul li {
+                margin: 0 0.5rem;
+            }
+            
+            .footer-content {
+                flex-direction: column;
+            }
+            
+            .footer-links ul {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            .footer-links ul li {
+                margin: 0.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container nav-container">
+            <a href="#" class="logo">HC<span>Tech</span></a>
+            <nav>
+                <ul>
+                    <li><a href="#inicio">Inicio</a></li>
+                    <li><a href="#servicios">Servicios</a></li>
+                    <li><a href="#proyectos">Proyectos</a></li>
+                    <li><a href="#nosotros">Nosotros</a></li>
+                    <li><a href="#contacto">Contacto</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section id="inicio" class="hero">
+        <div class="container hero-content">
+            <h1>Soluciones de software a medida para tu negocio</h1>
+            <p>Desarrollamos aplicaciones web y móviles que impulsan el crecimiento de tu empresa</p>
+            <a href="#contacto" class="btn">Contáctanos</a>
+        </div>
+    </section>
+
+    <!-- Servicios -->
+    <section id="servicios" class="services">
+        <div class="container">
+            <div class="section-title">
+                <h2>Nuestros Servicios</h2>
+                <p>Ofrecemos soluciones tecnológicas completas para tu negocio</p>
+            </div>
+            <div class="services-grid">
+                <div class="service-card">
+                    <div class="service-icon">💻</div>
+                    <h3>Desarrollo Web</h3>
+                    <p>Creación de sitios web responsivos, aplicaciones web y sistemas a medida con las últimas tecnologías.</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">📱</div>
+                    <h3>Apps Móviles</h3>
+                    <p>Desarrollo de aplicaciones nativas e híbridas para iOS y Android con interfaces intuitivas y atractivas.</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">☁️</div>
+                    <h3>Cloud Solutions</h3>
+                    <p>Implementación de infraestructuras en la nube, migración y optimización de servicios cloud.</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">🔍</div>
+                    <h3>Consultoría TI</h3>
+                    <p>Análisis y asesoramiento especializado para optimizar tus procesos tecnológicos y aumentar la productividad.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Proyectos -->
+    <section id="proyectos" class="projects">
+        <div class="container">
+            <div class="section-title">
+                <h2>Proyectos Destacados</h2>
+                <p>Algunos de nuestros trabajos más recientes</p>
+            </div>
+            <div class="projects-grid">
+                <div class="project-card">
+                    <img src="https://images.unsplash.com/photo-1551650975-87deedd944c3?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" alt="Proyecto E-commerce">
+                    <div class="project-info">
+                        <h3>Sistema E-commerce</h3>
+                        <p>Plataforma de comercio electrónico con carrito de compras, pasarela de pagos y panel administrativo.</p>
+                    </div>
+                </div>
+                <div class="project-card">
+                    <img src="https://images.unsplash.com/photo-1552664730-d307ca884978?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" alt="App de Delivery">
+                    <div class="project-info">
+                        <h3>App de Delivery</h3>
+                        <p>Aplicación móvil para servicio de entrega de comida con seguimiento en tiempo real y sistema de valoraciones.</p>
+                    </div>
+                </div>
+                <div class="project-card">
+                    <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" alt="Sistema CRM">
+                    <div class="project-info">
+                        <h3>Sistema CRM Personalizado</h3>
+                        <p>Sistema de gestión de relaciones con clientes desarrollado a medida para una empresa de marketing.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sobre Nosotros -->
+    <section id="nosotros" class="about">
+        <div class="container">
+            <div class="section-title">
+                <h2>Sobre Nosotros</h2>
+                <p>Conoce más sobre nuestra empresa y equipo</p>
+            </div>
+            <div class="about-content">
+                <div class="about-image">
+                    <img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" alt="Nuestro equipo">
+                </div>
+                <div class="about-text">
+                    <h3>Innovación y calidad en cada proyecto</h3>
+                    <p>HC Tech Solutions nació en 2015 con la misión de ayudar a las empresas a transformar digitalmente sus negocios mediante soluciones de software innovadoras y de alta calidad.</p>
+                    <p>Nuestro equipo está compuesto por desarrolladores, diseñadores y especialistas en tecnología apasionados por crear productos que marquen la diferencia.</p>
+                    <p>Trabajamos con metodologías ágiles que nos permiten adaptarnos a las necesidades específicas de cada cliente, garantizando plazos de entrega y los más altos estándares de calidad.</p>
+                    <a href="equipo.html" class="btn">Conocé Nuestro Equipo</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonios -->
+    <section class="testimonials">
+        <div class="container">
+            <div class="section-title">
+                <h2>Testimonios</h2>
+                <p>Lo que nuestros clientes dicen de nosotros</p>
+            </div>
+            <div class="testimonials-container">
+                <div class="testimonial active">
+                    <p class="testimonial-text">"HC Tech desarrolló nuestra aplicación móvil y el resultado superó todas nuestras expectativas. El equipo fue profesional, meticuloso y cumplió con todos los plazos."</p>
+                    <p class="testimonial-author">María González</p>
+                    <p class="testimonial-role">Directora de Innovación, TechCorp</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contacto -->
+    <section id="contacto" class="contact">
+        <div class="container">
+            <div class="section-title contact">
+                <h2>Contacto</h2>
+                <p>Estamos listos para empezar tu próximo proyecto</p>
+            </div>
+            <div class="contact-container">
+                <div class="contact-info">
+                    <h3>Hablemos de tu idea</h3>
+                    <p>Completa el formulario y nos pondremos en contacto contigo a la brevedad.</p>
+                    <div class="contact-details">
+                        <p>📍 Av. Principal 123, Ciudad, País</p>
+                        <p>📞 +1 234 567 890</p>
+                        <p>✉️ info@hctech.com</p>
+                    </div>
+                </div>
+                <div class="contact-form">
+                    <form>
+                        <input type="text" placeholder="Nombre completo" required>
+                        <input type="email" placeholder="Correo electrónico" required>
+                        <input type="text" placeholder="Asunto">
+                        <textarea placeholder="Tu mensaje" required></textarea>
+                        <button type="submit">Enviar mensaje</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-logo">HC<span>Tech</span></div>
+                <div class="footer-links">
+                    <ul>
+                        <li><a href="#inicio">Inicio</a></li>
+                        <li><a href="#servicios">Servicios</a></li>
+                        <li><a href="#proyectos">Proyectos</a></li>
+                        <li><a href="#nosotros">Nosotros</a></li>
+                        <li><a href="#contacto">Contacto</a></li>
+                    </ul>
+                </div>
+                <div class="social-icons">
+                    <a href="#">FB</a>
+                    <a href="#">TW</a>
+                    <a href="#">IG</a>
+                    <a href="#">LN</a>
+                </div>
+                <div class="copyright">
+                    <p>&copy; 2025 HC Tech Solutions. Todos los derechos reservados.</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Navegación suave al hacer clic en los enlaces
+        document.querySelectorAll('nav a, .footer-links a').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                const targetId = this.getAttribute('href');
+                const targetSection = document.querySelector(targetId);
+                
+                window.scrollTo({
+                    top: targetSection.offsetTop - 80,
+                    behavior: 'smooth'
+                });
+            });
+        });
+        
+        // Cambio de testimonio cada 5 segundos
+        const testimonials = [
+            {
+                text: '"HC Tech desarrolló nuestra aplicación móvil y el resultado superó todas nuestras expectativas. El equipo fue profesional, meticuloso y cumplió con todos los plazos."',
+                author: "María González",
+                role: "Directora de Innovación, TechCorp"
+            },
+            {
+                text: '"Trabajar con HC Tech ha sido una experiencia excelente. Su solución cloud nos ayudó a reducir costos y mejorar nuestra eficiencia operativa en un 40%."',
+                author: "Carlos Mendoza",
+                role: "CTO, RetailSolutions"
+            },
+            {
+                text: '"El sistema CRM personalizado que desarrollaron para nosotros ha transformado completamente nuestra forma de gestionar las relaciones con clientes. Altamente recomendados."',
+                author: "Ana Rodríguez",
+                role: "Gerente de Ventas, MarketPlus"
+            }
+        ];
+        
+        let currentTestimonial = 0;
+        const testimonialElement = document.querySelector('.testimonial');
+        
+        function changeTestimonial() {
+            currentTestimonial = (currentTestimonial + 1) % testimonials.length;
+            
+            testimonialElement.innerHTML = `
+                <p class="testimonial-text">${testimonials[currentTestimonial].text}</p>
+                <p class="testimonial-author">${testimonials[currentTestimonial].author}</p>
+                <p class="testimonial-role">${testimonials[currentTestimonial].role}</p>
+            `;
+        }
+        
+        setInterval(changeTestimonial, 5000);
+    </script>
+</body>
+</html>

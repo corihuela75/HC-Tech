@@ -1,0 +1,166 @@
+doctype html
+html
+  head
+    meta(charset="utf-8")
+    meta(name="viewport" content="width=device-width, initial-scale=1")
+    title= titulo || "Gestión de Marcajes"
+    style.
+      body {
+        font-family: Arial, sans-serif;
+        margin: 20px;
+        background-color: #f9f9f9;
+      }
+      h1 {
+        color: #333;
+      }
+      a {
+        text-decoration: none;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+        background-color: #fff;
+        box-shadow: 0 0 10px rgba(0,0,0,.1);
+      }
+      th, td {
+        border: 1px solid #ddd;
+        padding: 10px;
+        text-align: left;
+      }
+      th {
+        background-color: #4CAF50;
+        color: #fff;
+      }
+      tr:nth-child(even) {
+        background-color: #f2f2f2;
+      }
+      tr:hover {
+        background-color: #e6f7ff;
+      }
+      button {
+        padding: 5px 10px;
+        margin-right: 5px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 0.9rem;
+      }
+      .edit-btn {
+        background-color: #2196F3;
+        color: #fff;
+      }
+      .delete-btn {
+        background-color: #f44336;
+        color: #fff;
+      }
+      .submit-btn {
+        background-color: #4CAF50;
+        color: #fff;
+        margin-top: 10px;
+      }
+      form {
+        margin-top: 20px;
+        padding: 15px;
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0,0,0,.1);
+        max-width: 600px;
+      }
+      label {
+        display: block;
+        margin-top: 10px;
+        font-weight: bold;
+      }
+      input, select {
+        width: 100%;
+        padding: 8px;
+        margin-top: 4px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+      }
+
+  body
+    h1= titulo || "Gestión de Marcajes"
+    
+    // Botón ancla al formulario
+    a(href="#form-agregar")
+      button.submit-btn(type="button") + Agregar Marcaje
+
+    if marcajes && marcajes.length
+      table
+        thead
+          tr
+            th ID
+            th Empleado ID
+            th Tipo
+            th Fecha y Hora
+            th Método
+            th Acciones
+        tbody
+          each mar in marcajes
+            tr
+              td #{mar.id}
+              td #{mar.empleado_id}
+              td #{mar.tipo}
+              td #{mar.fecha_hora}
+              td #{mar.metodo}
+              td
+                a(href=`/api/marcajes/${mar.id}?empresa_id=${mar.empresa_id}`)
+                  button.edit-btn(type="button") Editar
+                form(action=`/api/marcajes/${mar.id}?empresa_id=${mar.empresa_id}&_method=DELETE` method="POST" style="display:inline")
+                  button.delete-btn(type="submit") Eliminar
+    else if !marcaje
+      p No hay registros de marcajes para mostrar.
+
+    // --- FORMULARIO CREAR / EDITAR ---
+    if marcaje
+      h1#form-agregar Editar Marcaje ID: #{marcaje.id}
+      form(action=`/api/marcajes/${marcaje.id}?empresa_id=${marcaje.empresa_id}&_method=PUT` method="POST")
+        label(for="empleado_id") ID del Empleado
+        input(type="number" name="empleado_id" id="empleado_id" required value=marcaje.empleado_id)
+
+        label(for="tipo") Tipo de Marcaje
+        select(name="tipo" id="tipo" required)
+          option(value="entrada" selected=marcaje.tipo === 'entrada') Entrada
+          option(value="salida" selected=marcaje.tipo === 'salida') Salida
+          option(value="pausa_inicio" selected=marcaje.tipo === 'pausa_inicio') Inicio de Pausa
+          option(value="pausa_fin" selected=marcaje.tipo === 'pausa_fin') Fin de Pausa
+
+        label(for="fecha_hora") Fecha y Hora
+        input(type="datetime-local" name="fecha_hora" id="fecha_hora" required value=marcaje.fecha_hora ? marcaje.fecha_hora.replace(' ', 'T') : '')
+
+        label(for="metodo") Método
+        select(name="metodo" id="metodo")
+          option(value="web" selected=marcaje.metodo === 'web') Web
+          option(value="movil" selected=marcaje.metodo === 'movil') Móvil
+          option(value="qr" selected=marcaje.metodo === 'qr') QR
+          option(value="biometrico" selected=marcaje.metodo === 'biometrico') Biométrico
+
+        button.submit-btn(type="submit") Actualizar
+        a(href=`/api/marcajes?empresa_id=${marcaje.empresa_id}`)
+          button(type="button") Cancelar
+    else
+      h1#form-agregar Nuevo Marcaje
+      form(action="/api/marcajes" method="POST")
+        label(for="empleado_id") ID del Empleado
+        input(type="number" name="empleado_id" id="empleado_id" required)
+
+        label(for="tipo") Tipo de Marcaje
+        select(name="tipo" id="tipo" required)
+          option(value="entrada") Entrada
+          option(value="salida") Salida
+          option(value="pausa_inicio") Inicio de Pausa
+          option(value="pausa_fin") Fin de Pausa
+
+        label(for="fecha_hora") Fecha y Hora
+        input(type="datetime-local" name="fecha_hora" id="fecha_hora" required)
+
+        label(for="metodo") Método
+        select(name="metodo" id="metodo")
+          option(value="web") Web
+          option(value="movil") Móvil
+          option(value="qr") QR
+          option(value="biometrico") Biométrico
+
+        button.submit-btn(type="submit") Guardar
