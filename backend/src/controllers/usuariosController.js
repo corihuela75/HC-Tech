@@ -220,13 +220,19 @@ export const procesarLogin = async (req, res) => {
     }
 
     // Si viene de navegador → guardar cookie y redirigir
-    res.cookie('token', token, { httpOnly: true })
+    res.cookie('token', token, {
+      httpOnly: true, // JS no puede leerla
+      secure: process.env.NODE_ENV === 'production', // solo HTTPS en producción
+      sameSite: 'strict', // protege contra CSRF
+      maxAge: 2 * 60 * 60 * 1000, // 2 horas en milisegundos (coincide con JWT)
+    })
 
     return res.render('Dashboard', {
       titulo: 'Panel de control',
       usuario: user.nombre,
       rol: user.rol,
     })
+    
   } catch (error) {
     console.error('Error en login:', error)
 

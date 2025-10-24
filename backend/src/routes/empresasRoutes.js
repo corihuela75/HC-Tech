@@ -13,15 +13,18 @@ import {
   actualizarEmpresa,
   borrarEmpresa
 } from '../controllers/empresasController.js';
+import { verificarTokenYRol } from '../middlewares/authMiddleware.js';
 
 const router = Router();
 
-router.get('/', listarEmpresas);           // GET /api/empresas
-router.get('/:id/edit', mostrarFormularioEditar);  // GET /api/empresas/:id/edit
-router.get('/:id', obtenerEmpresa);        // GET /api/empresas/:id
-router.post('/', crearEmpresa);            // POST /api/empresas
-router.put('/:id', actualizarEmpresa);     // PUT /api/empresas/:id
-router.delete('/:id', borrarEmpresa);      // DELETE /api/empresas/:id
+// Listar y ver empresas: admin o empleado
+router.get('/', verificarTokenYRol('admin', 'empleado'), listarEmpresas);
+router.get('/:id', verificarTokenYRol('admin', 'empleado'), obtenerEmpresa);
+router.get('/:id/edit', verificarTokenYRol('admin'), mostrarFormularioEditar); // solo admin
+
+// Crear, actualizar, eliminar: solo admin
+router.post('/', verificarTokenYRol('admin'), crearEmpresa);
+router.put('/:id', verificarTokenYRol('admin'), actualizarEmpresa);
+router.delete('/:id', verificarTokenYRol('admin'), borrarEmpresa);
 
 export default router;
-

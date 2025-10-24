@@ -11,13 +11,17 @@ import {
   actualizarAusencia,
   eliminarAusencia
 } from "../controllers/ausenciasController.js";
+import { verificarTokenYRol } from '../middlewares/authMiddleware.js'
 
 const router = Router();
 
-router.get("/", listarAusencias);           // GET /ausencias?empresa_id=1
-router.get("/:id", obtenerAusencia);        // GET /ausencias/5?empresa_id=1
-router.post("/", crearAusencia);            // POST /ausencias
-router.put("/:id", actualizarAusencia);     // PUT /ausencias/5?empresa_id=1
-router.delete("/:id", eliminarAusencia);    // DELETE /ausencias/5?empresa_id=1
+// Listar y ver ausencias: admin o empleado
+router.get("/", verificarTokenYRol('admin', 'empleado'), listarAusencias);       
+router.get("/:id", verificarTokenYRol('admin', 'empleado'), obtenerAusencia);    
+
+// Crear, actualizar, eliminar: solo admin
+router.post("/", verificarTokenYRol('admin'), crearAusencia);                     
+router.put("/:id", verificarTokenYRol('admin'), actualizarAusencia);              
+router.delete("/:id", verificarTokenYRol('admin'), eliminarAusencia);             
 
 export default router;

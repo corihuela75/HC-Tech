@@ -73,13 +73,10 @@ CREATE TABLE
         -- turno_id ahora es NULLable, permitiendo asignaciones manuales
         turno_id INT NULL,
         fecha DATE NOT NULL,
-        
         -- Nuevos campos para registrar el horario si no se usa un turno predefinido
         hora_inicio_manual TIME DEFAULT NULL,
         hora_fin_manual TIME DEFAULT NULL,
-        
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        
         FOREIGN KEY (empleado_id) REFERENCES empleados (id) ON DELETE CASCADE,
         -- La clave foránea sigue existiendo, pero ahora se permite NULL
         FOREIGN KEY (turno_id) REFERENCES turnos (id) ON DELETE CASCADE
@@ -121,25 +118,51 @@ CREATE TABLE
 -- 8. Datos iniciales
 -- ==============================
 -- Empresa
-INSERT INTO empresas (nombre, direccion, telefono, cuit, email) VALUES
-('Tech Solutions SRL', 'Av. Corrientes 1234, CABA', '011-4567-8901', '30-71234567-8', 'contacto@techsolutions.com.ar'),
-('Logística del Plata SA', 'Ruta 2 Km 45, La Plata', '0221-478-1234', '30-80123456-7', 'info@logisticaplata.com'),
-('Hotel Buenavista', 'San Martín 567, Mar del Plata', '0223-490-4567', '30-90234567-6', 'reservas@hotelbuenavista.com'),
-('Agroexportaciones del Sur', 'Ruta 33 Km 10, Rosario', '0341-400-7890', '30-65432109-5', 'ventas@agrosur.com'),
-('Desarrollos Web AR', 'Calle Belgrano 890, Córdoba', '0351-455-6677', '30-12345678-9', 'soporte@desarrolloswebar.com');
-
+INSERT INTO
+    empresas (nombre, direccion, telefono, cuit, email)
+VALUES
+    (
+        'Tech Solutions SRL',
+        'Av. Corrientes 1234, CABA',
+        '011-4567-8901',
+        '30-71234567-8',
+        'contacto@techsolutions.com.ar'
+    ),
+    (
+        'Logística del Plata SA',
+        'Ruta 2 Km 45, La Plata',
+        '0221-478-1234',
+        '30-80123456-7',
+        'info@logisticaplata.com'
+    ),
+    (
+        'Hotel Buenavista',
+        'San Martín 567, Mar del Plata',
+        '0223-490-4567',
+        '30-90234567-6',
+        'reservas@hotelbuenavista.com'
+    ),
+    (
+        'Agroexportaciones del Sur',
+        'Ruta 33 Km 10, Rosario',
+        '0341-400-7890',
+        '30-65432109-5',
+        'ventas@agrosur.com'
+    ),
+    (
+        'Desarrollos Web AR',
+        'Calle Belgrano 890, Córdoba',
+        '0351-455-6677',
+        '30-12345678-9',
+        'soporte@desarrolloswebar.com'
+    );
 
 -- Usuario administrador
 INSERT INTO
     usuarios (empresa_id, nombre, email, password, rol)
 VALUES
-    (
-        1,
-        'Administrador Hotel',
-        'admin@hotel.com',
-        'hash_password',
-        'admin'
-    );
+    (1, 'Administrador', 'admin@', '$2b$10$QNJhcJ3BW4O2prVo5fqai.4pzQOh4gZGGHAWytTEGGJUM9bYFy0vO', 'admin'),
+    (1, 'Empleado', 'empleado@', '$2b$10$jE8ljBHh/u9/Y16PdxRFjuuATX3wS15o45PyhY1.exLGQouSoGNJW', 'empleado');
 
 -- Turnos predefinidos
 INSERT INTO
@@ -241,27 +264,33 @@ VALUES
         '37888999',
         'Limpieza',
         '2024-06-01'
-    ); -- ID 10
+    );
 
+-- ID 10
 -- ==============================
 -- Asignación de turnos
 -- ==============================
 INSERT INTO
-    asignaciones_turnos (empleado_id, turno_id, fecha, hora_inicio_manual, hora_fin_manual)
+    asignaciones_turnos (
+        empleado_id,
+        turno_id,
+        fecha,
+        hora_inicio_manual,
+        hora_fin_manual
+    )
 VALUES
-    
     (1, 1, '2025-10-21', NULL, NULL), -- 1. Predefinido: Empleado 1, Turno 1 (Mañana)
     (2, NULL, '2025-10-21', '07:30:00', '15:30:00'), -- 2. Manual: Empleado 2, Horario ad-hoc
     (3, 2, '2025-10-21', NULL, NULL), -- 3. Predefinido: Empleado 3, Turno 2 (Tarde)
-
     (4, NULL, '2025-10-21', '09:00:00', '13:00:00'), -- 4. Manual: Empleado 4, Turno de media jornada
     (5, 3, '2025-10-21', NULL, NULL), -- 5. Predefinido: Empleado 5, Turno 3 (Noche)
     (6, NULL, '2025-10-22', '10:00:00', '19:00:00'), -- 6. Manual: Empleado 6, Horario extendido
     (7, 1, '2025-10-22', NULL, NULL), -- 7. Predefinido: Empleado 7, Turno 1, para el día siguiente
-    (8, NULL, '2025-10-22', '22:00:00', '06:00:00'),     -- 8. Manual: Empleado 8, Turno que cruza la medianoche (típico turno nocturno)
+    (8, NULL, '2025-10-22', '22:00:00', '06:00:00'), -- 8. Manual: Empleado 8, Turno que cruza la medianoche (típico turno nocturno)
     (9, 2, '2025-10-22', NULL, NULL), -- 9. Predefinido: Empleado 9, Turno 2, para el día siguiente
-    (10, NULL, '2025-10-23', '14:00:00', '17:00:00'); -- 10. Manual: Empleado 10, Turno de capacitación corto
+    (10, NULL, '2025-10-23', '14:00:00', '17:00:00');
 
+-- 10. Manual: Empleado 10, Turno de capacitación corto
 -- ==============================
 -- Marcajes (entradas/salidas)
 -- ==============================

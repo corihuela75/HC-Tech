@@ -29,7 +29,16 @@ Permite gestionar empleados, turnos, marcajes y ausencias de manera centralizada
   npm install
   ```
  
-### 3. Configurar las variables de entorno (.env):
+### 3. Ejecutar el script de base de datos (saas_app.sql)
+
+Abrir el cliente MySQL (MySQL Workbench, terminal o cualquier gestor SQL).
+Ejecutar el contenido del archivo:
+
+SOURCE /backend/src/config/db.sql;
+
+Esto creará las tablas y agregará los usuarios de prueba.
+
+### 4. Configurar las variables de entorno (.env):
 
 ```
 DB_HOST=localhost
@@ -41,13 +50,28 @@ PORT=3000
 JWT_SECRET=HCTech
 ```
 
-### 4. Ejecutar el servidor:
+### 5. Moverse a la carpeta backend
+
+```
+cd backend
+```
+
+### 6. Ejecutar el servidor:
 
 ```
 npm run dev
 ```
 
 El servidor quedará disponible en:  👉 http://localhost:3000
+
+### 7. Usuarios de acceso demo
+
+| Usuario | Contraseña |
+| :--- | :--- |
+| admin@ | 1234 |
+| empleado@ | 1234 |
+
+Nota: Las contraseñas se guardan hasheadas en la base de datos, listas para usar con el login.
 
 
 ## 📂 Estructura del proyecto

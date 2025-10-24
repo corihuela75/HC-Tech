@@ -11,13 +11,17 @@ import {
   actualizarMarcaje,
   eliminarMarcaje
 } from "../controllers/marcajesController.js";
+import { verificarTokenYRol } from '../middlewares/authMiddleware.js'
 
 const router = Router();
 
-router.get("/", listarMarcajes);            // GET /marcajes?empresa_id=1
-router.get("/:id", obtenerMarcaje);         // GET /marcajes/5?empresa_id=1
-router.post("/", crearMarcaje);             // POST /marcajes
-router.put("/:id", actualizarMarcaje);      // PUT /marcajes/5?empresa_id=1
-router.delete("/:id", eliminarMarcaje);     // DELETE /marcajes/5?empresa_id=1
+// Listar y ver marcajes: admin o empleado
+router.get("/", verificarTokenYRol('admin', 'empleado'), listarMarcajes);       
+router.get("/:id", verificarTokenYRol('admin', 'empleado'), obtenerMarcaje);    
+
+// Crear, actualizar, eliminar: solo admin
+router.post("/", verificarTokenYRol('admin'), crearMarcaje);                     
+router.put("/:id", verificarTokenYRol('admin'), actualizarMarcaje);              
+router.delete("/:id", verificarTokenYRol('admin'), eliminarMarcaje);             
 
 export default router;

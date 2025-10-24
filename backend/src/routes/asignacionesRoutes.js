@@ -12,13 +12,17 @@ import {
   actualizarAsignacion,
   eliminarAsignacion
 } from "../controllers/asignacionesController.js";
+import { verificarTokenYRol } from '../middlewares/authMiddleware.js'
 
 const router = Router();
 
-router.get("/", listarAsignaciones);            // GET /asignaciones?empleado_id=1
-router.get("/:id", obtenerAsignacion);         // GET /asignaciones/2?empleado_id=1
-router.post("/", crearAsignacion);             // POST /asignaciones
-router.delete("/:id", eliminarAsignacion);     // DELETE /asignaciones/2?empleado_id=1
-router.put("/:id", actualizarAsignacion);      // PUT /asignaciones/2?empleado_id=1
+// Listar y ver asignaciones: admin o empleado
+router.get("/", verificarTokenYRol('admin', 'empleado'), listarAsignaciones);       
+router.get("/:id", verificarTokenYRol('admin', 'empleado'), obtenerAsignacion);    
+
+// Crear, actualizar, eliminar: solo admin
+router.post("/", verificarTokenYRol('admin'), crearAsignacion);                     
+router.put("/:id", verificarTokenYRol('admin'), actualizarAsignacion);              
+router.delete("/:id", verificarTokenYRol('admin'), eliminarAsignacion);             
 
 export default router;

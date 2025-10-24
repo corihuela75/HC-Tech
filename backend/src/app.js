@@ -8,6 +8,7 @@
 import express from "express";
 import methodOverride from "method-override";
 import createError from "http-errors";
+import cookieParser from 'cookie-parser'
 import empleadosRoutes from "./routes/empleadosRoutes.js";
 import empresasRoutes from "./routes/empresasRoutes.js";
 import usuariosRoutes from "./routes/usuariosRoutes.js";
@@ -25,6 +26,9 @@ const PORT = 3000;
 // 1. JSON y Formularios
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// Middleware para parsear cookies
+app.use(cookieParser());
 
 // 2. Method Override: transforma POST en PUT/DELETE
 app.use(methodOverride("_method"));
