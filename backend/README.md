@@ -1,209 +1,112 @@
-Este proyecto implementa un **CRUD de empleados** usando **Node.js, Express y MySQL**.
+# 🕒 Sistema de Control de Horarios de Empleados
+
+Este proyecto implementa un **Sistema de Control de Horarios de Empleados** desarrollado con **Node.js**, **Express** y **MySQL**.  
+Permite gestionar empleados, turnos, marcajes y ausencias de manera centralizada, facilitando el control de asistencia y la administración del personal.
 
 ---
 
-## ⚙️ Instalación
+## 🚀 Tecnologías utilizadas
 
-1. Clonar el repositorio:
+- **Node.js** – Entorno de ejecución para el backend  
+- **Express.js** – Framework para el desarrollo del servidor  
+- **MySQL** – Base de datos relacional  
+- **Pug** – Motor de plantillas para renderizar vistas  
+- **JWT (JSON Web Token)** – Autenticación segura  
+- **Redocly / OpenAPI** – Documentación de API  
 
-```bash
-git clone https://github.com/usuario/backend.git
-```
+---
 
-2. Instalar dependencias:
+## ⚙️ Instalación y configuración
 
-```bash
-npm install
-```
+### 1. Clonar el repositorio:
+   ```
+    git clone https://github.com/corihuela75/HC-Tech.git
+   ```
 
-3. Configurar variables de entorno en `.env`:
+### 2. Instalar dependencias:
+
+  ```
+  npm install
+  ```
+ 
+### 3. Configurar las variables de entorno (.env):
 
 ```
 DB_HOST=localhost
 DB_USER=root
-DB_PASS=tu_password
-DB_NAME=empresa_db
+DB_PASS=admin123    
+DB_NAME=saas_app
 DB_PORT=3306
+PORT=3000
+JWT_SECRET=HCTech
 ```
 
-4. Levantar servidor:
+### 4. Ejecutar el servidor:
 
-```bash
+```
 npm run dev
 ```
 
-Servidor corriendo en: `http://localhost:3000`
+El servidor quedará disponible en:  👉 http://localhost:3000
 
----
 
 ## 📂 Estructura del proyecto
 
 ```
-/backend
-├── src
-│   ├── config
-│   │   └── db.js
-│   ├── controllers
-│   ├── models
-│   └── routes
-│       ├── api
-│       └── pug
-├── .env
-├── package.json
-└── README.md
+PP4/
+├── .github/                     # Configuración de acciones y flujos de GitHub
+├── backend/                     # Carpeta principal del backend
+│   ├── doc/                     # Documentación del proyecto (OpenAPI, Redocly, etc.)
+│   ├── src/                     # Código fuente del servidor
+│   │   ├── config/              # Configuración general (DB, variables de entorno, etc.)
+│   │   ├── controllers/         # Controladores que manejan la lógica de las rutas
+│   │   ├── middlewares/         # Middlewares (autenticación, validaciones, logs, etc.)
+│   │   ├── models/              # Modelos de datos y consultas a la base de datos
+│   │   ├── routes/              # Definición de endpoints y rutas
+│   │   └── views/               # Vistas renderizadas (motor Pug)
+│   ├── app.js                   # Punto de entrada del servidor Express
+│   ├── .env                     # Variables de entorno (no subir al repo)
+│   ├── .gitignore               # Archivos/carpetas ignoradas por Git
+│   ├── package.json             # Dependencias y scripts del proyecto
+│   ├── package-lock.json        # Bloqueo de versiones
+│   ├── .prettierrc.json         # Configuración de formato del código
+│   └── README.md                # Documentación específica del backend
+├── node_modules/                # Dependencias instaladas
+├── public/                      # Archivos estáticos (CSS, imágenes, JS, etc.)
+└── .gitignore                   # Ignora archivos en el repositorio raíz
+
 ```
 
----
+## 📘 Documentación de la API
 
-## 📘 API CRUD – Empleados
+La documentación de los endpoints está disponible en formato OpenAPI (YAML) dentro de la carpeta backend/doc.
 
-Base URL: `http://localhost:3000/api/empleados`
+La documentación completa de la API está disponible localmente en formato HTML: 👉 [Ver documentación de la API](http://localhost:3000/doc/index.html)
 
-### 1️⃣ Crear empleado
+También podés acceder al archivo directamente en el repositorio:
 
-`POST /api/empleados`
-
-**Request body:**
-
-```json
-{
-  "empresa_id": 2,
-  "nombre": "Ana",
-  "apellido": "Gómez",
-  "dni": "12345678",
-  "puesto": "Recepcionista",
-  "fecha_ingreso": "2025-09-01"
-}
+```
+/backend/doc/index.html
 ```
 
-**Response (201 Created):**
+Luego abrí openapi.html en tu navegador para visualizar la documentación interactiva.
 
-```json
-{
-  "id": 15,
-  "empresa_id": 2,
-  "nombre": "Ana",
-  "apellido": "Gómez",
-  "dni": "12345678",
-  "puesto": "Recepcionista",
-  "fecha_ingreso": "2025-09-01"
-}
+## 🧩 Scripts útiles
+Comando	Descripción
+```
+npm start //	Inicia el servidor en modo producción
+npm run dev //	Inicia el servidor con nodemon (desarrollo)
+npm test //	Ejecuta los tests (si están configurados)
 ```
 
----
 
-### 2️⃣ Listar todos los empleados
+## 👤 Autores
 
-`GET /api/empleados`
+**Heber Duarte**
+* 📧 heberduarteryr@gmail.com
+* 🔗 GitHub - Heber-739
 
-**Response (200 OK):**
 
-```json
-[
-  {
-    "id": 1,
-    "empresa_id": 2,
-    "nombre": "Carlos",
-    "apellido": "López",
-    "dni": "11111111",
-    "puesto": "Gerente",
-    "fecha_ingreso": "2022-05-01",
-    "activo": true,
-    "created_at": "2022-05-01T12:00:00.000Z"
-  },
-  {
-    "id": 2,
-    "empresa_id": 2,
-    "nombre": "Ana",
-    "apellido": "Gómez",
-    "dni": "12345678",
-    "puesto": "Recepcionista",
-    "fecha_ingreso": "2025-09-01",
-    "activo": true,
-    "created_at": "2025-09-01T12:00:00.000Z"
-  }
-]
-```
-
----
-
-### 3️⃣ Obtener un empleado por ID
-
-`GET /api/empleados/:id`
-
-**Response (200 OK):**
-
-```json
-{
-  "id": 2,
-  "empresa_id": 2,
-  "nombre": "Ana",
-  "apellido": "Gómez",
-  "dni": "12345678",
-  "puesto": "Recepcionista",
-  "fecha_ingreso": "2025-09-01",
-  "activo": true,
-  "created_at": "2025-09-01T12:00:00.000Z"
-}
-```
-
-**Errores posibles:**
-
-- `404 Not Found` → empleado no encontrado
-
----
-
-### 4️⃣ Actualizar empleado
-
-`PUT /api/empleados/:id`
-
-**Request body (campos a actualizar):**
-
-```json
-{
-  "nombre": "Ana María",
-  "puesto": "Jefa de Recepción",
-  "activo": true}
-```
-
-**Response (200 OK):**
-
-```json
-{
-  "id": 2,
-  "empresa_id": 2,
-  "nombre": "Ana María",
-  "apellido": "Gómez",
-  "dni": "12345678",
-  "puesto": "Jefa de Recepción",
-  "fecha_ingreso": "2025-09-01",
-  "activo": true,
-  "created_at": "2025-09-01T12:00:00.000Z"
-}
-```
-
----
-
-### 5️⃣ Eliminar empleado
-
-`DELETE /api/empleados/:id`
-
-**Response (200 OK):**
-
-```json
-{
-  "message": "Empleado eliminado correctamente"
-}
-```
-
-**Errores posibles:**
-
-- `404 Not Found` → empleado no encontrado
-
----
-
-## 🚨 Errores comunes
-
-- `400 Bad Request` → faltan datos obligatorios o JSON mal formado
-- `409 Conflict` → el `dni` ya existe
-- `500 Internal Server Error` → error en la base de datos o servidor
+**Cristian Orihuela**
+* 📧 ori@live.com.ar
+* 🔗 GitHub - corihuela75
