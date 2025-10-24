@@ -14,6 +14,7 @@ import usuariosRoutes from "./routes/usuariosRoutes.js";
 import turnosRoutes from "./routes/turnosRoutes.js";
 import asignacionesRoutes from "./routes/asignacionesRoutes.js";
 import marcajesRoutes from "./routes/marcajesRoutes.js";
+import ausenciasRoutes from "./routes/ausenciasRoutes.js";
 
 
 const app = express();
@@ -40,6 +41,7 @@ app.use('/api/usuarios', usuariosRoutes);
 app.use("/api/turnos", turnosRoutes);
 app.use("/api/asignaciones", asignacionesRoutes);
 app.use("/api/marcajes", marcajesRoutes);
+app.use("/api/ausencias", ausenciasRoutes);
 
 
 // 404

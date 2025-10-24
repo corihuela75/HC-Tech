@@ -1,0 +1,205 @@
+openapi: 3.0.0
+info:
+  title: API de Gestión de Ausencias
+  description: API para la gestión de vacaciones, enfermedades y otros tipos de ausencias de empleados.
+  version: 1.0.0
+servers:
+  - url: /ausencias # Asumiendo que esta es la ruta base configurada
+    description: Servidor principal
+paths:
+  /ausencias:
+    get:
+      summary: Lista todas las ausencias
+      operationId: listarAusencias
+      parameters:
+        - in: query
+          name: empresa_id
+          schema:
+            type: integer
+          description: ID de la empresa para filtrar las ausencias.
+          required: true
+      responses:
+        '200':
+          description: Lista de ausencias obtenida correctamente.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Ausencia'
+        '400':
+          description: Parámetros de consulta inválidos o faltantes.
+        '500':
+          description: Error interno del servidor.
+    post:
+      summary: Crea una nueva solicitud de ausencia
+      operationId: crearAusencia
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AusenciaCreacion'
+      responses:
+        '201':
+          description: Solicitud de ausencia creada correctamente.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Ausencia'
+        '400':
+          description: Datos de la solicitud inválidos.
+        '500':
+          description: Error interno del servidor.
+
+  /ausencias/{id}:
+    parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: ID de la ausencia a gestionar.
+        required: true
+    get:
+      summary: Obtiene una ausencia por su ID
+      operationId: obtenerAusencia
+      parameters:
+        - in: query
+          name: empresa_id
+          schema:
+            type: integer
+          description: ID de la empresa para validar la ausencia.
+          required: true
+      responses:
+        '200':
+          description: Detalle de la ausencia obtenida correctamente.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Ausencia'
+        '404':
+          description: Ausencia no encontrada para el ID y empresa_id proporcionados.
+        '500':
+          description: Error interno del servidor.
+    put:
+      summary: Actualiza una ausencia (ej. aprobar, cambiar fechas)
+      operationId: actualizarAusencia
+      parameters:
+        - in: query
+          name: empresa_id
+          schema:
+            type: integer
+          description: ID de la empresa para validar la ausencia.
+          required: true
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AusenciaActualizacion'
+      responses:
+        '200':
+          description: Ausencia actualizada correctamente.
+        '400':
+          description: Datos de actualización inválidos.
+        '404':
+          description: Ausencia no encontrada.
+        '500':
+          description: Error interno del servidor.
+    delete:
+      summary: Elimina una solicitud de ausencia
+      operationId: eliminarAusencia
+      parameters:
+        - in: query
+          name: empresa_id
+          schema:
+            type: integer
+          description: ID de la empresa para validar la ausencia.
+          required: true
+      responses:
+        '204':
+          description: Ausencia eliminada correctamente (Sin Contenido).
+        '404':
+          description: Ausencia no encontrada.
+        '500':
+          description: Error interno del servidor.
+
+components:
+  schemas:
+    Ausencia:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: ID único de la ausencia.
+          readOnly: true
+        empleado_id:
+          type: integer
+          description: ID del empleado que solicita la ausencia.
+        empresa_id:
+          type: integer
+          description: ID de la empresa a la que pertenece el empleado.
+        tipo:
+          type: string
+          enum: [vacaciones, enfermedad, otros]
+          description: Tipo de ausencia.
+        fecha_inicio:
+          type: string
+          format: date
+          description: Fecha de inicio de la ausencia (YYYY-MM-DD).
+        fecha_fin:
+          type: string
+          format: date
+          description: Fecha de fin de la ausencia (YYYY-MM-DD).
+        estado:
+          type: string
+          enum: [pendiente, aprobada, rechazada]
+          default: pendiente
+          description: Estado actual de la solicitud de ausencia.
+      required:
+        - empleado_id
+        - empresa_id
+        - tipo
+        - fecha_inicio
+        - fecha_fin
+
+    AusenciaCreacion:
+      type: object
+      description: Esquema para crear una nueva ausencia.
+      allOf:
+        - $ref: '#/components/schemas/Ausencia'
+        - properties:
+            id:
+              readOnly: false # Se anula el readOnly para que la propiedad no aparezca en el cuerpo de la solicitud
+            estado:
+              default: pendiente
+              description: Estado inicial de la solicitud, por defecto 'pendiente'.
+      required:
+        - empleado_id
+        - empresa_id
+        - tipo
+        - fecha_inicio
+        - fecha_fin
+      # Excluir 'id' y campos de solo lectura si es necesario, aunque allOf es suficiente.
+
+    AusenciaActualizacion:
+      type: object
+      description: Esquema para actualizar una ausencia existente.
+      properties:
+        tipo:
+          type: string
+          enum: [vacaciones, enfermedad, otros]
+          description: Tipo de ausencia.
+        fecha_inicio:
+          type: string
+          format: date
+          description: Nueva fecha de inicio (YYYY-MM-DD).
+        fecha_fin:
+          type: string
+          format: date
+          description: Nueva fecha de fin (YYYY-MM-DD).
+        estado:
+          type: string
+          enum: [pendiente, aprobada, rechazada]
+          description: Nuevo estado de la solicitud.
+      # Nota: Se omiten empleado_id y empresa_id ya que se infieren de la sesión/token o path/query.

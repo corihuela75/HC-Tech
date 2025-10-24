@@ -1,0 +1,23 @@
+# openapi-main.yaml
+openapi: 3.0.0
+info:
+  title: API de Gestión de Asignaciones de Turnos (Fusionada)
+  version: 1.0.0
+  description: API para crear, consultar, actualizar y eliminar asignaciones de turnos por empleado.
+
+servers:
+  - url: /asignaciones
+    description: URL Base para los endpoints de Asignaciones
+
+# Referencia a la sección 'paths' en el archivo externo
+paths:
+  $ref: 'asignaciones.yaml'
+  
+
+components:
+  schemas:
+    # Referencia a la sección de 'schemas' en el archivo externo. 
+    # El fragmento '/components/schemas' es necesario si el archivo referenciado 
+    # tuviera la estructura completa de un documento OpenAPI. 
+    # En este caso, asumimos que el archivo 'schemas.yaml' SÓLO contiene los esquemas.
+    # $ref: './components/schemas.yaml' 
