@@ -1,0 +1,88 @@
+doctype html
+html
+  head
+    title= titulo || "Demo Sistema Control de Horarios"
+    meta(charset="utf-8")
+    meta(name="viewport" content="width=device-width, initial-scale=1")
+
+    // Bloque para estilos específicos de cada vista
+    block styles
+
+    style.
+      body {
+        font-family: Arial, sans-serif;
+        background: #f7f9fc;
+        margin: 0;
+        padding: 0;
+      }
+
+      header {
+        background: #004aad;
+        color: white;
+        padding: 20px;
+      }
+
+      nav ul {
+        list-style: none;
+        padding: 0;
+        display: flex;
+        gap: 15px;
+      }
+
+      nav a {
+        color: white;
+        text-decoration: none;
+        font-weight: bold;
+      }
+
+      main {
+        padding: 20px;
+      }
+
+      button {
+        padding: 5px 10px;
+        margin-right: 5px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 0.9rem;
+      }
+
+      footer {
+        background: #004aad;
+        color: white;
+        text-align: center;
+        padding: 10px;
+        position: static; /* ya no fijo */
+              width: 100%;
+        margin-top: 40px;
+      }
+      .titulo-blanco {
+        color: white;
+      }
+
+
+  body
+    header
+      h1.titulo-blanco Demo Sistema Control de Horarios
+      p Bienvenido #{nombre || 'Usuario'} (#{rol || 'sin rol'})
+
+      nav
+        ul
+          li: a(href="/api/usuarios") 👤 Usuarios
+          li: a(href="/api/empleados") 👷 Empleados
+          li: a(href="/api/empresas") 🏢 Empresas
+          li: a(href="/api/turnos") 🕒 Turnos
+          li: a(href="/api/marcajes") ⏱️ Marcajes
+          li: a(href="/api/ausencias") 📅 Ausencias
+          li: a(href="/api/asignaciones") 🧩 Asignaciones
+          li(style="margin-left:auto")
+            form(action="/api/usuarios/logout" method="POST" style="display:inline")
+              button(type="submit") 🚪 Salir
+        
+    
+    main
+      block content
+
+    footer
+      p © #{new Date().getFullYear()} Demo Sistema Control de Horarios

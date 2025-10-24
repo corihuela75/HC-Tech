@@ -1,164 +1,142 @@
-doctype html
-html
-  head
-    meta(charset="utf-8")
-    meta(name="viewport" content="width=device-width, initial-scale=1")
-    title= titulo || "Gestión de Asignaciones"
-    style.
-      body {
-        font-family: Arial, sans-serif;
-        margin: 20px;
-        background-color: #f9f9f9;
-      }
-      h1 {
-        color: #333;
-      }
-      a {
-        text-decoration: none;
-      }
-      table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-top: 20px;
-        background-color: #fff;
-        box-shadow: 0 0 10px rgba(0,0,0,.1);
-      }
-      th, td {
-        border: 1px solid #ddd;
-        padding: 10px;
-        text-align: left;
-      }
-      th {
-        background-color: #4CAF50;
-        color: #fff;
-      }
-      tr:nth-child(even) {
-        background-color: #f2f2f2;
-      }
-      tr:hover {
-        background-color: #e6f7ff;
-      }
-      button {
-        padding: 5px 10px;
-        margin-right: 5px;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-        font-size: 0.9rem;
-      }
-      .edit-btn {
-        background-color: #2196F3;
-        color: #fff;
-      }
-      .delete-btn {
-        background-color: #f44336;
-        color: #fff;
-      }
-      .submit-btn {
-        background-color: #4CAF50;
-        color: #fff;
-        margin-top: 10px;
-      }
-      form {
-        margin-top: 20px;
-        padding: 15px;
-        background-color: #fff;
-        border-radius: 8px;
-        box-shadow: 0 0 10px rgba(0,0,0,.1);
-        max-width: 500px;
-      }
-      label {
-        display: block;
-        margin-top: 10px;
-        font-weight: bold;
-      }
-      input, select {
-        width: 100%;
-        padding: 8px;
-        margin-top: 4px;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-      }
+extends dashboard.pug
 
-  body
-    h1= titulo || "Gestión de Asignaciones"
+block styles
+  style.
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+      background-color: #fff;
+      box-shadow: 0 0 10px rgba(0,0,0,.1);
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 10px;
+      text-align: left;
+    }
+    th {
+      background-color: #4CAF50;
+      color: #fff;
+    }
+    tr:nth-child(even) {
+      background-color: #f2f2f2;
+    }
+    tr:hover {
+      background-color: #e6f7ff;
+    }
+    button {
+      padding: 5px 10px;
+      margin-right: 5px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.9rem;
+    }
+    .edit-btn {
+      background-color: #2196F3;
+      color: #fff;
+    }
+    .delete-btn {
+      background-color: #f44336;
+      color: #fff;
+    }
+    .submit-btn {
+      background-color: #4CAF50;
+      color: #fff;
+      margin-top: 10px;
+    }
+    form {
+      margin-top: 20px;
+      padding: 15px;
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,.1);
+      max-width: 500px;
+    }
+    label {
+      display: block;
+      margin-top: 10px;
+      font-weight: bold;
+    }
+    input, select {
+      width: 100%;
+      padding: 8px;
+      margin-top: 4px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
 
-    // Botón ancla al formulario
-    a(href="#form-agregar")
-      button.submit-btn(type="button") + Agregar Asignación
+block content
+  h1= titulo || "Gestión de Asignaciones"
 
-    if asignaciones && asignaciones.length
-      table
-        thead
+  a(href="#form-agregar")
+    button.submit-btn(type="button") + Agregar Asignación
+
+  if asignaciones && asignaciones.length
+    table
+      thead
+        tr
+          th ID
+          th Empleado ID
+          th Turno ID
+          th Fecha
+          th Hora Inicio Manual
+          th Hora Fin Manual
+          th Acciones
+      tbody
+        each asig in asignaciones
           tr
-            th ID
-            th Empleado ID
-            th Turno ID
-            th Fecha
-            th Hora Inicio Manual
-            th Hora Fin Manual
-            th Acciones
-        tbody
-          each asig in asignaciones
-            tr
-              td #{asig.id}
-              td #{asig.empleado_id}
-              td #{asig.turno_id}
-              td #{asig.fecha}
-              td #{asig.hora_inicio_manual || '-'}
-              td #{asig.hora_fin_manual || '-'}
-              td
-                // Enlace de edición
-                a(href=`/api/asignaciones/${asig.id}?empleado_id=${asig.empleado_id}`)
-                  button.edit-btn(type="button") Editar
+            td #{asig.id}
+            td #{asig.empleado_id}
+            td #{asig.turno_id}
+            td #{asig.fecha}
+            td #{asig.hora_inicio_manual || '-'}
+            td #{asig.hora_fin_manual || '-'}
+            td
+              a(href=`/api/asignaciones/${asig.id}?empleado_id=${asig.empleado_id}`)
+                button.edit-btn(type="button") Editar
+              form(action=`/api/asignaciones/${asig.id}?empleado_id=${asig.empleado_id}&_method=DELETE` method="POST" style="display:inline")
+                button.delete-btn(type="submit") Eliminar
+  else
+    p No hay asignaciones registradas.
 
-                // Formulario de eliminación
-                form(action=`/api/asignaciones/${asig.id}?empleado_id=${asig.empleado_id}&_method=DELETE` method="POST" style="display:inline")
-                  button.delete-btn(type="submit") Eliminar
-    else if !asignacion
-      p No hay asignaciones registradas.
+  if asignacion
+    h2#form-agregar Editar Asignación ID: #{asignacion.id}
+    form(action=`/api/asignaciones/${asignacion.id}?empleado_id=${asignacion.empleado_id}&_method=PUT` method="POST")
+      label(for="empleado_id") Empleado ID
+      input(type="number" name="empleado_id" id="empleado_id" required value=asignacion.empleado_id readonly)
 
-    // --- FORMULARIO CREAR / EDITAR ---
-    if asignacion
-      h1#form-agregar Editar Asignación ID: #{asignacion.id}
-      form(action=`/api/asignaciones/${asignacion.id}?empleado_id=${asignacion.empleado_id}&_method=PUT` method="POST")
-      
+      label(for="turno_id") Turno ID
+      input(type="number" name="turno_id" id="turno_id" required value=asignacion.turno_id)
 
-        label(for="empleado_id") Empleado ID
-        input(type="number" name="empleado_id" id="empleado_id" required value=asignacion.empleado_id readonly)
+      label(for="fecha") Fecha
+      input(type="date" name="fecha" id="fecha" required value=asignacion.fecha)
 
-        label(for="turno_id") Turno ID
-        input(type="number" name="turno_id" id="turno_id" required value=asignacion.turno_id)
-        
-        label(for="fecha") Fecha
-        input(type="date" name="fecha" id="fecha" required value=asignacion.fecha)
+      label(for="hora_inicio_manual") Hora Inicio Manual
+      input(type="time" name="hora_inicio_manual" id="hora_inicio_manual" value=asignacion.hora_inicio_manual)
 
-        label(for="hora_inicio_manual") Hora Inicio Manual
-        input(type="time" name="hora_inicio_manual" id="hora_inicio_manual" value=asignacion.hora_inicio_manual)
+      label(for="hora_fin_manual") Hora Fin Manual
+      input(type="time" name="hora_fin_manual" id="hora_fin_manual" value=asignacion.hora_fin_manual)
 
-        label(for="hora_fin_manual") Hora Fin Manual
-        input(type="time" name="hora_fin_manual" id="hora_fin_manual" value=asignacion.hora_fin_manual)
+      button.submit-btn(type="submit") Actualizar
+      a(href=`/api/asignaciones?empleado_id=${asignacion.empleado_id}`)
+        button(type="button") Cancelar
+  else
+    h2#form-agregar Nueva Asignación
+    form(action="/api/asignaciones" method="POST")
+      label(for="empleado_id") Empleado ID
+      input(type="number" name="empleado_id" id="empleado_id" required)
 
-        button.submit-btn(type="submit") Actualizar
-        a(href=`/api/asignaciones?empleado_id=${asignacion.empleado_id}`)
-          button(type="button") Cancelar  
-    else
-      h1#form-agregar Nueva Asignación
-      form(action="/api/asignaciones" method="POST")
+      label(for="turno_id") Turno ID
+      input(type="number" name="turno_id" id="turno_id" required)
 
-        label(for="empleado_id") Empleado ID
-        input(type="number" name="empleado_id" id="empleado_id" required)
+      label(for="fecha") Fecha
+      input(type="date" name="fecha" id="fecha" required)
 
-        label(for="turno_id") Turno ID
-        input(type="number" name="turno_id" id="turno_id" required)
+      label(for="hora_inicio_manual") Hora Inicio Manual
+      input(type="time" name="hora_inicio_manual" id="hora_inicio_manual")
 
-        label(for="fecha") Fecha
-        input(type="date" name="fecha" id="fecha" required)
+      label(for="hora_fin_manual") Hora Fin Manual
+      input(type="time" name="hora_fin_manual" id="hora_fin_manual")
 
-        label(for="hora_inicio_manual") Hora Inicio Manual
-        input(type="time" name="hora_inicio_manual" id="hora_inicio_manual")
-
-        label(for="hora_fin_manual") Hora Fin Manual
-        input(type="time" name="hora_fin_manual" id="hora_fin_manual")
-
-        button.submit-btn(type="submit") Guardar
+      button.submit-btn(type="submit") Guardar

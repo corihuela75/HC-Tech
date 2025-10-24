@@ -1,170 +1,168 @@
-doctype html
-html
-  head
-    meta(charset="utf-8")
-    meta(name="viewport" content="width=device-width, initial-scale=1")
-    title= titulo || "Gestión de Ausencias"
-    style.
-      body {
-        font-family: Arial, sans-serif;
-        margin: 20px;
-        background-color: #f9f9f9;
-      }
-      h1 {
-        color: #333;
-      }
-      a {
-        text-decoration: none;
-      }
-      table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-top: 20px;
-        background-color: #fff;
-        box-shadow: 0 0 10px rgba(0,0,0,.1);
-      }
-      th, td {
-        border: 1px solid #ddd;
-        padding: 10px;
-        text-align: left;
-      }
-      th {
-        background-color: #4CAF50;
-        color: #fff;
-      }
-      tr:nth-child(even) {
-        background-color: #f2f2f2;
-      }
-      tr:hover {
-        background-color: #e6f7ff;
-      }
-      button {
-        padding: 5px 10px;
-        margin-right: 5px;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-        font-size: 0.9rem;
-      }
-      .edit-btn {
-        background-color: #2196F3;
-        color: #fff;
-      }
-      .delete-btn {
-        background-color: #f44336;
-        color: #fff;
-      }
-      .submit-btn {
-        background-color: #4CAF50;
-        color: #fff;
-        margin-top: 10px;
-      }
-      form {
-        margin-top: 20px;
-        padding: 15px;
-        background-color: #fff;
-        border-radius: 8px;
-        box-shadow: 0 0 10px rgba(0,0,0,.1);
-        max-width: 600px;
-      }
-      label {
-        display: block;
-        margin-top: 10px;
-        font-weight: bold;
-      }
-      input, select {
-        width: 100%;
-        padding: 8px;
-        margin-top: 4px;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-      }
+extends dashboard.pug
 
-  body
-    h1= titulo || "Gestión de Ausencias"
+block styles
+  style.
+  
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      background-color: #f9f9f9;
+    }
+    h1 {
+      color: #333;
+    }
+    a {
+      text-decoration: none;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+      background-color: #fff;
+      box-shadow: 0 0 10px rgba(0,0,0,.1);
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 10px;
+      text-align: left;
+    }
+    th {
+      background-color: #4CAF50;
+      color: #fff;
+    }
+    tr:nth-child(even) {
+      background-color: #f2f2f2;
+    }
+    tr:hover {
+      background-color: #e6f7ff;
+    }
+    button {
+      padding: 5px 10px;
+      margin-right: 5px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.9rem;
+    }
+    .edit-btn {
+      background-color: #2196F3;
+      color: #fff;
+    }
+    .delete-btn {
+      background-color: #f44336;
+      color: #fff;
+    }
+    .submit-btn {
+      background-color: #4CAF50;
+      color: #fff;
+      margin-top: 10px;
+    }
+    form {
+      margin-top: 20px;
+      padding: 15px;
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,.1);
+      max-width: 600px;
+    }
+    label {
+      display: block;
+      margin-top: 10px;
+      font-weight: bold;
+    }
+    input, select {
+      width: 100%;
+      padding: 8px;
+      margin-top: 4px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
 
-    // Botón ancla al formulario
-    a(href="#form-agregar")
-      button.submit-btn(type="button") + Agregar Ausencia
+block content
+  h1= titulo || "Gestión de Ausencias"
 
-    if ausencias && ausencias.length
-      table
-        thead
+  // Botón ancla al formulario
+  a(href="#form-agregar")
+    button.submit-btn(type="button") + Agregar Ausencia
+
+  if ausencias && ausencias.length
+    table
+      thead
+        tr
+          th ID
+          th Empleado ID
+          th Tipo
+          th Fecha Inicio
+          th Fecha Fin
+          th Estado
+          th Acciones
+      tbody
+        each a in ausencias
           tr
-            th ID
-            th Empleado ID
-            th Tipo
-            th Fecha Inicio
-            th Fecha Fin
-            th Estado
-            th Acciones
-        tbody
-          each a in ausencias
-            tr
-              td #{a.id}
-              td #{a.empleado_id}
-              td #{a.tipo}
-              td #{a.fecha_inicio}
-              td #{a.fecha_fin}
-              td #{a.estado}
-              td
-                a(href=`/api/ausencias/${a.id}?empresa_id=${a.empresa_id}`)
-                  button.edit-btn(type="button") Editar
-                form(action=`/api/ausencias/${a.id}?empresa_id=${a.empresa_id}&_method=DELETE` method="POST" style="display:inline")
-                  button.delete-btn(type="submit") Eliminar
-    else if !ausencia
-      p No hay registros de ausencias para mostrar.
+            td #{a.id}
+            td #{a.empleado_id}
+            td #{a.tipo}
+            td #{a.fecha_inicio}
+            td #{a.fecha_fin}
+            td #{a.estado}
+            td
+              a(href=`/api/ausencias/${a.id}?empresa_id=${a.empresa_id}`)
+                button.edit-btn(type="button") Editar
+              form(action=`/api/ausencias/${a.id}?empresa_id=${a.empresa_id}&_method=DELETE` method="POST" style="display:inline")
+                button.delete-btn(type="submit") Eliminar
+  else if !ausencia
+    p No hay registros de ausencias para mostrar.
 
-    // --- FORMULARIO CREAR / EDITAR ---
-    if ausencia
-      h1#form-agregar Editar Ausencia ID: #{ausencia.id}
-      form(action=`/api/ausencias/${ausencia.id}?empresa_id=${ausencia.empresa_id}&_method=PUT` method="POST")
-        label(for="empleado_id") ID del Empleado
-        input(type="number" name="empleado_id" id="empleado_id" required value=ausencia.empleado_id)
+  // --- FORMULARIO CREAR / EDITAR ---
+  if ausencia
+    h1#form-agregar Editar Ausencia ID: #{ausencia.id}
+    form(action=`/api/ausencias/${ausencia.id}?empresa_id=${ausencia.empresa_id}&_method=PUT` method="POST")
+      label(for="empleado_id") ID del Empleado
+      input(type="number" name="empleado_id" id="empleado_id" required value=ausencia.empleado_id)
 
-        label(for="tipo") Tipo de Ausencia
-        select(name="tipo" id="tipo" required)
-          option(value="vacaciones" selected=ausencia.tipo === 'vacaciones') Vacaciones
-          option(value="enfermedad" selected=ausencia.tipo === 'enfermedad') Enfermedad
-          option(value="otro" selected=ausencia.tipo === 'otro') Otro
+      label(for="tipo") Tipo de Ausencia
+      select(name="tipo" id="tipo" required)
+        option(value="vacaciones" selected=ausencia.tipo === 'vacaciones') Vacaciones
+        option(value="enfermedad" selected=ausencia.tipo === 'enfermedad') Enfermedad
+        option(value="otro" selected=ausencia.tipo === 'otro') Otro
 
-        label(for="fecha_inicio") Fecha de Inicio
-        input(type="date" name="fecha_inicio" id="fecha_inicio" required value=ausencia.fecha_inicio)
+      label(for="fecha_inicio") Fecha de Inicio
+      input(type="date" name="fecha_inicio" id="fecha_inicio" required value=ausencia.fecha_inicio)
 
-        label(for="fecha_fin") Fecha de Fin
-        input(type="date" name="fecha_fin" id="fecha_fin" required value=ausencia.fecha_fin)
+      label(for="fecha_fin") Fecha de Fin
+      input(type="date" name="fecha_fin" id="fecha_fin" required value=ausencia.fecha_fin)
 
-        label(for="estado") Estado
-        select(name="estado" id="estado")
-          option(value="pendiente" selected=ausencia.estado === 'pendiente') Pendiente
-          option(value="aprobada" selected=ausencia.estado === 'aprobada') Aprobada
-          option(value="rechazada" selected=ausencia.estado === 'rechazada') Rechazada
+      label(for="estado") Estado
+      select(name="estado" id="estado")
+        option(value="pendiente" selected=ausencia.estado === 'pendiente') Pendiente
+        option(value="aprobada" selected=ausencia.estado === 'aprobada') Aprobada
+        option(value="rechazada" selected=ausencia.estado === 'rechazada') Rechazada
 
-        button.submit-btn(type="submit") Actualizar
-        a(href=`/api/ausencias?empresa_id=${ausencia.empresa_id}`)
-          button(type="button") Cancelar
-    else
-      h1#form-agregar Nueva Ausencia
-      form(action="/api/ausencias" method="POST")
-        label(for="empleado_id") ID del Empleado
-        input(type="number" name="empleado_id" id="empleado_id" required)
+      button.submit-btn(type="submit") Actualizar
+      a(href=`/api/ausencias?empresa_id=${ausencia.empresa_id}`)
+        button(type="button") Cancelar
+  else
+    h1#form-agregar Nueva Ausencia
+    form(action="/api/ausencias" method="POST")
+      label(for="empleado_id") ID del Empleado
+      input(type="number" name="empleado_id" id="empleado_id" required)
 
-        label(for="tipo") Tipo de Ausencia
-        select(name="tipo" id="tipo" required)
-          option(value="vacaciones") Vacaciones
-          option(value="enfermedad") Enfermedad
-          option(value="otro") Otro
+      label(for="tipo") Tipo de Ausencia
+      select(name="tipo" id="tipo" required)
+        option(value="vacaciones") Vacaciones
+        option(value="enfermedad") Enfermedad
+        option(value="otro") Otro
 
-        label(for="fecha_inicio") Fecha de Inicio
-        input(type="date" name="fecha_inicio" id="fecha_inicio" required)
+      label(for="fecha_inicio") Fecha de Inicio
+      input(type="date" name="fecha_inicio" id="fecha_inicio" required)
 
-        label(for="fecha_fin") Fecha de Fin
-        input(type="date" name="fecha_fin" id="fecha_fin" required)
+      label(for="fecha_fin") Fecha de Fin
+      input(type="date" name="fecha_fin" id="fecha_fin" required)
 
-        label(for="estado") Estado
-        select(name="estado" id="estado")
-          option(value="pendiente") Pendiente
-          option(value="aprobada") Aprobada
-          option(value="rechazada") Rechazada
+      label(for="estado") Estado
+      select(name="estado" id="estado")
+        option(value="pendiente") Pendiente
+        option(value="aprobada") Aprobada
+        option(value="rechazada") Rechazada
 
-        button.submit-btn(type="submit") Guardar
+      button.submit-btn(type="submit") Guardar

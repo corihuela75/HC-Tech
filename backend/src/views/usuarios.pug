@@ -1,165 +1,162 @@
-doctype html
-html
-  head
-    meta(charset="utf-8")
-    meta(name="viewport" content="width=device-width, initial-scale=1")
-    title= titulo || "Gestión de Usuarios"
-    // El CSS DE EMPRESAS INTEGRADO A CONTINUACIÓN
-    style.
-      body {
-        font-family: Arial, sans-serif;
-        margin: 20px;
-        background-color: #f9f9f9;
-      }
-      h1 {
-        color: #333;
-      }
-      a {
-        text-decoration: none;
-      }
-      table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-top: 20px;
-        background-color: #fff;
-        box-shadow: 0 0 10px rgba(0,0,0,.1);
-      }
-      th, td {
-        border: 1px solid #ddd;
-        padding: 10px;
-        text-align: left;
-      }
-      th {
-        background-color: #4CAF50;
-        color: #fff;
-      }
-      tr:nth-child(even) {
-        background-color: #f2f2f2;
-      }
-      tr:hover {
-        background-color: #e6f7ff;
-      }
-      button {
-        padding: 5px 10px;
-        margin-right: 5px;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-        font-size: 0.9rem;
-      }
-      .edit-btn {
-        background-color: #2196F3;
-        color: #fff;
-      }
-      .delete-btn {
-        background-color: #f44336;
-        color: #fff;
-      }
-      .submit-btn {
-        background-color: #4CAF50;
-        color: #fff;
-        margin-top: 10px;
-      }
-      form {
-        margin-top: 20px;
-        padding: 15px;
-        background-color: #fff;
-        border-radius: 8px;
-        box-shadow: 0 0 10px rgba(0,0,0,.1);
-        max-width: 500px;
-      }
-      label {
-        display: block;
-        margin-top: 10px;
-        font-weight: bold;
-      }
-      input, select {
-        width: 100%;
-        padding: 8px;
-        margin-top: 4px;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-      }
+extends dashboard.pug
 
-  body
-    h1= titulo || "Gestión de Usuarios"
-    
-    // Botón ancla al formulario
-    a(href="#form-agregar")
-      button.submit-btn(type="button") + Agregar Usuario
+block styles
+  style.
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      background-color: #f9f9f9;
+    }
+    h1 {
+      color: #333;
+    }
+    a {
+      text-decoration: none;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+      background-color: #fff;
+      box-shadow: 0 0 10px rgba(0,0,0,.1);
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 10px;
+      text-align: left;
+    }
+    th {
+      background-color: #4CAF50;
+      color: #fff;
+    }
+    tr:nth-child(even) {
+      background-color: #f2f2f2;
+    }
+    tr:hover {
+      background-color: #e6f7ff;
+    }
+    button {
+      padding: 5px 10px;
+      margin-right: 5px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.9rem;
+    }
+    .edit-btn {
+      background-color: #2196F3;
+      color: #fff;
+    }
+    .delete-btn {
+      background-color: #f44336;
+      color: #fff;
+    }
+    .submit-btn {
+      background-color: #4CAF50;
+      color: #fff;
+      margin-top: 10px;
+    }
+    form {
+      margin-top: 20px;
+      padding: 15px;
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,.1);
+      max-width: 500px;
+    }
+    label {
+      display: block;
+      margin-top: 10px;
+      font-weight: bold;
+    }
+    input, select {
+      width: 100%;
+      padding: 8px;
+      margin-top: 4px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
 
-    // --- TABLA DE USUARIOS (Siempre visible si hay datos) ---
-    // NOTA: Si 'usuario' existe (modo edición), 'usuarios' suele estar vacío, 
-    // pero la estructura HTML se renderiza igual, mostrando el mensaje "No hay registros..." si no hay lista.
-    if usuarios && usuarios.length
-      table
-        thead
+
+block content
+  h1= titulo || "Gestión de Usuarios"
+  
+  // Botón ancla al formulario
+  a(href="#form-agregar")
+    button.submit-btn(type="button") + Agregar Usuario
+
+  // --- TABLA DE USUARIOS (Siempre visible si hay datos) ---
+  // NOTA: Si 'usuario' existe (modo edición), 'usuarios' suele estar vacío, 
+  // pero la estructura HTML se renderiza igual, mostrando el mensaje "No hay registros..." si no hay lista.
+  if usuarios && usuarios.length
+    table
+      thead
+        tr
+          th ID
+          th Nombre 
+          th Email 
+          th Rol 
+          th Acciones
+      tbody
+        each usr in usuarios
           tr
-            th ID
-            th Nombre 
-            th Email 
-            th Rol 
-            th Acciones
-        tbody
-          each usr in usuarios
-            tr
-              td #{usr.id}
-              td #{usr.nombre} 
-              td #{usr.email} 
-              td #{usr.rol}
-              td
-                // Enlace de edición (usa el ID y el empresa_id)
-                a(href=`/api/usuarios/${usr.id}?empresa_id=${usr.empresa_id}`)
-                  button.edit-btn(type="button") Editar
-                
-                // Formulario de eliminación (usa el ID y el empresa_id para el DELETE)
-                form(action=`/api/usuarios/${usr.id}?empresa_id=${usr.empresa_id}&_method=DELETE` method="POST" style="display:inline")
-                  button.delete-btn(type="submit") Eliminar
-    else if !usuario
-      // Solo mostramos este mensaje si NO estamos en modo edición (usuario existe)
-      p No hay registros de usuarios para mostrar.
+            td #{usr.id}
+            td #{usr.nombre} 
+            td #{usr.email} 
+            td #{usr.rol}
+            td
+              // Enlace de edición (usa el ID y el empresa_id)
+              a(href=`/api/usuarios/${usr.id}?empresa_id=${usr.empresa_id}`)
+                button.edit-btn(type="button") Editar
+              
+              // Formulario de eliminación (usa el ID y el empresa_id para el DELETE)
+              form(action=`/api/usuarios/${usr.id}?empresa_id=${usr.empresa_id}&_method=DELETE` method="POST" style="display:inline")
+                button.delete-btn(type="submit") Eliminar
+  else if !usuario
+    // Solo mostramos este mensaje si NO estamos en modo edición (usuario existe)
+    p No hay registros de usuarios para mostrar.
 
-    // --- FORMULARIO CREAR / EDITAR ---
-    
-    // El formulario de edición se mostrará debajo de la lista
-    if usuario
-      h1#form-agregar Editar Usuario
-      // La acción es PUT usando method-override
-      form(action=`/api/usuarios/${usuario.id}?empresa_id=${usuario.empresa_id}&_method=PUT` method="POST")
-        label(for="nombre") Nombre
-        input(type="text" name="nombre" id="nombre" required value=usuario.nombre)
+  // --- FORMULARIO CREAR / EDITAR ---
+  
+  // El formulario de edición se mostrará debajo de la lista
+  if usuario
+    h1#form-agregar Editar Usuario
+    // La acción es PUT usando method-override
+    form(action=`/api/usuarios/${usuario.id}?empresa_id=${usuario.empresa_id}&_method=PUT` method="POST")
+      label(for="nombre") Nombre
+      input(type="text" name="nombre" id="nombre" required value=usuario.nombre)
 
-        label(for="password") Contraseña
-        input(type="password" name="password" id="password" required)
+      label(for="password") Contraseña
+      input(type="password" name="password" id="password" required)
 
-        label(for="email") Email
-        input(type="text" name="email" id="email" required value=usuario.email)
+      label(for="email") Email
+      input(type="text" name="email" id="email" required value=usuario.email)
 
-        label(for="rol") Rol
-        select(name="rol" id="rol")
-          option(value="empleado" selected) Empleado
-          option(value="admin") Admin
+      label(for="rol") Rol
+      select(name="rol" id="rol")
+        option(value="empleado" selected) Empleado
+        option(value="admin") Admin
 
-        button.submit-btn(type="submit") Actualizar
-        a(href=`/api/usuarios?empresa_id=${usuario.empresa_id}`)
-          button(type="button") Cancelar
-    else
-      // El formulario de creación se mostrará debajo de la lista
-      h1#form-agregar Nuevo Usuario
-      // Acción de creación (POST normal)
-      form(action="/api/usuarios" method="POST")
-        label(for="nombre") Nombre
-        input(type="text" name="nombre" id="nombre" required)
+      button.submit-btn(type="submit") Actualizar
+      a(href=`/api/usuarios?empresa_id=${usuario.empresa_id}`)
+        button(type="button") Cancelar
+  else
+    // El formulario de creación se mostrará debajo de la lista
+    h1#form-agregar Nuevo Usuario
+    // Acción de creación (POST normal)
+    form(action="/api/usuarios" method="POST")
+      label(for="nombre") Nombre
+      input(type="text" name="nombre" id="nombre" required)
 
-        label(for="password") Contraseña
-        input(type="password" name="password" id="password" required)
+      label(for="password") Contraseña
+      input(type="password" name="password" id="password" required)
 
-        label(for="email") Email
-        input(type="text" name="email" id="email" required)
+      label(for="email") Email
+      input(type="text" name="email" id="email" required)
 
-        label(for="rol") Rol
-        select(name="rol" id="rol")
-          option(value="empleado" selected) Empleado
-          option(value="admin") Admin
-        
-        button.submit-btn(type="submit") Guardar
+      label(for="rol") Rol
+      select(name="rol" id="rol")
+        option(value="empleado" selected) Empleado
+        option(value="admin") Admin
+      
+      button.submit-btn(type="submit") Guardar

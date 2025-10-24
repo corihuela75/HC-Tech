@@ -227,7 +227,7 @@ export const procesarLogin = async (req, res) => {
       maxAge: 2 * 60 * 60 * 1000, // 2 horas en milisegundos (coincide con JWT)
     })
 
-    return res.render('Dashboard', {
+    return res.render('dashboard', {
       titulo: 'Panel de control',
       usuario: user.nombre,
       rol: user.rol,
@@ -242,4 +242,10 @@ export const procesarLogin = async (req, res) => {
     }
     return res.status(500).render('Login', { error: 'Error interno del servidor' })
   }
+}
+
+// Logout Usuario
+export const logoutUsuario = (req, res) => {
+  res.clearCookie('token') // elimina la cookie del JWT
+  res.redirect('/api/usuarios/login')    // redirige al login
 }

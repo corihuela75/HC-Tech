@@ -16,6 +16,7 @@ import turnosRoutes from "./routes/turnosRoutes.js";
 import asignacionesRoutes from "./routes/asignacionesRoutes.js";
 import marcajesRoutes from "./routes/marcajesRoutes.js";
 import ausenciasRoutes from "./routes/ausenciasRoutes.js";
+import dashboardRoutes from "./routes/dashboardRoutes.js";
 
 
 const app = express();
@@ -38,7 +39,7 @@ app.set("view engine", "pug");
 app.set("views", "./src/views");
 
 // --- Rutas ---
-app.get("/", (req, res) => res.redirect("/api/empresas"));
+app.get("/", (req, res) => res.redirect("/api/usuarios/login"));
 app.use("/api/empleados", empleadosRoutes);
 app.use('/api/empresas', empresasRoutes);
 app.use('/api/usuarios', usuariosRoutes);
@@ -46,6 +47,8 @@ app.use("/api/turnos", turnosRoutes);
 app.use("/api/asignaciones", asignacionesRoutes);
 app.use("/api/marcajes", marcajesRoutes);
 app.use("/api/ausencias", ausenciasRoutes);
+app.use("/api/dashboard", dashboardRoutes);
+
 
 
 // 404

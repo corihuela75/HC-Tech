@@ -13,6 +13,7 @@ import {
   eliminarUsuario,
   mostrarLogin,
   procesarLogin,
+  logoutUsuario
 } from '../controllers/usuariosController.js'
 import { verificarTokenYRol } from '../middlewares/authMiddleware.js'
 
@@ -21,6 +22,9 @@ const router = Router()
 // Login
 router.get('/login', mostrarLogin)
 router.post('/login', procesarLogin)
+
+// Logout
+router.post('/logout', logoutUsuario)
 
 // Usuarios protegidos por rol
 router.get('/', verificarTokenYRol('admin', 'empleado'), listarUsuarios)     // ambos pueden listar
