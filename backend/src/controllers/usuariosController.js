@@ -33,7 +33,7 @@ const esPeticionAPI = (req) => {
 // Listar Usuarios
 export const listarUsuarios = async (req, res) => {
   try {
-    const empresa_id = req.query.empresa_id || 1 // fijo en 1 para vistas
+    const empresa_id = req.empresaId;
     const usuarios = await getUsuariosByEmpresa(empresa_id)
 
     if (!esPeticionAPI(req)) {
@@ -49,7 +49,7 @@ export const listarUsuarios = async (req, res) => {
 // Obtener Usuario
 export const obtenerUsuario = async (req, res) => {
   try {
-    const empresa_id = req.query.empresa_id || 1
+    const empresa_id = req.empresaId;
     const { id } = req.params
     const usuario = await getUsuarioById(id, empresa_id)
 
@@ -78,7 +78,7 @@ export const obtenerUsuario = async (req, res) => {
 // Crear Usuario
 export const crearUsuario = async (req, res) => {
   try {
-    const empresa_id = req.query.empresa_id || 1
+    const empresa_id = req.empresaId; 
     const nuevoUsuario = await createUsuario({ ...req.body, empresa_id })
 
     if (!esPeticionAPI(req)) {
@@ -95,7 +95,7 @@ export const crearUsuario = async (req, res) => {
 // Actualizar Usuario
 export const actualizarUsuario = async (req, res) => {
   try {
-    const empresa_id = req.query.empresa_id || 1
+    const empresa_id = req.empresaId; 
     const { id } = req.params
 
     const filasAfectadas = await updateUsuario(id, empresa_id, req.body)
@@ -125,8 +125,7 @@ export const actualizarUsuario = async (req, res) => {
 export const eliminarUsuario = async (req, res) => {
   try {
     const id = parseInt(req.params.id, 10)
-    // Capturamos empresa_id del query string o default a 1
-    const empresa_id = parseInt(req.query.empresa_id, 10) || 1
+    const empresa_id = req.empresaId;
 
     // 1. Llama al modelo (que retorna filasAfectadas: 1 o 0)
     const filasAfectadas = await deleteUsuario(id, empresa_id)
@@ -214,6 +213,7 @@ export const procesarLogin = async (req, res) => {
           id: user.id,
           nombre: user.nombre,
           email: user.email,
+          empresa_id: user.empresa_id,
           rol: user.rol,
         },
       })

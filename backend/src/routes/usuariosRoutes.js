@@ -3,7 +3,6 @@
  * Descripción: Define las rutas para la gestión de usuarios en la aplicación.
  */
 
-
 import { Router } from 'express'
 import {
   listarUsuarios,
@@ -13,9 +12,10 @@ import {
   eliminarUsuario,
   mostrarLogin,
   procesarLogin,
-  logoutUsuario
+  logoutUsuario,
 } from '../controllers/usuariosController.js'
 import { verificarTokenYRol } from '../middlewares/authMiddleware.js'
+import { isolateByCompany } from '../middlewares/isolateByCompany.js'
 
 const router = Router()
 
@@ -27,10 +27,10 @@ router.post('/login', procesarLogin)
 router.post('/logout', logoutUsuario)
 
 // Usuarios protegidos por rol
-router.get('/', verificarTokenYRol('admin', 'empleado'), listarUsuarios)     // ambos pueden listar
-router.get('/:id', verificarTokenYRol('admin', 'empleado'), obtenerUsuario)  // ambos pueden ver detalle
-router.post('/', verificarTokenYRol('admin'), crearUsuario)                   // solo admin
-router.put('/:id', verificarTokenYRol('admin'), actualizarUsuario)           // solo admin
-router.delete('/:id', verificarTokenYRol('admin'), eliminarUsuario)          // solo admin
+router.get('/', verificarTokenYRol('admin', 'empleado'), isolateByCompany, listarUsuarios) // ambos pueden listar
+router.get('/:id', verificarTokenYRol('admin', 'empleado'), isolateByCompany, obtenerUsuario) // ambos pueden ver detalle
+router.post('/', verificarTokenYRol('admin'), isolateByCompany, crearUsuario) // solo admin
+router.put('/:id', verificarTokenYRol('admin'), isolateByCompany, actualizarUsuario) // solo admin
+router.delete('/:id', verificarTokenYRol('admin'), isolateByCompany, eliminarUsuario) // solo admin
 
 export default router

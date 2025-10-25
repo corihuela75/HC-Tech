@@ -17,14 +17,12 @@ import { verificarTokenYRol } from '../middlewares/authMiddleware.js';
 
 const router = Router();
 
-// Listar y ver empresas: admin o empleado
-router.get('/', verificarTokenYRol('admin', 'empleado'), listarEmpresas);
-router.get('/:id', verificarTokenYRol('admin', 'empleado'), obtenerEmpresa);
-router.get('/:id/edit', verificarTokenYRol('admin'), mostrarFormularioEditar); // solo admin
-
-// Crear, actualizar, eliminar: solo admin
-router.post('/', verificarTokenYRol('admin'), crearEmpresa);
-router.put('/:id', verificarTokenYRol('admin'), actualizarEmpresa);
-router.delete('/:id', verificarTokenYRol('admin'), borrarEmpresa);
+// Listar y ver empresas: Solo superadmin
+router.get('/', verificarTokenYRol(), listarEmpresas);
+router.get('/:id', verificarTokenYRol(), obtenerEmpresa);
+router.get('/:id/edit', verificarTokenYRol(), mostrarFormularioEditar); // solo admin
+router.post('/', verificarTokenYRol(), crearEmpresa);
+router.put('/:id', verificarTokenYRol(), actualizarEmpresa);
+router.delete('/:id', verificarTokenYRol(), borrarEmpresa);
 
 export default router;

@@ -27,7 +27,7 @@ CREATE TABLE
         nombre VARCHAR(100) NOT NULL,
         email VARCHAR(100) UNIQUE NOT NULL,
         password VARCHAR(255) NOT NULL, -- hashed
-        rol ENUM ('admin', 'empleado') DEFAULT 'empleado',
+        rol ENUM ('superadmin','admin', 'empleado') DEFAULT 'empleado',
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         FOREIGN KEY (empresa_id) REFERENCES empresas (id) ON DELETE CASCADE
     );
@@ -122,11 +122,11 @@ INSERT INTO
     empresas (nombre, direccion, telefono, cuit, email)
 VALUES
     (
-        'Tech Solutions SRL',
-        'Av. Corrientes 1234, CABA',
-        '011-4567-8901',
-        '30-71234567-8',
-        'contacto@techsolutions.com.ar'
+        'HCTech Solutions',
+        'Sin Direccion',
+        'Sin Telefono',
+        '99-99999999-9',
+        'hctech@'
     ),
     (
         'Logística del Plata SA',
@@ -161,8 +161,11 @@ VALUES
 INSERT INTO
     usuarios (empresa_id, nombre, email, password, rol)
 VALUES
-    (1, 'Administrador', 'admin@', '$2b$10$QNJhcJ3BW4O2prVo5fqai.4pzQOh4gZGGHAWytTEGGJUM9bYFy0vO', 'admin'),
-    (1, 'Empleado', 'empleado@', '$2b$10$jE8ljBHh/u9/Y16PdxRFjuuATX3wS15o45PyhY1.exLGQouSoGNJW', 'empleado');
+    (1, 'Super-Admin', 'super@', '$2b$10$QNJhcJ3BW4O2prVo5fqai.4pzQOh4gZGGHAWytTEGGJUM9bYFy0vO', 'superadmin'),
+    (1, 'Admin', 'admin@', '$2b$10$AzxhOGE3xDkKwTckSh5kh.gdPq8uTZ5zqj6qbrnvQIarABDeohhui', 'admin'),
+    (1, 'Empleado', 'empleado@', '$2b$10$jE8ljBHh/u9/Y16PdxRFjuuATX3wS15o45PyhY1.exLGQouSoGNJW', 'empleado'),
+    (2, 'Administrador 2', 'admin2@', '$2b$10$PANUXEqDhFJxYHGIC6b5beLZTNumTI.GVTL8LpX8sEY5DWVnzeEcG', 'admin'),
+    (2, 'Empleado 2', 'empleado2@', '$2b$10$bsFtSaV/4eI0TdpPB6vx/unyhIyVD0ig5LhTQ3e4gkohCgiQAJaCq', 'empleado');
 
 -- Turnos predefinidos
 INSERT INTO
