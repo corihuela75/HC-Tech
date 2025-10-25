@@ -66,10 +66,11 @@ El servidor quedará disponible en:  👉 http://localhost:3000
 
 ### 7. Usuarios de acceso demo
 
-| Usuario | Contraseña |
-| :--- | :--- |
-| admin@ | 1234 |
-| empleado@ | 1234 |
+| Usuario | Contraseña | Rol
+| :--- | :--- | :--- |
+| super@ | 1234 | SuperAdmin |
+| admin@ | 1234 | Admin |
+| empleado@ | 1234 | Empleado |
 
 Nota: Las contraseñas se guardan hasheadas en la base de datos, listas para usar con el login.
 

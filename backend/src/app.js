@@ -17,6 +17,7 @@ import asignacionesRoutes from "./routes/asignacionesRoutes.js";
 import marcajesRoutes from "./routes/marcajesRoutes.js";
 import ausenciasRoutes from "./routes/ausenciasRoutes.js";
 import dashboardRoutes from "./routes/dashboardRoutes.js";
+import cargarUsuarioParaVistas from "./middlewares/localsMiddleware.js";
 
 
 const app = express();
@@ -24,15 +25,18 @@ const PORT = 3000;
 
 // --- Middlewares (el ORDEN importa) ---
 
-// 1. JSON y Formularios
+//  JSON y Formularios
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Middleware para parsear cookies
 app.use(cookieParser());
 
-// 2. Method Override: transforma POST en PUT/DELETE
+// Method Override: transforma POST en PUT/DELETE
 app.use(methodOverride("_method"));
+
+// Middleware para cargar usuario en vistas Pug
+app.use(cargarUsuarioParaVistas);
 
 // --- Configuración de Vistas ---
 app.set("view engine", "pug");
