@@ -27,7 +27,7 @@ CREATE TABLE
         nombre VARCHAR(100) NOT NULL,
         email VARCHAR(100) UNIQUE NOT NULL,
         password VARCHAR(255) NOT NULL, -- hashed
-        rol ENUM ('superadmin','admin', 'empleado') DEFAULT 'empleado',
+        rol ENUM ('superadmin', 'admin', 'empleado') DEFAULT 'empleado',
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         FOREIGN KEY (empresa_id) REFERENCES empresas (id) ON DELETE CASCADE
     );
@@ -115,6 +115,27 @@ CREATE TABLE
     );
 
 -- ==============================
+-- 8. Tabla Parametros de empresa
+-- ==============================
+CREATE TABLE
+    parametros (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        empresa_id INT NOT NULL,
+        jornada_max_diaria DECIMAL(4, 2) DEFAULT 8.00,
+        jornada_max_semanal DECIMAL(5, 2) DEFAULT 48.00,
+        horas_nocturnas_inicio TIME DEFAULT '21:00:00',
+        horas_nocturnas_fin TIME DEFAULT '06:00:00',
+        jornada_max_nocturna DECIMAL(4, 2) DEFAULT 7.00,
+        jornada_max_insalubre DECIMAL(4, 2) DEFAULT 6.00,
+        permite_horas_extras BOOLEAN DEFAULT TRUE,
+        max_horas_extras_diarias DECIMAL(3, 1) DEFAULT 2.0,
+        max_horas_extras_semanales DECIMAL(3, 1) DEFAULT 10.0,
+        tiempo_descanso_minimo DECIMAL(3, 1) DEFAULT 12.0, -- en horas
+        fecha_actualizacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+        FOREIGN KEY (empresa_id) REFERENCES empresas (id)
+    );
+
+-- ==============================
 -- 8. Datos iniciales
 -- ==============================
 -- Empresa
@@ -161,11 +182,41 @@ VALUES
 INSERT INTO
     usuarios (empresa_id, nombre, email, password, rol)
 VALUES
-    (1, 'Super-Admin', 'super@', '$2b$10$QNJhcJ3BW4O2prVo5fqai.4pzQOh4gZGGHAWytTEGGJUM9bYFy0vO', 'superadmin'),
-    (1, 'Admin', 'admin@', '$2b$10$AzxhOGE3xDkKwTckSh5kh.gdPq8uTZ5zqj6qbrnvQIarABDeohhui', 'admin'),
-    (1, 'Empleado', 'empleado@', '$2b$10$jE8ljBHh/u9/Y16PdxRFjuuATX3wS15o45PyhY1.exLGQouSoGNJW', 'empleado'),
-    (2, 'Administrador 2', 'admin2@', '$2b$10$PANUXEqDhFJxYHGIC6b5beLZTNumTI.GVTL8LpX8sEY5DWVnzeEcG', 'admin'),
-    (2, 'Empleado 2', 'empleado2@', '$2b$10$bsFtSaV/4eI0TdpPB6vx/unyhIyVD0ig5LhTQ3e4gkohCgiQAJaCq', 'empleado');
+    (
+        1,
+        'Super-Admin',
+        'super@',
+        '$2b$10$QNJhcJ3BW4O2prVo5fqai.4pzQOh4gZGGHAWytTEGGJUM9bYFy0vO',
+        'superadmin'
+    ),
+    (
+        1,
+        'Admin',
+        'admin@',
+        '$2b$10$AzxhOGE3xDkKwTckSh5kh.gdPq8uTZ5zqj6qbrnvQIarABDeohhui',
+        'admin'
+    ),
+    (
+        1,
+        'Empleado',
+        'empleado@',
+        '$2b$10$jE8ljBHh/u9/Y16PdxRFjuuATX3wS15o45PyhY1.exLGQouSoGNJW',
+        'empleado'
+    ),
+    (
+        2,
+        'Administrador 2',
+        'admin2@',
+        '$2b$10$PANUXEqDhFJxYHGIC6b5beLZTNumTI.GVTL8LpX8sEY5DWVnzeEcG',
+        'admin'
+    ),
+    (
+        2,
+        'Empleado 2',
+        'empleado2@',
+        '$2b$10$bsFtSaV/4eI0TdpPB6vx/unyhIyVD0ig5LhTQ3e4gkohCgiQAJaCq',
+        'empleado'
+    );
 
 -- Turnos predefinidos
 INSERT INTO
@@ -335,3 +386,19 @@ VALUES
         '2025-09-04',
         'pendiente'
     );
+
+-- ==============================
+-- Parametros de empresa
+-- ==============================
+INSERT INTO
+    parametros (
+        empresa_id,
+        jornada_max_diaria,
+        jornada_max_semanal,
+        horas_nocturnas_inicio,
+        horas_nocturnas_fin,
+        permite_horas_extras,
+        max_horas_extras_diarias
+    )
+VALUES
+    (1, 8, 48, '21:00:00', '06:00:00', TRUE, 2);

@@ -16,6 +16,7 @@ import turnosRoutes from "./routes/turnosRoutes.js";
 import asignacionesRoutes from "./routes/asignacionesRoutes.js";
 import marcajesRoutes from "./routes/marcajesRoutes.js";
 import ausenciasRoutes from "./routes/ausenciasRoutes.js";
+import parametrosRoutes from "./routes/parametrosRoutes.js";
 import dashboardRoutes from "./routes/dashboardRoutes.js";
 import cargarUsuarioParaVistas from "./middlewares/localsMiddleware.js";
 
@@ -51,6 +52,7 @@ app.use("/api/turnos", turnosRoutes);
 app.use("/api/asignaciones", asignacionesRoutes);
 app.use("/api/marcajes", marcajesRoutes);
 app.use("/api/ausencias", ausenciasRoutes);
+app.use("/api/parametros", parametrosRoutes);
 app.use("/api/dashboard", dashboardRoutes);
 
 

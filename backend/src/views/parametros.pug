@@ -1,0 +1,158 @@
+extends dashboard.pug
+
+block styles
+  style.
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      background-color: #f9f9f9;
+    }
+    h1 {
+      color: #333;
+    }
+    a {
+      text-decoration: none;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+      background-color: #fff;
+      box-shadow: 0 0 10px rgba(0,0,0,.1);
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 10px;
+      text-align: left;
+    }
+    th {
+      background-color: #4CAF50;
+      color: #fff;
+    }
+    tr:nth-child(even) {
+      background-color: #f2f2f2;
+    }
+    tr:hover {
+      background-color: #e6f7ff;
+    }
+    button {
+      padding: 5px 10px;
+      margin-right: 5px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.9rem;
+    }
+    .edit-btn {
+      background-color: #2196F3;
+      color: #fff;
+    }
+    .delete-btn {
+      background-color: #f44336;
+      color: #fff;
+    }
+    .submit-btn {
+      background-color: #4CAF50;
+      color: #fff;
+      margin-top: 10px;
+    }
+    form {
+      margin-top: 20px;
+      padding: 15px;
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,.1);
+      max-width: 600px;
+    }
+    label {
+      display: block;
+      margin-top: 10px;
+      font-weight: bold;
+    }
+    input, select {
+      width: 100%;
+      padding: 8px;
+      margin-top: 4px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+block content
+  h1= titulo || "Gestión de Parámetros"
+
+  // --- TABLA DE PARÁMETROS ---
+  if parametros
+    table
+      thead
+        tr
+          th ID
+          th Jornada Max Diaria
+          th Jornada Max Semanal
+          th Horas Nocturnas Inicio
+          th Horas Nocturnas Fin
+          th Jornada Max Nocturna
+          th Jornada Max Insalubre
+          th Permite Horas Extras
+          th Max Horas Extras Diarias
+          th Max Horas Extras Semanales
+          th Tiempo Descanso Minimo
+          th Acciones
+      tbody
+        tr
+          td #{parametros.id}
+          td #{parametros.jornada_max_diaria}
+          td #{parametros.jornada_max_semanal}
+          td #{parametros.horas_nocturnas_inicio}
+          td #{parametros.horas_nocturnas_fin}
+          td #{parametros.jornada_max_nocturna}
+          td #{parametros.jornada_max_insalubre}
+          td #{parametros.permite_horas_extras ? 'Sí' : 'No'}
+          td #{parametros.max_horas_extras_diarias}
+          td #{parametros.max_horas_extras_semanales}
+          td #{parametros.tiempo_descanso_minimo}
+          td
+            a(href=`/api/parametros/${parametros.id}`)
+              button.edit-btn(type="button") Editar
+  else
+    p No hay parámetros configurados para esta empresa.
+
+  // --- FORMULARIO CREAR / EDITAR ---
+  if parametros
+    h1#form-agregar Editar Parámetros
+    form(action=`/api/parametros?_method=PUT` method="POST")
+      label(for="jornada_max_diaria") Jornada Max Diaria
+      input(type="number" name="jornada_max_diaria" id="jornada_max_diaria" step="0.01" required value=parametros.jornada_max_diaria)
+
+      label(for="jornada_max_semanal") Jornada Max Semanal
+      input(type="number" name="jornada_max_semanal" id="jornada_max_semanal" step="0.01" required value=parametros.jornada_max_semanal)
+
+      label(for="horas_nocturnas_inicio") Horas Nocturnas Inicio
+      input(type="time" name="horas_nocturnas_inicio" id="horas_nocturnas_inicio" required value=parametros.horas_nocturnas_inicio)
+
+      label(for="horas_nocturnas_fin") Horas Nocturnas Fin
+      input(type="time" name="horas_nocturnas_fin" id="horas_nocturnas_fin" required value=parametros.horas_nocturnas_fin)
+
+      label(for="jornada_max_nocturna") Jornada Max Nocturna
+      input(type="number" name="jornada_max_nocturna" id="jornada_max_nocturna" step="0.01" required value=parametros.jornada_max_nocturna)
+
+      label(for="jornada_max_insalubre") Jornada Max Insalubre
+      input(type="number" name="jornada_max_insalubre" id="jornada_max_insalubre" step="0.01" required value=parametros.jornada_max_insalubre)
+
+      label(for="permite_horas_extras") Permite Horas Extras
+      select(name="permite_horas_extras" id="permite_horas_extras")
+        option(value=1 selected=parametros.permite_horas_extras) Sí
+        option(value=0 selected=!parametros.permite_horas_extras) No
+
+      label(for="max_horas_extras_diarias") Max Horas Extras Diarias
+      input(type="number" name="max_horas_extras_diarias" id="max_horas_extras_diarias" step="0.1" required value=parametros.max_horas_extras_diarias)
+
+      label(for="max_horas_extras_semanales") Max Horas Extras Semanales
+      input(type="number" name="max_horas_extras_semanales" id="max_horas_extras_semanales" step="0.1" required value=parametros.max_horas_extras_semanales)
+
+      label(for="tiempo_descanso_minimo") Tiempo Descanso Minimo (horas)
+      input(type="number" name="tiempo_descanso_minimo" id="tiempo_descanso_minimo" step="0.1" required value=parametros.tiempo_descanso_minimo)
+
+      button.submit-btn(type="submit") Actualizar
+      a(href=`/api/parametros`)
+        button(type="button") Cancelar
+
