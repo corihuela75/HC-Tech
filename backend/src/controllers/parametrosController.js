@@ -3,11 +3,14 @@
  * Descripción: Controlador para parámetros, usando empresa_id del token.
  */
 
-import { servicioObtenerParametros,servicioActualizarParametros, servicioCrearParametros, servicioEliminarParametros } from '../services/parametrosService.js'
+import {
+  servicioObtenerParametros,
+  servicioActualizarParametros,
+  servicioCrearParametros,
+  servicioEliminarParametros,
+} from '../services/parametrosService.js'
 
-// ======================================================
-// 🔹 Helpers
-// ======================================================
+// Helpers
 
 // Detecta si la petición es API o Web
 const esPeticionAPI = (req) => {
@@ -30,9 +33,7 @@ const responder = (req, res, data, vista, extra = {}) => {
   return res.json(data)
 }
 
-// ======================================================
-// 🔹 Controladores CRUD
-// ======================================================
+// Controladores CRUD
 
 // Listar parámetros de la empresa
 export const listarParametros = async (req, res) => {
@@ -66,7 +67,7 @@ export const obtenerParametros = async (req, res) => {
   } catch (error) {
     console.error('Error obtenerParametros:', error.message)
     return manejarError(req, res, 500, 'Error al obtener parámetros')
-  }s
+  }
 }
 
 // Crear parámetros
@@ -86,7 +87,6 @@ export const crearParametros = async (req, res) => {
 // Actualizar parámetros
 export const actualizarParametros = async (req, res) => {
   try {
-    
     const empresa_id = req.empresaId
     const actualizado = await servicioActualizarParametros(empresa_id, req.body)
 
@@ -101,7 +101,7 @@ export const actualizarParametros = async (req, res) => {
     const parametrosActualizados = await servicioObtenerParametros(empresa_id)
     return res.json({
       message: 'Parámetros actualizados correctamente',
-      parametros: parametrosActualizados
+      parametros: parametrosActualizados,
     })
   } catch (error) {
     console.error('Error actualizarParametros:', error.message)

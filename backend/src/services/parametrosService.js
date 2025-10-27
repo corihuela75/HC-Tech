@@ -10,9 +10,9 @@ import {
   deleteParametros
 } from '../models/parametrosModel.js'
 
-// ======================================================
-// 🔹 Validaciones de negocio
-// ======================================================
+
+// Validaciones de negocio
+
 
 // Validación de valores de parámetros
 export const validarParametros = (data) => {
@@ -49,9 +49,9 @@ const validarCampos = (data) => {
   }
 }
 
-// ======================================================
-// 🔹 Servicios
-// ======================================================
+
+// Servicios
+
 
 // Obtener parámetros de una empresa
 export const servicioObtenerParametros = async (empresa_id) => {
