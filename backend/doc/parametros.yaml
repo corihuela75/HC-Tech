@@ -1,0 +1,196 @@
+openapi: 3.1.0
+info:
+  title: API - Parámetros de Empresa
+  description: |
+    Permite gestionar los **parámetros configurables** de jornada laboral, horas nocturnas y límites de horas extras por empresa.  
+    Solo los usuarios con **rol admin** pueden crear, actualizar o eliminar parámetros.
+  version: 1.0.0
+
+tags:
+  - name: Parámetros
+    description: Configuración de límites y horarios laborales por empresa.
+
+paths:
+  /api/parametros:
+    get:
+      summary: Obtener los parámetros de una empresa
+      tags: [Parámetros]
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: empresa_id
+          in: query
+          required: true
+          schema:
+            type: integer
+          description: ID de la empresa cuyos parámetros se desean consultar.
+      responses:
+        '200':
+          description: Parámetros obtenidos correctamente.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Parametros'
+        '404':
+          description: No se encontraron parámetros para la empresa.
+        '401':
+          description: Token inválido o sin permisos.
+    post:
+      summary: Crear los parámetros de una empresa
+      tags: [Parámetros]
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ParametrosInput'
+      responses:
+        '201':
+          description: Parámetros creados correctamente.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Parametros'
+        '400':
+          description: Error en los datos enviados.
+        '401':
+          description: Token inválido o sin permisos.
+        '409':
+          description: Ya existen parámetros para esta empresa.
+    put:
+      summary: Actualizar los parámetros de una empresa
+      tags: [Parámetros]
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: empresa_id
+          in: query
+          required: true
+          schema:
+            type: integer
+          description: ID de la empresa cuyos parámetros se actualizarán.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ParametrosInput'
+      responses:
+        '200':
+          description: Parámetros actualizados correctamente.
+        '400':
+          description: Error en los datos enviados.
+        '401':
+          description: Token inválido o sin permisos.
+        '404':
+          description: No se encontraron parámetros para actualizar.
+    delete:
+      summary: Eliminar los parámetros de una empresa
+      tags: [Parámetros]
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: empresa_id
+          in: query
+          required: true
+          schema:
+            type: integer
+          description: ID de la empresa cuyos parámetros se eliminarán.
+      responses:
+        '200':
+          description: Parámetros eliminados correctamente.
+        '404':
+          description: No se encontraron parámetros para eliminar.
+        '401':
+          description: Token inválido o sin permisos.
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    Parametros:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        empresa_id:
+          type: integer
+          example: 10
+        jornada_max_diaria:
+          type: number
+          example: 8.0
+        jornada_max_semanal:
+          type: number
+          example: 48.0
+        horas_nocturnas_inicio:
+          type: string
+          format: time
+          example: '21:00:00'
+        horas_nocturnas_fin:
+          type: string
+          format: time
+          example: '06:00:00'
+        jornada_max_nocturna:
+          type: number
+          example: 7.0
+        jornada_max_insalubre:
+          type: number
+          example: 6.0
+        permite_horas_extras:
+          type: boolean
+          example: true
+        max_horas_extras_diarias:
+          type: number
+          example: 2.0
+        max_horas_extras_semanales:
+          type: number
+          example: 10.0
+        tiempo_descanso_minimo:
+          type: number
+          example: 12.0
+      required:
+        - empresa_id
+
+    ParametrosInput:
+      type: object
+      properties:
+        jornada_max_diaria:
+          type: number
+          example: 8.0
+        jornada_max_semanal:
+          type: number
+          example: 48.0
+        horas_nocturnas_inicio:
+          type: string
+          example: '21:00:00'
+        horas_nocturnas_fin:
+          type: string
+          example: '06:00:00'
+        jornada_max_nocturna:
+          type: number
+          example: 7.0
+        jornada_max_insalubre:
+          type: number
+          example: 6.0
+        permite_horas_extras:
+          type: boolean
+          example: true
+        max_horas_extras_diarias:
+          type: number
+          example: 2.0
+        max_horas_extras_semanales:
+          type: number
+          example: 10.0
+        tiempo_descanso_minimo:
+          type: number
+          example: 12.0
+      required:
+        - jornada_max_diaria
+        - jornada_max_semanal
