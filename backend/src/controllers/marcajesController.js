@@ -3,14 +3,8 @@
  * Descripción: Controlador para gestionar las operaciones CRUD de marcajes.
  */
 
-import {
-  getMarcajesByEmpresa,
-  getMarcajesByEmpleado,
-  getMarcajeById,
-  createMarcaje,
-  updateMarcaje,
-  deleteMarcaje,
-} from '../models/marcajesModel.js'
+import { getMarcajesByEmpresa, getMarcajesByEmpleado, getMarcajeById, createMarcaje, updateMarcaje, deleteMarcaje } from '../models/marcajesModel.js'
+import { servicioEliminarMarcaje, servicioModificarMarcaje, servicioRegistrarMarcaje } from '../services/marcajesService.js'
 
 const esPeticionAPI = (req) => {
   const accept = req.headers.accept || ''
@@ -35,9 +29,7 @@ export const listarMarcajes = async (req, res) => {
     const empresa_id = req.query.empresa_id || 1
     const empleado_id = req.query.empleado_id
 
-    const marcajes = empleado_id
-      ? await getMarcajesByEmpleado(empleado_id, empresa_id)
-      : await getMarcajesByEmpresa(empresa_id)
+    const marcajes = empleado_id ? await getMarcajesByEmpleado(empleado_id, empresa_id) : await getMarcajesByEmpresa(empresa_id)
 
     if (!esPeticionAPI(req)) {
       return res.render('marcajes', { titulo: 'Gestión de Marcajes', marcajes })
@@ -77,7 +69,6 @@ export const obtenerMarcaje = async (req, res) => {
     } else {
       res.render('marcajes', { marcaje, marcajes, titulo: 'Editar Marcaje' })
     }
-
   } catch (error) {
     console.error('Error al obtener el marcaje:', error)
     res.status(500).render('error', { mensaje: 'Error interno del servidor' })
@@ -88,7 +79,7 @@ export const obtenerMarcaje = async (req, res) => {
 export const crearMarcaje = async (req, res) => {
   try {
     const empresa_id = req.query.empresa_id || 1
-    const nuevoMarcaje = await createMarcaje({ ...req.body, empresa_id })
+    const nuevoMarcaje = await servicioRegistrarMarcaje({ ...req.body, empresa_id })
 
     if (!esPeticionAPI(req)) {
       return res.redirect(`/api/marcajes?empresa_id=${empresa_id}`)
@@ -106,7 +97,7 @@ export const actualizarMarcaje = async (req, res) => {
     const empresa_id = req.query.empresa_id || 1
     const { id } = req.params
 
-    const filasAfectadas = await updateMarcaje(id, empresa_id, req.body)
+    const filasAfectadas = await servicioModificarMarcaje(id, empresa_id, req.body)
 
     if (filasAfectadas === 0) {
       if (!esPeticionAPI(req)) {
@@ -132,7 +123,7 @@ export const eliminarMarcaje = async (req, res) => {
     const id = parseInt(req.params.id, 10)
     const empresa_id = parseInt(req.query.empresa_id, 10) || 1
 
-    const filasAfectadas = await deleteMarcaje(id, empresa_id)
+    const filasAfectadas = await servicioEliminarMarcaje(id, empresa_id)
 
     if (filasAfectadas === 0) {
       if (!esPeticionAPI(req)) {
