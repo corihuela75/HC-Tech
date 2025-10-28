@@ -10,11 +10,14 @@ CREATE TABLE
     IF NOT EXISTS empresas (
         id INT AUTO_INCREMENT PRIMARY KEY,
         nombre VARCHAR(150) NOT NULL,
+        pag_web VARCHAR(150) DEFAULT NULL,
         direccion VARCHAR(255) DEFAULT NULL,
-        telefono VARCHAR(50) DEFAULT NULL,
-        cuit VARCHAR(20) UNIQUE,
+        razon_social VARCHAR(150) NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         email VARCHAR(150) DEFAULT NULL,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        telefono VARCHAR(50) DEFAULT NULL,
+        imagen VARCHAR(512) DEFAULT NULL,
+        cuit VARCHAR(20) UNIQUE,
     );
 
 -- ==============================
@@ -41,9 +44,15 @@ CREATE TABLE
         empresa_id INT NOT NULL,
         nombre VARCHAR(100) NOT NULL,
         apellido VARCHAR(100) NOT NULL,
+        telefono VARCHAR(20),
+        direccion VARCHAR(255) DEFAULT NULL,
+        fecha_nac DATE,
+        turno VARCHAR(50) NOT NULL, -- Ej: "Mañana", "Tarde", "Noche"
         dni VARCHAR(20) UNIQUE,
+        imagen VARCHAR(512) DEFAULT NULL,
         puesto VARCHAR(100),
         fecha_ingreso DATE,
+        fecha_egreso DATE DEFAULT NULL,
         activo BOOLEAN DEFAULT TRUE,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         FOREIGN KEY (empresa_id) REFERENCES empresas (id) ON DELETE CASCADE
@@ -140,39 +149,49 @@ CREATE TABLE
 -- ==============================
 -- Empresa
 INSERT INTO
-    empresas (nombre, direccion, telefono, cuit, email)
+    empresas (nombre, pag_web, direccion, razon_social, telefono, cuit, email)
 VALUES
     (
         'HCTech Solutions',
+        'HCTechSolutions.com',
         'Sin Direccion',
+        'HCTech Solutions',
         'Sin Telefono',
         '99-99999999-9',
         'hctech@'
     ),
     (
-        'Logística del Plata SA',
+        'Logística del Plata',
+        'PlataSA.com',
         'Ruta 2 Km 45, La Plata',
+        'Logística del Plata SA',
         '0221-478-1234',
         '30-80123456-7',
         'info@logisticaplata.com'
     ),
     (
         'Hotel Buenavista',
+        'HotelBuenavista.com',
         'San Martín 567, Mar del Plata',
+        'Hotel Buenavista',
         '0223-490-4567',
         '30-90234567-6',
         'reservas@hotelbuenavista.com'
     ),
     (
         'Agroexportaciones del Sur',
+        'AgroexportacionesSur.com',
         'Ruta 33 Km 10, Rosario',
+        'Agroexportaciones del Sur S.A',
         '0341-400-7890',
         '30-65432109-5',
         'ventas@agrosur.com'
     ),
     (
-        'Desarrollos Web AR',
+        'Desarrollos Web Argentina',
+        'DesarrollosAR.com',
         'Calle Belgrano 890, Córdoba',
+        'Desarrollos Web AR',
         '0351-455-6677',
         '30-12345678-9',
         'soporte@desarrolloswebar.com'
@@ -229,95 +248,150 @@ VALUES
 -- ==============================
 -- Empleados
 -- ==============================
-INSERT INTO
+INSINSERT INTO
     empleados (
         empresa_id,
         nombre,
         apellido,
+        telefono, 
+        direccion,
+        fecha_nac,
+        turno,    
         dni,
         puesto,
-        fecha_ingreso
+        fecha_ingreso,
+        activo    
     )
 VALUES
     (
         1,
         'Juan',
         'Pérez',
+        '3415550101',
+        'Calle Falsa 123, Piso 1',
+        '1995-05-15',
+        'Mañana',
         '30111222',
         'Recepcionista',
-        '2020-01-15'
+        '2020-01-15',
+        TRUE
     ),
     (
         1,
         'Ana',
         'Gómez',
+        '3415550202',
+        'Avenida Siempre Viva 742',
+        '1998-08-22',
+        'Tarde',
         '28999888',
         'Camarera',
-        '2019-03-10'
+        '2019-03-10',
+        TRUE
     ),
     (
         1,
         'Carlos',
         'López',
+        '3415550303',
+        'Boulevard de los Sueños 50',
+        '1992-03-01',
+        'Noche',
         '31222333',
         'Cocinero',
-        '2021-07-05'
+        '2021-07-05',
+        TRUE
     ),
     (
         1,
         'María',
         'Fernández',
+        '3415550404',
+        'Pasaje Secreto 88',
+        '1985-11-20',
+        'Mañana',
         '27555666',
         'Gobernanta',
-        '2018-11-22'
+        '2018-11-22',
+        TRUE
     ),
     (
         1,
         'Roberto',
         'Sosa',
+        '3415550505',
+        'Ruta 9, Km 10',
+        '1979-04-30',
+        'Tarde',
         '29333444',
         'Mantenimiento',
-        '2022-05-10'
-    ), -- ID 5
+        '2022-05-10',
+        TRUE
+    ),
     (
         1,
         'Julia',
         'Ramos',
+        '3415550606',
+        'Calle del Sol 25',
+        '2000-12-12',
+        'Noche',
         '33444555',
         'Barman',
-        '2023-08-01'
-    ), -- ID 6
+        '2023-08-01',
+        TRUE
+    ),
     (
         1,
         'Martín',
         'Vega',
+        '3415550707',
+        'Avenida Principal 404',
+        '1990-01-01',
+        'Noche',
         '34555666',
         'Portero',
-        '2024-01-20'
-    ), -- ID 7
+        '2024-01-20',
+        TRUE
+    ),
     (
         1,
         'Sofia',
         'Díaz',
+        '3415550808',
+        'Plaza Central 15',
+        '1997-06-06',
+        'Mañana',
         '35666777',
         'Recepcionista',
-        '2023-04-10'
-    ), -- ID 8
+        '2023-04-10',
+        TRUE
+    ),
     (
         1,
         'Andrés',
         'Castro',
+        '3415550909',
+        'Calle Última 99',
+        '1994-02-28',
+        'Tarde',
         '36777888',
         'Camarero',
-        '2022-11-11'
-    ), -- ID 9
+        '2022-11-11',
+        TRUE
+    ),
     (
         1,
         'Paula',
         'Luna',
+        '3415551010',
+        'Paseo de la Costa 300',
+        '1999-07-17',
+        'Mañana',
         '37888999',
         'Limpieza',
-        '2024-06-01'
+        '2024-06-01',
+        TRUE
     );
 
 -- ID 10
