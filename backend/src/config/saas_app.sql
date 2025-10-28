@@ -248,7 +248,7 @@ VALUES
 -- ==============================
 -- Empleados
 -- ==============================
-INSINSERT INTO
+INSERT INTO
     empleados (
         empresa_id,
         nombre,
