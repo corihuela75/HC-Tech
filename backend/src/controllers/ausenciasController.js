@@ -3,14 +3,8 @@
  * Descripción: Controlador para gestionar las operaciones CRUD de ausencias (vacaciones, enfermedad, otros).
  */
 
-import {
-  getAusenciasByEmpresa,
-  getAusenciasByEmpleado,
-  getAusenciaById,
-  createAusencia,
-  updateAusencia,
-  deleteAusencia,
-} from '../models/ausenciasModel.js'
+import {  getAusenciasByEmpresa,  getAusenciasByEmpleado,  getAusenciaById,  createAusencia,  updateAusencia,  deleteAusencia} from '../models/ausenciasModel.js'
+import { servicioEliminarAusencia, servicioRegistrarAusencia, servicioModificarAusencia } from '../services/ausenciasServices.js'
 
 // Detectar si la petición es API (JSON) o vista web
 const esPeticionAPI = (req) => {
@@ -30,16 +24,13 @@ const manejarError = (res, funcion, error) => {
   }
 }
 
-
 // LISTAR AUSENCIAS (por empresa o por empleado)
 export const listarAusencias = async (req, res) => {
   try {
     const empresa_id = req.query.empresa_id || 1
     const empleado_id = req.query.empleado_id
 
-    const ausencias = empleado_id
-      ? await getAusenciasByEmpleado(empleado_id, empresa_id)
-      : await getAusenciasByEmpresa(empresa_id)
+    const ausencias = empleado_id ? await getAusenciasByEmpleado(empleado_id, empresa_id) : await getAusenciasByEmpresa(empresa_id)
 
     if (!esPeticionAPI(req)) {
       return res.render('ausencias', { titulo: 'Gestión de Ausencias', ausencias })
@@ -50,7 +41,6 @@ export const listarAusencias = async (req, res) => {
     manejarError(res, 'listarAusencias', error)
   }
 }
-
 
 // OBTENER UNA AUSENCIA POR ID
 export const obtenerAusencia = async (req, res) => {
@@ -88,12 +78,11 @@ export const obtenerAusencia = async (req, res) => {
   }
 }
 
-
 // CREAR NUEVA AUSENCIA
 export const crearAusencia = async (req, res) => {
   try {
     const empresa_id = req.query.empresa_id || 1
-    const nuevaAusencia = await createAusencia({ ...req.body, empresa_id })
+    const nuevaAusencia = await servicioRegistrarAusencia({ ...req.body, empresa_id })
 
     if (!esPeticionAPI(req)) {
       return res.redirect(`/api/ausencias?empresa_id=${empresa_id}`)
@@ -105,14 +94,13 @@ export const crearAusencia = async (req, res) => {
   }
 }
 
-
 // ACTUALIZAR UNA AUSENCIA
 export const actualizarAusencia = async (req, res) => {
   try {
     const empresa_id = req.query.empresa_id || 1
     const { id } = req.params
 
-    const filasAfectadas = await updateAusencia(id, empresa_id, req.body)
+    const filasAfectadas = await servicioModificarAusencia(id, empresa_id, req.body)
 
     if (filasAfectadas === 0) {
       if (!esPeticionAPI(req)) {
@@ -132,14 +120,13 @@ export const actualizarAusencia = async (req, res) => {
   }
 }
 
-
 // ELIMINAR AUSENCIA
 export const eliminarAusencia = async (req, res) => {
   try {
     const id = parseInt(req.params.id, 10)
     const empresa_id = parseInt(req.query.empresa_id, 10) || 1
 
-    const filasAfectadas = await deleteAusencia(id, empresa_id)
+    const filasAfectadas = await servicioEliminarAusencia(id, empresa_id)
 
     if (filasAfectadas === 0) {
       if (!esPeticionAPI(req)) {

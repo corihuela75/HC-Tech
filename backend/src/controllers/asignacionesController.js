@@ -3,7 +3,11 @@
  * Descripción: Controlador para gestionar las operaciones CRUD de asignaciones de turnos.
  */
 
-import { getAsignacionesByEmpleado, getAsignacionById, createAsignacion, updateAsignacion, deleteAsignacion } from '../models/asignacionesModel.js'
+import { getAsignacionesByEmpleado, getAsignacionById } from '../models/asignacionesModel.js'
+import { servicioActualizarAsignacion, servicioEliminarAsignacion, servicioCrearAsignacion } from '../services/asignacionesService.js'
+
+
+
 
 const esPeticionAPI = (req) => {
   const accept = req.headers.accept || ''
@@ -83,12 +87,18 @@ export const obtenerAsignacion = async (req, res) => {
   }
 }
 
+
 // 3️ Crear asignación
 export const crearAsignacion = async (req, res) => {
   try {
-    const nuevaAsignacion = await createAsignacion(req.body)
+    const datos = {
+      ...req.body,
+      empresa_id: req.empresa_id // viene del middleware isolateByCompany
+    }
 
-    if (!esPeticionAPI(req)) {
+    const nuevaAsignacion = await servicioCrearAsignacion(datos)
+
+    if (!esPeticionAPI(req)) {  
       return res.redirect(`/api/asignaciones`)
     }
 
@@ -108,7 +118,7 @@ export const actualizarAsignacion = async (req, res) => {
       return res.status(400).json({ message: 'Falta el parámetro empleado_id' })
     }
 
-    const filasAfectadas = await updateAsignacion(id, empleado_id, req.body)
+    const filasAfectadas = await servicioActualizarAsignacion(id, empleado_id, req.body)
 
     if (filasAfectadas === 0) {
       const mensaje = 'Asignación no encontrada para actualizar'
@@ -136,7 +146,7 @@ export const eliminarAsignacion = async (req, res) => {
     }
 
     // Llamada al modelo, pasando empleado_id si existe
-    const filasAfectadas = await deleteAsignacion(id, empleado_id)
+    const filasAfectadas = await servicioEliminarAsignacion(id, empleado_id)
 
     if (filasAfectadas === 0) {
       const mensaje = 'Asignación no encontrada para eliminar'
