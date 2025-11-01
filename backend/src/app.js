@@ -19,6 +19,7 @@ import ausenciasRoutes from "./routes/ausenciasRoutes.js";
 import parametrosRoutes from "./routes/parametrosRoutes.js";
 import dashboardRoutes from "./routes/dashboardRoutes.js";
 import cargarUsuarioParaVistas from "./middlewares/localsMiddleware.js";
+import cors from 'cors';
 
 
 const app = express();
@@ -35,6 +36,13 @@ app.use(cookieParser());
 
 // Method Override: transforma POST en PUT/DELETE
 app.use(methodOverride("_method"));
+
+app.use(cors({
+    origin: "http://localhost:4200", 
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-From'],
+    credentials: true
+}));
 
 // Middleware para cargar usuario en vistas Pug
 app.use(cargarUsuarioParaVistas);

@@ -204,7 +204,7 @@ export const procesarLogin = async (req, res) => {
 
     // 4: RESPUESTA: Según el tipo de cliente
 
-    if (isApiCall) {
+    if (isApiCall) {    
       // Si viene de Thunder/Postman → devolver JSON
       return res.json({
         message: 'Login exitoso',
@@ -218,6 +218,28 @@ export const procesarLogin = async (req, res) => {
         },
       })
     }
+
+    if(req.get('X-Requested-From')?.includes('hctech-front')){
+        // Si viene de front
+        res.cookie('token', token, {
+          httpOnly: true, 
+          secure: process.env.NODE_ENV === 'production',
+          sameSite: 'strict', // desactivado momentaneamente para localhost
+          maxAge: 2 * 60 * 60 * 1000, // 2 horas en milisegundos (coincide con JWT)
+        })
+
+        return res.json({
+        message: 'Login exitoso',
+        usuario: {
+          id: user.id,
+          nombre: user.nombre,
+          email: user.email,
+          empresa_id: user.empresa_id,
+          rol: user.rol,
+        },
+      })
+
+      }
 
     // Si viene de navegador → guardar cookie y redirigir
     res.cookie('token', token, {

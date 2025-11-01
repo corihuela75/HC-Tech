@@ -17,7 +17,7 @@ CREATE TABLE
         email VARCHAR(150) DEFAULT NULL,
         telefono VARCHAR(50) DEFAULT NULL,
         imagen VARCHAR(512) DEFAULT NULL,
-        cuit VARCHAR(20) UNIQUE,
+        cuit VARCHAR(20) UNIQUE
     );
 
 -- ==============================
