@@ -49,6 +49,7 @@ CREATE TABLE
         fecha_nac DATE,
         turno VARCHAR(50) NOT NULL, -- Ej: "Mañana", "Tarde", "Noche"
         dni VARCHAR(20) UNIQUE,
+        estado ENUM ('Ausente', 'Inactivo', 'Activo', 'Vacaciones', 'Enfermedad') DEFAULT 'Ausente',
         imagen VARCHAR(512) DEFAULT NULL,
         puesto VARCHAR(100),
         fecha_ingreso DATE,
