@@ -9,7 +9,8 @@ import {
   obtenerEmpleado,
   crearEmpleado,
   actualizarEmpleado,
-  eliminarEmpleado
+  eliminarEmpleado,
+  obtenerEstadisticas
 } from "../controllers/empleadosController.js";
 import { verificarTokenYRol } from '../middlewares/authMiddleware.js'
 
@@ -18,6 +19,7 @@ const router = Router();
 // Listar y ver empleados: admin o empleado
 router.get("/", verificarTokenYRol('admin', 'empleado'), listarEmpleados);       
 router.get("/:id", verificarTokenYRol('admin', 'empleado'), obtenerEmpleado);    
+router.post("/statics", verificarTokenYRol('admin', 'empleado'), obtenerEstadisticas);
 
 // Crear, actualizar, eliminar: solo admin
 router.post("/", verificarTokenYRol('admin'), crearEmpleado);                     

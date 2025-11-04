@@ -164,6 +164,25 @@ export const mostrarLogin = (req, res) => {
   res.render('Login', { titulo: 'Login de Usuarios' })
 }
 
+export const verificarToken = async (req, res) => {
+    const token = req.cookies.token;
+
+    try {
+        const {id, empresa_id} = jwt.verify(token, JWT_SECRET);
+        const user = await getUsuarioById(id, empresa_id);
+
+        return res.status(200).json({
+        message: 'User verificado',
+        usuario: user
+      })
+    } catch (error) {
+      res.clearCookie('token'); 
+      return res.status(401).json({ 
+            mensaje: 'Sesión expirada o token inválido.' 
+        });
+    }
+};
+
 // Procesar login
 export const procesarLogin = async (req, res) => {
   const { email, password } = req.body

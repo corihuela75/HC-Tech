@@ -6,8 +6,8 @@
 
 import pool from "../config/db.js";
 
-export const getEmpresas = async () => {
-  const [rows] = await pool.query('SELECT * FROM empresas ORDER BY id DESC');
+export const getEmpresas = async (user_id) => {
+  const [rows] = await pool.query('SELECT * FROM empresas WHERE user_id = ? ORDER BY id DESC', [user_id]);
   return rows;
 };
 
@@ -25,10 +25,23 @@ export const createEmpresa = async (data) => {
 };
 
 
-export const updateEmpresa = async (id, data) => {
+export const updateEmpresa = async (data) => {
+const {
+  id,
+nombre,
+pag_web,
+direccion,
+razon_social,
+created_at,
+email,
+telefono,
+imagen,
+cuit,
+} = data;
+
   const [result] = await pool.query(
-    'UPDATE empresas SET nombre = ?, direccion = ?, telefono = ?, email = ? WHERE id = ?',
-    [data.nombre, data.direccion || null, data.telefono || null, data.email || null, id]
+    'UPDATE empresas SET nombre = ?, pag_web = ?, razon_social = ?, created_at = ?, direccion = ?, telefono = ?, imagen = ?, email = ?, cuit = ? WHERE id = ?',
+    [nombre, pag_web, razon_social, created_at, direccion, telefono, imagen, email, cuit, id]
   );
   // Retorna true si 1 fila fue afectada, false en caso contrario.
   return result.affectedRows === 1;

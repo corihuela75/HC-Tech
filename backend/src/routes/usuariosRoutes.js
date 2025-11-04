@@ -13,6 +13,7 @@ import {
   mostrarLogin,
   procesarLogin,
   logoutUsuario,
+  verificarToken,
 } from '../controllers/usuariosController.js'
 import { verificarTokenYRol } from '../middlewares/authMiddleware.js'
 import { isolateByCompany } from '../middlewares/isolateByCompany.js'
@@ -22,6 +23,7 @@ const router = Router()
 // Login
 router.get('/login', mostrarLogin)
 router.post('/login', procesarLogin)
+router.post('/check', verificarToken)
 
 // Logout
 router.post('/logout', logoutUsuario)

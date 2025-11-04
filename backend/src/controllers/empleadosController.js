@@ -8,7 +8,8 @@ import {
   getEmpleadoById,
   createEmpleado,
   updateEmpleado,
-  deleteEmpleado, // ¡Importamos la función limpia del modelo!
+  deleteEmpleado,
+  getStaticsByEmployeeId, // ¡Importamos la función limpia del modelo!
 } from '../models/empleadosModel.js'
 
 const esPeticionAPI = (req) => {
@@ -52,6 +53,18 @@ export const listarEmpleados = async (req, res) => {
 }
 
 // Obtener empleado
+export const obtenerEstadisticas = async (req, res) => {
+  try {
+    const {empresa_id = 1 , empleado_id} = req.body;
+    const statics = await getStaticsByEmployeeId(empleado_id, empresa_id);
+
+    res.json(statics)
+  } catch (error) {
+    manejarError(res, 'obtenerEstadisticas', error)
+  }
+}
+
+// Obtener empleado
 export const obtenerEmpleado = async (req, res) => {
   try {
     const empresa_id = req.query.empresa_id || 1
@@ -83,11 +96,10 @@ export const obtenerEmpleado = async (req, res) => {
 // Crear empleado
 export const crearEmpleado = async (req, res) => {
   try {
-    const empresa_id = req.query.empresa_id || 1
-    const nuevoEmpleado = await createEmpleado({ ...req.body, empresa_id })
+    const nuevoEmpleado = await createEmpleado(req.body)
 
     if (!esPeticionAPI(req)) {
-      return res.redirect(`/api/empleados?empresa_id=${empresa_id}`)
+      return res.redirect(`/api/empleados?empresa_id=${req.body.empresa_id}`)
     }
 
     // API: 201 Created
@@ -100,10 +112,9 @@ export const crearEmpleado = async (req, res) => {
 // Actualizar empleado
 export const actualizarEmpleado = async (req, res) => {
   try {
-    const empresa_id = req.query.empresa_id || 1
-    const { id } = req.params
+    const { id, empresa_id } = req.query.body;
 
-    const filasAfectadas = await updateEmpleado(id, empresa_id, req.body)
+    const filasAfectadas = await updateEmpleado(req.body)
 
     if (filasAfectadas === 0) {
       if (!esPeticionAPI(req)) {

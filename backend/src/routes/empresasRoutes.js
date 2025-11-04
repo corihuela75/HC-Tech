@@ -7,6 +7,7 @@
 import { Router } from 'express';
 import {
   listarEmpresas,
+  listarEmpresasByUser,
   obtenerEmpresa,
   mostrarFormularioEditar,
   crearEmpresa,
@@ -22,7 +23,8 @@ router.get('/', verificarTokenYRol(), listarEmpresas);
 router.get('/:id', verificarTokenYRol(), obtenerEmpresa);
 router.get('/:id/edit', verificarTokenYRol(), mostrarFormularioEditar); // solo admin
 router.post('/', verificarTokenYRol(), crearEmpresa);
-router.put('/:id', verificarTokenYRol(), actualizarEmpresa);
+router.post('/empresaById', verificarTokenYRol(), listarEmpresasByUser);
+router.put('/', verificarTokenYRol(), actualizarEmpresa);
 router.delete('/:id', verificarTokenYRol(), borrarEmpresa);
 
 export default router;

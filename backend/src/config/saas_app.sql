@@ -9,6 +9,7 @@ USE saas_app;
 CREATE TABLE
     IF NOT EXISTS empresas (
         id INT AUTO_INCREMENT PRIMARY KEY,
+        user_id INT NOT NULL,
         nombre VARCHAR(150) NOT NULL,
         pag_web VARCHAR(150) DEFAULT NULL,
         direccion VARCHAR(255) DEFAULT NULL,
@@ -26,13 +27,11 @@ CREATE TABLE
 CREATE TABLE
     usuarios (
         id INT AUTO_INCREMENT PRIMARY KEY,
-        empresa_id INT NOT NULL,
         nombre VARCHAR(100) NOT NULL,
         email VARCHAR(100) UNIQUE NOT NULL,
         password VARCHAR(255) NOT NULL, -- hashed
         rol ENUM ('superadmin', 'admin', 'empleado') DEFAULT 'empleado',
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        FOREIGN KEY (empresa_id) REFERENCES empresas (id) ON DELETE CASCADE
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     );
 
 -- ==============================
@@ -42,14 +41,14 @@ CREATE TABLE
     empleados (
         id INT AUTO_INCREMENT PRIMARY KEY,
         empresa_id INT NOT NULL,
-        nombre VARCHAR(100) NOT NULL,
-        apellido VARCHAR(100) NOT NULL,
+        nombre VARCHAR(200) NOT NULL,
         telefono VARCHAR(20),
+        email VARCHAR(100) UNIQUE NOT NULL,
         direccion VARCHAR(255) DEFAULT NULL,
         fecha_nac DATE,
         turno VARCHAR(50) NOT NULL, -- Ej: "Mañana", "Tarde", "Noche"
         dni VARCHAR(20) UNIQUE,
-        estado ENUM ('Ausente', 'Inactivo', 'Activo', 'Vacaciones', 'Enfermedad') DEFAULT 'Ausente',
+        estado ENUM ('Ausente', 'Inactivo', 'Activo', 'Vacaciones') DEFAULT 'Ausente',
         imagen VARCHAR(512) DEFAULT NULL,
         puesto VARCHAR(100),
         fecha_ingreso DATE,
@@ -74,25 +73,6 @@ CREATE TABLE
     );
 
 -- ==============================
--- 5. Tabla asignación de turnos (empleados)
--- ==============================
-CREATE TABLE
-    asignaciones_turnos (
-        id INT AUTO_INCREMENT PRIMARY KEY,
-        empleado_id INT NOT NULL,
-        -- turno_id ahora es NULLable, permitiendo asignaciones manuales
-        turno_id INT NULL,
-        fecha DATE NOT NULL,
-        -- Nuevos campos para registrar el horario si no se usa un turno predefinido
-        hora_inicio_manual TIME DEFAULT NULL,
-        hora_fin_manual TIME DEFAULT NULL,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        FOREIGN KEY (empleado_id) REFERENCES empleados (id) ON DELETE CASCADE,
-        -- La clave foránea sigue existiendo, pero ahora se permite NULL
-        FOREIGN KEY (turno_id) REFERENCES turnos (id) ON DELETE CASCADE
-    );
-
--- ==============================
 -- 6. Tabla marcajes (control horario)
 -- ==============================
 CREATE TABLE
@@ -100,11 +80,13 @@ CREATE TABLE
         id INT AUTO_INCREMENT PRIMARY KEY,
         empleado_id INT NOT NULL,
         empresa_id INT NOT NULL,
-        tipo ENUM ('entrada', 'salida', 'pausa_inicio', 'pausa_fin') NOT NULL,
-        fecha_hora DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        hora_inicio DATE NOT NULL,
+        hora_fin DATE NOT NULL,
+        entrada DATE DEFAULT NULL,
+        salida DATE DEFAULT NULL,
         metodo ENUM ('web', 'movil', 'qr', 'biometrico') DEFAULT 'web',
-        FOREIGN KEY (empleado_id) REFERENCES empleados (id) ON DELETE CASCADE,
-        FOREIGN KEY (empresa_id) REFERENCES empresas (id) ON DELETE CASCADE
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (empleado_id) REFERENCES empleados (id) ON DELETE CASCADE
     );
 
 -- ==============================
@@ -120,8 +102,7 @@ CREATE TABLE
         fecha_fin DATE NOT NULL,
         estado ENUM ('pendiente', 'aprobada', 'rechazada') DEFAULT 'pendiente',
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        FOREIGN KEY (empleado_id) REFERENCES empleados (id) ON DELETE CASCADE,
-        FOREIGN KEY (empresa_id) REFERENCES empresas (id) ON DELETE CASCADE
+        FOREIGN KEY (empleado_id) REFERENCES empleados (id) ON DELETE CASCADE
     );
 
 -- ==============================
@@ -142,18 +123,56 @@ CREATE TABLE
         max_horas_extras_semanales DECIMAL(3, 1) DEFAULT 10.0,
         tiempo_descanso_minimo DECIMAL(3, 1) DEFAULT 12.0, -- en horas
         fecha_actualizacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-        FOREIGN KEY (empresa_id) REFERENCES empresas (id)
+        FOREIGN KEY (empresa_id) REFERENCES empresas (id) ON DELETE CASCADE
     );
 
 -- ==============================
 -- 8. Datos iniciales
 -- ==============================
+
+-- Usuario administrador
+INSERT INTO
+    usuarios ( nombre, email, password, rol)
+VALUES
+    (
+        'Super-Admin',
+        'super@super',
+        '$2b$10$QNJhcJ3BW4O2prVo5fqai.4pzQOh4gZGGHAWytTEGGJUM9bYFy0vO',
+        'superadmin'
+    ),
+    (
+        'Admin',
+        'admin@admin',
+        '$2b$10$AzxhOGE3xDkKwTckSh5kh.gdPq8uTZ5zqj6qbrnvQIarABDeohhui',
+        'admin'
+    ),
+    (
+        'Empleado',
+        'empleado@empleado',
+        '$2b$10$jE8ljBHh/u9/Y16PdxRFjuuATX3wS15o45PyhY1.exLGQouSoGNJW',
+        'empleado'
+    ),
+    (
+        'Administrador 2',
+        'admin2@admin2',
+        '$2b$10$PANUXEqDhFJxYHGIC6b5beLZTNumTI.GVTL8LpX8sEY5DWVnzeEcG',
+        'admin'
+    ),
+    (
+        'Empleado 2',
+        'empleado2@empleado2',
+        '$2b$10$bsFtSaV/4eI0TdpPB6vx/unyhIyVD0ig5LhTQ3e4gkohCgiQAJaCq',
+        'empleado'
+    );
+
+
 -- Empresa
 INSERT INTO
-    empresas (nombre, pag_web, direccion, razon_social, telefono, cuit, email)
+    empresas (nombre, user_id, pag_web, direccion, razon_social, telefono, cuit, email)
 VALUES
     (
         'HCTech Solutions',
+        1,
         'HCTechSolutions.com',
         'Sin Direccion',
         'HCTech Solutions',
@@ -163,6 +182,7 @@ VALUES
     ),
     (
         'Logística del Plata',
+        2,
         'PlataSA.com',
         'Ruta 2 Km 45, La Plata',
         'Logística del Plata SA',
@@ -172,6 +192,7 @@ VALUES
     ),
     (
         'Hotel Buenavista',
+        2,
         'HotelBuenavista.com',
         'San Martín 567, Mar del Plata',
         'Hotel Buenavista',
@@ -181,6 +202,7 @@ VALUES
     ),
     (
         'Agroexportaciones del Sur',
+        1,
         'AgroexportacionesSur.com',
         'Ruta 33 Km 10, Rosario',
         'Agroexportaciones del Sur S.A',
@@ -190,6 +212,7 @@ VALUES
     ),
     (
         'Desarrollos Web Argentina',
+        1,
         'DesarrollosAR.com',
         'Calle Belgrano 890, Córdoba',
         'Desarrollos Web AR',
@@ -198,45 +221,6 @@ VALUES
         'soporte@desarrolloswebar.com'
     );
 
--- Usuario administrador
-INSERT INTO
-    usuarios (empresa_id, nombre, email, password, rol)
-VALUES
-    (
-        1,
-        'Super-Admin',
-        'super@',
-        '$2b$10$QNJhcJ3BW4O2prVo5fqai.4pzQOh4gZGGHAWytTEGGJUM9bYFy0vO',
-        'superadmin'
-    ),
-    (
-        1,
-        'Admin',
-        'admin@',
-        '$2b$10$AzxhOGE3xDkKwTckSh5kh.gdPq8uTZ5zqj6qbrnvQIarABDeohhui',
-        'admin'
-    ),
-    (
-        1,
-        'Empleado',
-        'empleado@',
-        '$2b$10$jE8ljBHh/u9/Y16PdxRFjuuATX3wS15o45PyhY1.exLGQouSoGNJW',
-        'empleado'
-    ),
-    (
-        2,
-        'Administrador 2',
-        'admin2@',
-        '$2b$10$PANUXEqDhFJxYHGIC6b5beLZTNumTI.GVTL8LpX8sEY5DWVnzeEcG',
-        'admin'
-    ),
-    (
-        2,
-        'Empleado 2',
-        'empleado2@',
-        '$2b$10$bsFtSaV/4eI0TdpPB6vx/unyhIyVD0ig5LhTQ3e4gkohCgiQAJaCq',
-        'empleado'
-    );
 
 -- Turnos predefinidos
 INSERT INTO
@@ -253,7 +237,7 @@ INSERT INTO
     empleados (
         empresa_id,
         nombre,
-        apellido,
+        email,
         telefono, 
         direccion,
         fecha_nac,
@@ -266,8 +250,8 @@ INSERT INTO
 VALUES
     (
         1,
-        'Juan',
-        'Pérez',
+        'Juan Pérez',
+        'Juan@Pérez',
         '3415550101',
         'Calle Falsa 123, Piso 1',
         '1995-05-15',
@@ -279,8 +263,8 @@ VALUES
     ),
     (
         1,
-        'Ana',
-        'Gómez',
+        'Ana Gómez',
+        'Ana@Gómez',
         '3415550202',
         'Avenida Siempre Viva 742',
         '1998-08-22',
@@ -292,8 +276,8 @@ VALUES
     ),
     (
         1,
-        'Carlos',
-        'López',
+        'Carlos López',
+        'Carlos@López',
         '3415550303',
         'Boulevard de los Sueños 50',
         '1992-03-01',
@@ -305,8 +289,8 @@ VALUES
     ),
     (
         1,
-        'María',
-        'Fernández',
+        'María Fernández',
+        'María@Fernández',
         '3415550404',
         'Pasaje Secreto 88',
         '1985-11-20',
@@ -318,8 +302,8 @@ VALUES
     ),
     (
         1,
-        'Roberto',
-        'Sosa',
+        'Roberto Sosa',
+        'Roberto@Sosa',
         '3415550505',
         'Ruta 9, Km 10',
         '1979-04-30',
@@ -331,8 +315,8 @@ VALUES
     ),
     (
         1,
-        'Julia',
-        'Ramos',
+        'Julia Ramos',
+        'Julia@Ramos',
         '3415550606',
         'Calle del Sol 25',
         '2000-12-12',
@@ -344,8 +328,8 @@ VALUES
     ),
     (
         1,
-        'Martín',
-        'Vega',
+        'Martín Vega',
+        'Martín@Vega',
         '3415550707',
         'Avenida Principal 404',
         '1990-01-01',
@@ -357,8 +341,8 @@ VALUES
     ),
     (
         1,
-        'Sofia',
-        'Díaz',
+        'Sofia Díaz',
+        'Sofia@Díaz',
         '3415550808',
         'Plaza Central 15',
         '1997-06-06',
@@ -370,8 +354,8 @@ VALUES
     ),
     (
         1,
-        'Andrés',
-        'Castro',
+        'Andrés Castro',
+        'Andrés@Castro',
         '3415550909',
         'Calle Última 99',
         '1994-02-28',
@@ -383,8 +367,8 @@ VALUES
     ),
     (
         1,
-        'Paula',
-        'Luna',
+        'Paula Luna',
+        'Paula@Luna',
         '3415551010',
         'Paseo de la Costa 300',
         '1999-07-17',
@@ -395,42 +379,18 @@ VALUES
         TRUE
     );
 
--- ID 10
--- ==============================
--- Asignación de turnos
--- ==============================
-INSERT INTO
-    asignaciones_turnos (
-        empleado_id,
-        turno_id,
-        fecha,
-        hora_inicio_manual,
-        hora_fin_manual
-    )
-VALUES
-    (1, 1, '2025-10-21', NULL, NULL), -- 1. Predefinido: Empleado 1, Turno 1 (Mañana)
-    (2, NULL, '2025-10-21', '07:30:00', '15:30:00'), -- 2. Manual: Empleado 2, Horario ad-hoc
-    (3, 2, '2025-10-21', NULL, NULL), -- 3. Predefinido: Empleado 3, Turno 2 (Tarde)
-    (4, NULL, '2025-10-21', '09:00:00', '13:00:00'), -- 4. Manual: Empleado 4, Turno de media jornada
-    (5, 3, '2025-10-21', NULL, NULL), -- 5. Predefinido: Empleado 5, Turno 3 (Noche)
-    (6, NULL, '2025-10-22', '10:00:00', '19:00:00'), -- 6. Manual: Empleado 6, Horario extendido
-    (7, 1, '2025-10-22', NULL, NULL), -- 7. Predefinido: Empleado 7, Turno 1, para el día siguiente
-    (8, NULL, '2025-10-22', '22:00:00', '06:00:00'), -- 8. Manual: Empleado 8, Turno que cruza la medianoche (típico turno nocturno)
-    (9, 2, '2025-10-22', NULL, NULL), -- 9. Predefinido: Empleado 9, Turno 2, para el día siguiente
-    (10, NULL, '2025-10-23', '14:00:00', '17:00:00');
 
 -- 10. Manual: Empleado 10, Turno de capacitación corto
 -- ==============================
 -- Marcajes (entradas/salidas)
 -- ==============================
-INSERT INTO
-    marcajes (empleado_id, empresa_id, tipo, fecha_hora, metodo)
+INSERT INTO marcajes(empleado_id, empresa_id, hora_inicio, hora_fin, metodo)
 VALUES
-    (1, 1, 'entrada', '2025-09-01 06:05:00', 'movil'),
-    (1, 1, 'salida', '2025-09-01 14:10:00', 'movil'),
-    (2, 1, 'entrada', '2025-09-01 14:02:00', 'web'),
-    (2, 1, 'salida', '2025-09-01 22:00:00', 'web'),
-    (3, 1, 'entrada', '2025-09-01 22:05:00', 'qr');
+    (1, 1, '2025-09-01 06:00:00', '2025-09-01 14:00:00', 'movil'),
+    (1, 1, '2025-09-01 14:00:00', '2025-09-01 22:00:00', 'movil'),
+    (2, 1, '2025-09-01 14:00:00', '2025-09-01 22:00:00', 'web'),
+    (2, 1, '2025-09-01 22:00:00', '2025-09-02 06:00:00', 'web'),
+    (3, 1, '2025-09-01 22:00:00', '2025-09-02 06:00:00', 'qr');
 
 -- ==============================
 -- Ausencias / Vacaciones

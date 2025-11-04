@@ -5,11 +5,12 @@
 
 
 import pool from '../config/db.js'
+import { get_statics, listarEmpleadosQuery } from '../querys/empleados.js'
 
 // Listar empleados por empresa
 
 export const getEmpleadosByEmpresa = async (empresa_id) => {
-  const [rows] = await pool.query('SELECT * FROM empleados WHERE empresa_id = ?', [empresa_id])
+  const [rows] = await pool.query(listarEmpleadosQuery, [empresa_id])
   return rows
 }
 
@@ -20,16 +21,32 @@ export const getEmpleadoById = async (id, empresa_id) => {
   return rows[0]
 }
 
+export const getStaticsByEmployeeId = async (empleado_id, empresa_id) => {
+  const [rows] = await pool.query(get_statics, [empleado_id, empresa_id])
+  return rows[0]
+}
+
 // Crear nuevo empleado
 
 export const createEmpleado = async (empleado) => {
-  const { empresa_id, nombre, apellido, dni, puesto, fecha_ingreso } = empleado
+  /* 
+  empresa_id,
+        nombre,
+        email,
+        telefono, 
+        direccion,
+        fecha_nac,
+        turno,    
+        dni,
+        puesto,
+        fecha_ingreso,
+        activo     */
+  const { empresa_id, nombre, dni, puesto, fecha_ingreso } = empleado
   // Si viene en formato ISO, cortamos al YYYY-MM-DD
   const fechaFormateada = fecha_ingreso ? fecha_ingreso.split('T')[0] : null
-  const [result] = await pool.query('INSERT INTO empleados (empresa_id, nombre, apellido, dni, puesto, fecha_ingreso) VALUES (?, ?, ?, ?, ?, ?)', [
+  const [result] = await pool.query('INSERT INTO empleados (empresa_id, nombre, dni, puesto, fecha_ingreso) VALUES (?, ?, ?, ?, ?)', [
     empresa_id,
     nombre,
-    apellido,
     dni,
     puesto,
     fechaFormateada,
@@ -43,14 +60,14 @@ export const createEmpleado = async (empleado) => {
 // Actualizar empleado
 
 export const updateEmpleado = async (id, empresa_id, data) => {
-  const { nombre, apellido, dni, puesto, fecha_ingreso, activo } = data
+  const { nombre, dni, puesto, fecha_ingreso, activo } = data
   const fechaFormateada = fecha_ingreso ? fecha_ingreso.split('T')[0] : null
 
   const [result] = await pool.query(
     `UPDATE empleados 
-  SET nombre = ?, apellido = ?, dni = ?, puesto = ?, fecha_ingreso = ?, activo = ? 
+  SET nombre = ?, dni = ?, puesto = ?, fecha_ingreso = ?, activo = ? 
   WHERE id = ? AND empresa_id = ?`,
-    [nombre, apellido, dni, puesto, fechaFormateada, activo, id, empresa_id]
+    [nombre, dni, puesto, fechaFormateada, activo, id, empresa_id]
   )
   return result.affectedRows // Retorna 1 o 0
 }
