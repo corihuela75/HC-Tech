@@ -112,9 +112,9 @@ export const crearEmpleado = async (req, res) => {
 // Actualizar empleado
 export const actualizarEmpleado = async (req, res) => {
   try {
-    const { id, empresa_id } = req.query.body;
 
-    const filasAfectadas = await updateEmpleado(req.body)
+    const {id, empresa_id} = req.body;
+    const filasAfectadas = await updateEmpleado(req.body);
 
     if (filasAfectadas === 0) {
       if (!esPeticionAPI(req)) {
@@ -141,11 +141,9 @@ export const actualizarEmpleado = async (req, res) => {
 export const eliminarEmpleado = async (req, res) => {
   try {
     const id = parseInt(req.params.id, 10)
-    // Capturamos empresa_id del query string o default a 1
-    const empresa_id = parseInt(req.query.empresa_id, 10) || 1
 
     // 1. Llama al modelo (que retorna filasAfectadas: 1 o 0)
-    const filasAfectadas = await deleteEmpleado(id, empresa_id)
+    const filasAfectadas = await deleteEmpleado(id)
 
     // 2. Verifica si la eliminación tuvo efecto
     if (filasAfectadas === 0) {

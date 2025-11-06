@@ -20,7 +20,7 @@ const router = Router();
 
 // Listar y ver empresas: Solo superadmin
 router.get('/', verificarTokenYRol(), listarEmpresas);
-router.get('/:id', verificarTokenYRol(), obtenerEmpresa);
+router.get('/:id', verificarTokenYRol('admin', 'empleado'), obtenerEmpresa);
 router.get('/:id/edit', verificarTokenYRol(), mostrarFormularioEditar); // solo admin
 router.post('/', verificarTokenYRol(), crearEmpresa);
 router.post('/empresaById', verificarTokenYRol(), listarEmpresasByUser);

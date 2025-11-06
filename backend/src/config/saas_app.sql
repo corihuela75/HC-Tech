@@ -17,7 +17,7 @@ CREATE TABLE
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         email VARCHAR(150) DEFAULT NULL,
         telefono VARCHAR(50) DEFAULT NULL,
-        imagen VARCHAR(512) DEFAULT NULL,
+        imagen MEDIUMTEXT DEFAULT NULL,
         cuit VARCHAR(20) UNIQUE
     );
 
@@ -29,9 +29,10 @@ CREATE TABLE
         id INT AUTO_INCREMENT PRIMARY KEY,
         nombre VARCHAR(100) NOT NULL,
         email VARCHAR(100) UNIQUE NOT NULL,
+        imagen MEDIUMTEXT DEFAULT NULL,
         password VARCHAR(255) NOT NULL, -- hashed
         rol ENUM ('superadmin', 'admin', 'empleado') DEFAULT 'empleado',
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     );
 
 -- ==============================
@@ -43,13 +44,14 @@ CREATE TABLE
         empresa_id INT NOT NULL,
         nombre VARCHAR(200) NOT NULL,
         telefono VARCHAR(20),
+        rol ENUM ('superadmin', 'admin', 'empleado') DEFAULT 'empleado',
         email VARCHAR(100) UNIQUE NOT NULL,
         direccion VARCHAR(255) DEFAULT NULL,
         fecha_nac DATE,
         turno VARCHAR(50) NOT NULL, -- Ej: "Mañana", "Tarde", "Noche"
         dni VARCHAR(20) UNIQUE,
         estado ENUM ('Ausente', 'Inactivo', 'Activo', 'Vacaciones') DEFAULT 'Ausente',
-        imagen VARCHAR(512) DEFAULT NULL,
+        imagen MEDIUMTEXT DEFAULT NULL,
         puesto VARCHAR(100),
         fecha_ingreso DATE,
         fecha_egreso DATE DEFAULT NULL,
@@ -178,7 +180,7 @@ VALUES
         'HCTech Solutions',
         'Sin Telefono',
         '99-99999999-9',
-        'hctech@'
+        'hctech@hctech'
     ),
     (
         'Logística del Plata',

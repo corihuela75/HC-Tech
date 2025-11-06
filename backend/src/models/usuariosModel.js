@@ -23,7 +23,6 @@ export const getUsuarioById = async (id, empresa_id) => {
 }
 
 
-
 // Crear nuevo usuario
 export const createUsuario = async (usuario) => {
   const { empresa_id, nombre, email, password, rol } = usuario

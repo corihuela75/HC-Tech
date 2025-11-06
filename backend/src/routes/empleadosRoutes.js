@@ -23,7 +23,7 @@ router.post("/statics", verificarTokenYRol('admin', 'empleado'), obtenerEstadist
 
 // Crear, actualizar, eliminar: solo admin
 router.post("/", verificarTokenYRol('admin'), crearEmpleado);                     
-router.put("/:id", verificarTokenYRol('admin'), actualizarEmpleado);              
+router.put("/", verificarTokenYRol('admin'), actualizarEmpleado);              
 router.delete("/:id", verificarTokenYRol('admin'), eliminarEmpleado);             
 
 export default router;
