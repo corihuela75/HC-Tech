@@ -32,7 +32,7 @@ CREATE TABLE
         imagen MEDIUMTEXT DEFAULT NULL,
         password VARCHAR(255) NOT NULL, -- hashed
         rol ENUM ('superadmin', 'admin', 'empleado') DEFAULT 'empleado',
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     );
 
 -- ==============================
@@ -81,12 +81,13 @@ CREATE TABLE
     marcajes (
         id INT AUTO_INCREMENT PRIMARY KEY,
         empleado_id INT NOT NULL,
-        empresa_id INT NOT NULL,
-        hora_inicio DATE NOT NULL,
-        hora_fin DATE NOT NULL,
-        entrada DATE DEFAULT NULL,
-        salida DATE DEFAULT NULL,
-        metodo ENUM ('web', 'movil', 'qr', 'biometrico') DEFAULT 'web',
+        empresa_id INT NOT NULL, 
+        dia DATE NOT NULL,
+        hora_inicio TIME NOT NULL,
+        hora_fin TIME NOT NULL,
+        entrada TIME NULL,
+        salida TIME NULL,
+        metodo ENUM ('web', 'movil', 'qr', 'biometrico') DEFAULT NULL,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         FOREIGN KEY (empleado_id) REFERENCES empleados (id) ON DELETE CASCADE
     );
@@ -386,13 +387,25 @@ VALUES
 -- ==============================
 -- Marcajes (entradas/salidas)
 -- ==============================
-INSERT INTO marcajes(empleado_id, empresa_id, hora_inicio, hora_fin, metodo)
+INSERT INTO marcajes(empleado_id, empresa_id, dia, hora_inicio, hora_fin)
 VALUES
-    (1, 1, '2025-09-01 06:00:00', '2025-09-01 14:00:00', 'movil'),
-    (1, 1, '2025-09-01 14:00:00', '2025-09-01 22:00:00', 'movil'),
-    (2, 1, '2025-09-01 14:00:00', '2025-09-01 22:00:00', 'web'),
-    (2, 1, '2025-09-01 22:00:00', '2025-09-02 06:00:00', 'web'),
-    (3, 1, '2025-09-01 22:00:00', '2025-09-02 06:00:00', 'qr');
+    (1, 1,"2025-11-01" ,'22:00:00', '06:00:00'),
+    (1, 1,"2025-11-03" ,'22:00:00', '06:00:00'),
+    (1, 1,"2025-11-03" ,'06:00:00', '14:00:00'),
+    (1, 1,"2025-11-03" ,'22:00:00', '06:00:00'),
+    (1, 1,"2025-11-04" ,'06:00:00', '14:00:00'),
+    (1, 1,"2025-11-04" ,'22:00:00', '06:00:00'),
+    (1, 1,"2025-11-05" ,'06:00:00', '14:00:00'),
+    (1, 1,"2025-11-05" ,'22:00:00', '06:00:00'),
+    (1, 1,"2025-11-06" ,'06:00:00', '14:00:00'),
+    (1, 1,"2025-11-06" ,'22:00:00', '06:00:00'),
+    (1, 1,"2025-11-07" ,'06:00:00', '14:00:00'),
+    (1, 1,"2025-11-07" ,'06:00:00', '14:00:00'),
+    (1, 1,"2025-11-08" ,'06:00:00', '14:00:00'),
+    (1, 1,"2025-09-08" ,'14:00:00', '22:00:00'),
+    (2, 1,"2025-09-01" ,'14:00:00', '22:00:00'),
+    (2, 1,"2025-09-02" ,'22:00:00', '06:00:00'),
+    (3, 1,"2025-09-02" ,'22:00:00', '06:00:00');
 
 -- ==============================
 -- Ausencias / Vacaciones

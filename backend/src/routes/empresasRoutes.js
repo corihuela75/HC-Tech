@@ -23,7 +23,7 @@ router.get('/', verificarTokenYRol(), listarEmpresas);
 router.get('/:id', verificarTokenYRol('admin', 'empleado'), obtenerEmpresa);
 router.get('/:id/edit', verificarTokenYRol(), mostrarFormularioEditar); // solo admin
 router.post('/', verificarTokenYRol(), crearEmpresa);
-router.post('/empresaById', verificarTokenYRol(), listarEmpresasByUser);
+router.post('/empresaById', verificarTokenYRol("admin","empleado"), listarEmpresasByUser);
 router.put('/', verificarTokenYRol(), actualizarEmpresa);
 router.delete('/:id', verificarTokenYRol(), borrarEmpresa);
 

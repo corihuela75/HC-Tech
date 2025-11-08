@@ -91,12 +91,8 @@ export const obtenerAsignacion = async (req, res) => {
 // 3️ Crear asignación
 export const crearAsignacion = async (req, res) => {
   try {
-    const datos = {
-      ...req.body,
-      empresa_id: req.empresa_id // viene del middleware isolateByCompany
-    }
 
-    const nuevaAsignacion = await servicioCrearAsignacion(datos)
+    const nuevaAsignacion = await servicioCrearAsignacion(req.body)
 
     if (!esPeticionAPI(req)) {  
       return res.redirect(`/api/asignaciones`)

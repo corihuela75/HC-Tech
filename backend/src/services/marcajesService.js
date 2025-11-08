@@ -59,6 +59,22 @@ export const servicioRegistrarMarcaje = async (data) => {
   return nuevoMarcaje
 }
 
+export const servicioCrearMarcaje = async (data) => {
+  const { dia } = data
+
+    // Validar orden temporal
+    const fechaActual = new Date(dia)
+    const fechaUltima = new Date()
+    if (fechaActual < fechaUltima) {
+      throw new Error('La fecha/hora del marcaje no puede ser anterior a hoy.')
+    }
+
+  // Crear el marcaje si pasa las validaciones
+  const nuevoMarcaje = await createMarcaje(data)
+
+  return nuevoMarcaje;
+}
+
 
 // Valida y asctualiza un marcaje existente
 export const servicioModificarMarcaje = async (id, empresa_id, data) => {
@@ -87,7 +103,7 @@ export const servicioModificarMarcaje = async (id, empresa_id, data) => {
 
 // Valida y elimina un marcaje existente
 export const servicioEliminarMarcaje = async (id, empresa_id) => {
-  const marcaje = await getMarcajeById(id, empresa_id)
+  const marcaje = await getMarcajeById(id)
   if (!marcaje) {
     throw new Error('El marcaje no existe o no pertenece a la empresa.')
   }
@@ -100,6 +116,6 @@ export const servicioEliminarMarcaje = async (id, empresa_id) => {
 //     throw new Error('No se pueden eliminar marcajes con más de 7 días de antigüedad.')
 //   }
 
-  const filas = await deleteMarcaje(id, empresa_id)
+  const filas = await deleteMarcaje(id)
   return filas
 }

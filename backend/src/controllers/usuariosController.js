@@ -288,5 +288,11 @@ export const procesarLogin = async (req, res) => {
 // Logout Usuario
 export const logoutUsuario = (req, res) => {
   res.clearCookie('token') // elimina la cookie del JWT
+
+  if(req.get('X-Requested-From')?.includes('hctech-front')){
+
+        return res.status(200);
+      }
+
   res.redirect('/api/usuarios/login')    // redirige al login
 }
