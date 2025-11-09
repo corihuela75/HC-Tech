@@ -195,7 +195,7 @@ VALUES
     ),
     (
         'Hotel Buenavista',
-        2,
+        3,
         'HotelBuenavista.com',
         'San Martín 567, Mar del Plata',
         'Hotel Buenavista',
@@ -205,7 +205,7 @@ VALUES
     ),
     (
         'Agroexportaciones del Sur',
-        1,
+        4,
         'AgroexportacionesSur.com',
         'Ruta 33 Km 10, Rosario',
         'Agroexportaciones del Sur S.A',
@@ -215,7 +215,7 @@ VALUES
     ),
     (
         'Desarrollos Web Argentina',
-        1,
+        5,
         'DesarrollosAR.com',
         'Calle Belgrano 890, Córdoba',
         'Desarrollos Web AR',

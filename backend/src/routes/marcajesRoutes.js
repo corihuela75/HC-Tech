@@ -4,7 +4,7 @@
  */
 
 import { Router } from 'express'
-import { listarMarcajes, obtenerMarcaje, crearMarcaje, actualizarMarcaje, eliminarMarcaje, listarMarcajesByCompany } from '../controllers/marcajesController.js'
+import { listarMarcajes, obtenerMarcaje, crearMarcaje, actualizarMarcaje, eliminarMarcaje, listarMarcajesByCompany, actualizarSalidaMarcaje, actualizarEntradaMarcaje } from '../controllers/marcajesController.js'
 import { verificarTokenYRol } from '../middlewares/authMiddleware.js'
 import { isolateByCompany } from '../middlewares/isolateByCompany.js'
 
@@ -17,6 +17,8 @@ router.get('/:id', verificarTokenYRol('admin', 'empleado'), isolateByCompany, ob
 
 // Crear, actualizar, eliminar: solo admin
 router.post('/', verificarTokenYRol('admin'), crearMarcaje)
+router.put('/entrada', verificarTokenYRol('admin'), actualizarEntradaMarcaje)
+router.put('/salida', verificarTokenYRol('admin'), actualizarSalidaMarcaje)
 router.put('/:id', verificarTokenYRol('admin'), isolateByCompany, actualizarMarcaje)
 router.delete('/:id', verificarTokenYRol('admin'), eliminarMarcaje)
 

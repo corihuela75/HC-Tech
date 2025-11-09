@@ -4,7 +4,7 @@
  */
 
 import { getMarcajesByEmpresa, getMarcajesByEmpleado, getMarcajeById, createMarcaje, updateMarcaje, deleteMarcaje, getCurrentMarcajesByEmpresa } from '../models/marcajesModel.js'
-import { servicioCrearMarcaje, servicioEliminarMarcaje, servicioModificarMarcaje, servicioRegistrarMarcaje } from '../services/marcajesService.js'
+import { servicioCrearMarcaje, servicioEliminarMarcaje, servicioModificarMarcaje, servicioRegistrarEntrada, servicioRegistrarMarcaje, servicioRegistrarSalida } from '../services/marcajesService.js'
 
 const esPeticionAPI = (req) => {
   const accept = req.headers.accept || ''
@@ -126,6 +126,33 @@ export const actualizarMarcaje = async (req, res) => {
 
     const marcajeActualizado = await getMarcajeById(id, empresa_id)
     res.json(marcajeActualizado)
+  } catch (error) {
+    manejarError(res, 'actualizarMarcaje', error)
+  }
+}
+
+export const actualizarEntradaMarcaje = async (req, res) => {
+  try {
+    const filasAfectadas = await servicioRegistrarEntrada(req.body)
+    if (filasAfectadas === 0) {
+      return res.status(404).json({ message: 'Marcaje no encontrado para actualizar' })
+    }
+
+    const marcajeActualizado = await getMarcajeById(req.body.id)
+    res.status(200).json(marcajeActualizado)
+  } catch (error) {
+    manejarError(res, 'actualizarMarcaje', error)
+  }
+}
+
+export const actualizarSalidaMarcaje = async (req, res) => {
+  try {
+    const filasAfectadas = await servicioRegistrarSalida(req.body)
+    if (filasAfectadas === 0) {
+      return res.status(404).json({ message: 'Marcaje no encontrado para actualizar' })
+    }
+    const marcajeActualizado = await getMarcajeById(req.body.id)
+    res.status(200).json(marcajeActualizado)
   } catch (error) {
     manejarError(res, 'actualizarMarcaje', error)
   }

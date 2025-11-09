@@ -8,7 +8,9 @@ import {
   getMarcajeById,
   createMarcaje,
   updateMarcaje,
-  deleteMarcaje
+  deleteMarcaje,
+  updateSalidaMarcaje,
+  updateEntradaMarcaje
 } from '../models/marcajesModel.js'
 
 // Validación: tipos de marcaje válidos
@@ -59,13 +61,17 @@ export const servicioRegistrarMarcaje = async (data) => {
   return nuevoMarcaje
 }
 
-export const servicioCrearMarcaje = async (data) => {
-  const { dia } = data
+const validateDate = (date,init) => {
+    const hours = init.split(":")[0];
+    const newDate = new Date(date)
+    newDate.setHours(Number(hours), 0, 0, 0);
+    return new Date() >= newDate
+}
 
-    // Validar orden temporal
-    const fechaActual = new Date(dia)
-    const fechaUltima = new Date()
-    if (fechaActual < fechaUltima) {
+export const servicioCrearMarcaje = async (data) => {
+  const { dia, hora_inicio } = data
+
+    if (validateDate(dia,hora_inicio)) {
       throw new Error('La fecha/hora del marcaje no puede ser anterior a hoy.')
     }
 
@@ -98,6 +104,20 @@ export const servicioModificarMarcaje = async (id, empresa_id, data) => {
 
   await updateMarcaje(id, empresa_id, data)
   return await getMarcajeById(id, empresa_id)
+}
+
+export const servicioRegistrarEntrada = async (data) => {
+
+  const {entrada} = data;
+  data.entrada = new Date(entrada);
+    return await updateEntradaMarcaje(data)
+}
+
+export const servicioRegistrarSalida = async (data) => {
+  const {salida} = data;
+  data.salida = new Date(salida);
+
+    return await updateSalidaMarcaje(data)
 }
 
 

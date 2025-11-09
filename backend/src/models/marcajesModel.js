@@ -51,10 +51,12 @@ export const getMarcajeById = async (id) => {
 export const createMarcaje = async (marcaje) => {
   const { empleado_id, empresa_id, dia, hora_inicio, hora_fin } = marcaje;
 
+  const newDate = new Date(dia);
+
   const [result] = await pool.query(
     `INSERT INTO marcajes (empleado_id, empresa_id, dia, hora_inicio, hora_fin)
      VALUES (?, ?, ?, ?, ?)`,
-    [empleado_id, empresa_id, dia, `${hora_inicio}:00`, `${hora_fin}:00`]
+    [empleado_id, empresa_id, newDate, hora_inicio, hora_fin]
   )
 
   return {
@@ -64,17 +66,41 @@ export const createMarcaje = async (marcaje) => {
 }
 
 //Actualizar marcaje (por si se necesita corregir tipo o método)
-export const updateMarcaje = async (id, empresa_id, data) => {
+export const updateMarcaje = async (data) => {
   const { tipo, fecha_hora, metodo } = data
 
   const [result] = await pool.query(
     `UPDATE marcajes 
      SET tipo = ?, fecha_hora = ?, metodo = ?
-     WHERE id = ? AND empresa_id = ?`,
+     WHERE id = ?`,
     [tipo, fecha_hora, metodo, id, empresa_id]
   )
 
   return result.affectedRows // 1 si se actualizó, 0 si no
+}
+export const updateEntradaMarcaje = async (data) => {
+  const { entrada, id } = data
+
+  const [result] = await pool.query(
+    `UPDATE marcajes 
+     SET entrada = ?
+     WHERE id = ?`,
+    [entrada, id]
+  )
+
+  return result[0] // 1 si se actualizó, 0 si no
+}
+export const updateSalidaMarcaje = async (data) => {
+  const { id, salida } = data
+
+  const [result] = await pool.query(
+    `UPDATE marcajes 
+     SET salida = ?
+     WHERE id = ?`,
+    [salida, id]
+  )
+
+  return result[0] // 1 si se actualizó, 0 si no
 }
 
 //Eliminar marcaje
