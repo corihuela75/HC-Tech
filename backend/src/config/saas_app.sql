@@ -93,6 +93,25 @@ CREATE TABLE
     );
 
 -- ==============================
+-- Tabla tramites 
+-- ==============================
+
+CREATE TABLE
+    tramites (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        empleado_id INT NOT NULL,
+        empresa_id INT NOT NULL, 
+        estado ENUM ('Pendiente','En progreso','Aprobado','Rechazado') DEFAULT 'Pendiente',
+        asunto VARCHAR(50) NOT NULL,
+        fecha_pedido TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        fecha_cerrado TIMESTAMP null,
+        descripcion VARCHAR(250) NOT NULL,
+        devolucion VARCHAR(250) NOT NULL,
+        encargado INT DEFAULT NULL,
+        FOREIGN KEY (empleado_id) REFERENCES empleados (id) ON DELETE CASCADE
+    );
+
+-- ==============================
 -- 7. Tabla ausencias/vacaciones
 -- ==============================
 CREATE TABLE
@@ -173,6 +192,16 @@ VALUES
 INSERT INTO
     empresas (nombre, user_id, pag_web, direccion, razon_social, telefono, cuit, email)
 VALUES
+(
+        'Logística del Plata',
+        1,
+        'PlataSA.com',
+        'Ruta 2 Km 45, La Plata',
+        'Logística del Plata SA',
+        '0221-478-1234',
+        '30-80123456-7',
+        'info@logisticaplata.com'
+    ),
     (
         'HCTech Solutions',
         1,
@@ -182,47 +211,37 @@ VALUES
         'Sin Telefono',
         '99-99999999-9',
         'hctech@hctech'
-    ),
-    (
-        'Logística del Plata',
-        2,
-        'PlataSA.com',
-        'Ruta 2 Km 45, La Plata',
-        'Logística del Plata SA',
-        '0221-478-1234',
-        '30-80123456-7',
-        'info@logisticaplata.com'
-    ),
-    (
-        'Hotel Buenavista',
-        3,
-        'HotelBuenavista.com',
-        'San Martín 567, Mar del Plata',
-        'Hotel Buenavista',
-        '0223-490-4567',
-        '30-90234567-6',
-        'reservas@hotelbuenavista.com'
-    ),
-    (
-        'Agroexportaciones del Sur',
-        4,
-        'AgroexportacionesSur.com',
-        'Ruta 33 Km 10, Rosario',
-        'Agroexportaciones del Sur S.A',
-        '0341-400-7890',
-        '30-65432109-5',
-        'ventas@agrosur.com'
-    ),
-    (
-        'Desarrollos Web Argentina',
-        5,
-        'DesarrollosAR.com',
-        'Calle Belgrano 890, Córdoba',
-        'Desarrollos Web AR',
-        '0351-455-6677',
-        '30-12345678-9',
-        'soporte@desarrolloswebar.com'
     );
+    -- (
+    --     'Hotel Buenavista',
+    --     3,
+    --     'HotelBuenavista.com',
+    --     'San Martín 567, Mar del Plata',
+    --     'Hotel Buenavista',
+    --     '0223-490-4567',
+    --     '30-90234567-6',
+    --     'reservas@hotelbuenavista.com'
+    -- ),
+    -- (
+    --     'Agroexportaciones del Sur',
+    --     4,
+    --     'AgroexportacionesSur.com',
+    --     'Ruta 33 Km 10, Rosario',
+    --     'Agroexportaciones del Sur S.A',
+    --     '0341-400-7890',
+    --     '30-65432109-5',
+    --     'ventas@agrosur.com'
+    -- ),
+    -- (
+    --     'Desarrollos Web Argentina',
+    --     5,
+    --     'DesarrollosAR.com',
+    --     'Calle Belgrano 890, Córdoba',
+    --     'Desarrollos Web AR',
+    --     '0351-455-6677',
+    --     '30-12345678-9',
+    --     'soporte@desarrolloswebar.com'
+    -- );
 
 
 -- Turnos predefinidos

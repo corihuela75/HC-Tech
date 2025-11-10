@@ -18,6 +18,7 @@ import marcajesRoutes from "./routes/marcajesRoutes.js";
 import ausenciasRoutes from "./routes/ausenciasRoutes.js";
 import parametrosRoutes from "./routes/parametrosRoutes.js";
 import dashboardRoutes from "./routes/dashboardRoutes.js";
+import tramitesRoutes from "./routes/tramitesRoutes.js";
 import cargarUsuarioParaVistas from "./middlewares/localsMiddleware.js";
 import cors from 'cors';
 
@@ -62,6 +63,7 @@ app.use("/api/marcajes", marcajesRoutes);
 app.use("/api/ausencias", ausenciasRoutes);
 app.use("/api/parametros", parametrosRoutes);
 app.use("/api/dashboard", dashboardRoutes);
+app.use("/api/tramites", tramitesRoutes);
 
 
 

@@ -20,6 +20,11 @@ export const getEmpleadoById = async (id, empresa_id) => {
   return rows[0]
 }
 
+export const empleadoById = async (id) => {
+  const [rows] = await pool.query('SELECT * FROM empleados WHERE id = ?', [id])
+  return rows[0]
+}
+
 // Obtener un empleado por email
 export const getEmpleadoByEmail = async (email) => {
   const [rows] = await pool.query('SELECT * FROM empleados WHERE email = ?', [email])
@@ -41,7 +46,7 @@ export const createEmpleado = async (empleado) => {
   // Si viene en formato ISO, cortamos al YYYY-MM-DD
   const fechaFormateada = fecha_ingreso ? fecha_ingreso.split('T')[0] : null
   const [result] = await pool.query('INSERT INTO empleados (empresa_id, nombre, telefono, email, direccion, fecha_nac, turno, dni, estado, imagen, puesto, fecha_ingreso, fecha_egreso, created_at, rol, activo) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? )', [
-    empresa_id, nombre, telefono, email, direccion, fecha_nac, turno, dni, estado, imagen, puesto, fechaFormateada, fecha_egreso, created_at, rol, activo ])
+    empresa_id, nombre, telefono, email, direccion, new Date(fecha_nac), turno, dni, estado, imagen, puesto, fechaFormateada, fecha_egreso, new Date(created_at), rol, activo ])
   return {
     id: result.insertId,
     ...empleado,
