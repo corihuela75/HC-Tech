@@ -1,5 +1,6 @@
 import { empleadoById, getEmpleadoById } from '../models/empleadosModel.js'
 import { cerrarTramite, crearTramite, deleteTramite, obtenerTotalTramites, obtenerTramiteById, obtenerTramitesByUser, tomarTramite } from '../models/tramitesModel.js'
+import { getUsuarioById } from '../models/UsuariosModel.js'
 
 const manejarError = (res, funcion, error) => {
   console.error(`Error en ${funcion}:`, error.message || error)
@@ -15,7 +16,7 @@ const manejarError = (res, funcion, error) => {
 export const listarTramitesController = async (req, res) => {
   try {
     const { empleado_id, empresa_id } = req.body
-    const user = await empleadoById(empleado_id);
+    const user = await getUsuarioById(empleado_id);
     let response;
     if (!!user.rol && ['admin', 'superadmin'].includes(user.rol)) {
       response = await obtenerTotalTramites(empresa_id)

@@ -112,6 +112,18 @@ CREATE TABLE
     );
 
 -- ==============================
+-- Tabla calendario
+-- ==============================
+CREATE TABLE
+    calendario (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        empleado_id INT NOT NULL,
+        estado VARCHAR(20) NOT NULL,
+        fecha TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (empleado_id) REFERENCES empleados (id) ON DELETE CASCADE
+    );
+
+-- ==============================
 -- 7. Tabla ausencias/vacaciones
 -- ==============================
 CREATE TABLE
@@ -439,22 +451,25 @@ INSERT INTO
         estado
     )
 VALUES
-    (
-        4,
-        1,
-        'vacaciones',
-        '2025-09-05',
-        '2025-09-10',
-        'aprobada'
-    ),
-    (
-        2,
-        1,
-        'enfermedad',
-        '2025-09-02',
-        '2025-09-04',
-        'pendiente'
-    );
+    (4,1,'vacaciones','2025-09-05','2025-09-10','aprobada'),
+    (4,1,'vacaciones','2025-09-05','2025-09-10','aprobada'),
+    (4,1,'vacaciones','2025-09-05','2025-09-10','aprobada'),
+    (4,1,'vacaciones','2025-09-05','2025-09-10','aprobada'),
+    (4,1,'vacaciones','2025-09-05','2025-09-10','aprobada'),
+    (4,1,'vacaciones','2025-09-05','2025-09-10','aprobada'),
+    (4,1,'vacaciones','2025-09-05','2025-09-10','aprobada'),
+    (4,1,'vacaciones','2025-09-05','2025-09-10','aprobada'),
+    (4,1,'vacaciones','2025-09-05','2025-09-10','aprobada'),
+    (4,1,'vacaciones','2025-09-05','2025-09-10','aprobada'),
+    (4,1,'vacaciones','2025-09-05','2025-09-10','aprobada'),
+    (4,1,'vacaciones','2025-09-05','2025-09-10','aprobada'),
+    (4,1,'vacaciones','2025-09-05','2025-09-10','aprobada'),
+    (4,1,'vacaciones','2025-09-05','2025-09-10','aprobada'),
+    (4,1,'vacaciones','2025-09-05','2025-09-10','aprobada'),
+    (4,1,'vacaciones','2025-09-05','2025-09-10','aprobada'),
+    (4,1,'vacaciones','2025-09-05','2025-09-10','aprobada'),
+    (4,1,'vacaciones','2025-09-05','2025-09-10','aprobada'),
+    (2,1,'enfermedad','2025-09-02','2025-09-04','pendiente');
 
 -- ==============================
 -- Parametros de empresa

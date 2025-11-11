@@ -17,8 +17,8 @@ export const getUsuariosByEmpresa = async (empresa_id) => {
 
 // Obtener un usuario por ID
 
-export const getUsuarioById = async (id, empresa_id) => { 
-  const [rows] = await pool.query('SELECT * FROM usuarios WHERE id = ? AND empresa_id = ?', [id, empresa_id])
+export const getUsuarioById = async (id) => { 
+  const [rows] = await pool.query('SELECT * FROM usuarios WHERE id = ?', [id])
   return rows[0]
 }
 
