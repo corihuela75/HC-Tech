@@ -1,6 +1,7 @@
 import { empleadoById, getEmpleadoById } from '../models/empleadosModel.js'
 import { cerrarTramite, crearTramite, deleteTramite, obtenerTotalTramites, obtenerTramiteById, obtenerTramitesByUser, tomarTramite } from '../models/tramitesModel.js'
 import { getUsuarioById } from '../models/UsuariosModel.js'
+import { servicioRegistrarAusencia } from '../services/ausenciasServices.js'
 
 const manejarError = (res, funcion, error) => {
   console.error(`Error en ${funcion}:`, error.message || error)
@@ -65,7 +66,7 @@ export const tomarTramiteController = async (req, res) => {
 }
 export const cerrarTramiteController = async (req, res) => {
   try {
-    const { id, devolucion, estado } = req.body;
+    const { id, devolucion, estado, fecha_inicio, fecha_fin } = req.body;
 
     if (!(id && devolucion && estado)) {
       throw new Error('Campos faltantes')
@@ -74,7 +75,12 @@ export const cerrarTramiteController = async (req, res) => {
     const resultado = await cerrarTramite(req.body)
     if (!resultado) throw new Error('No se pudo actualizar Tramite')
 
-    const tramite = await obtenerTramiteById(id)
+      const tramite = await obtenerTramiteById(id)
+
+      const { empleado_id, empresa_id, asunto} = tramite;
+      const request = {empleado_id, empresa_id, tipo:asunto, fecha_inicio, fecha_fin, estado }
+      await servicioRegistrarAusencia(request);
+
     res.json(tramite)
   } catch (error) {
     manejarError(res, 'actualizarTramite', error)

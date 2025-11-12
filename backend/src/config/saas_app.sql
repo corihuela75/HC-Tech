@@ -131,10 +131,10 @@ CREATE TABLE
         id INT AUTO_INCREMENT PRIMARY KEY,
         empleado_id INT NOT NULL,
         empresa_id INT NOT NULL,
-        tipo ENUM ('vacaciones', 'enfermedad', 'otro') NOT NULL,
+        tipo VARCHAR(20) NOT NULL,
         fecha_inicio DATE NOT NULL,
         fecha_fin DATE NOT NULL,
-        estado ENUM ('pendiente', 'aprobada', 'rechazada') DEFAULT 'pendiente',
+        estado ENUM ('Pendiente', 'Aprobado', 'Rechazado') DEFAULT 'pendiente',
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         FOREIGN KEY (empleado_id) REFERENCES empleados (id) ON DELETE CASCADE
     );

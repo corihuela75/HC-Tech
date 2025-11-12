@@ -5,8 +5,8 @@
 
 import {  getAusenciasByEmpleado,  getAusenciaById,  createAusencia,  updateAusencia,  deleteAusencia} from '../models/ausenciasModel.js'
 
-const TIPOS_VALIDOS = ['vacaciones', 'enfermedad', 'otros']
-const ESTADOS_VALIDOS = ['pendiente', 'aprobada', 'rechazada']
+const TIPOS_VALIDOS = ['Vacaciones','Día libre','Enfermedad','Licencia','Capacitación']
+const ESTADOS_VALIDOS = ['Pendiente', 'Aprobado', 'Rechazado'];
 
 
 // Validación de solapamiento de fechas
