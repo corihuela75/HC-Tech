@@ -11,6 +11,7 @@ import {
   deleteEmpleado,
   getStaticsByEmployeeId, // ¡Importamos la función limpia del modelo!
 } from '../models/empleadosModel.js'
+import { getUsuarioByEmail, updateUsuarioEmpleadoId } from '../models/UsuariosModel.js'
 
 const esPeticionAPI = (req) => {
   const accept = req.headers.accept || ''
@@ -102,6 +103,9 @@ export const crearEmpleado = async (req, res) => {
       return res.redirect(`/api/empleados?empresa_id=${req.body.empresa_id}`)
     }
 
+    const user = getUsuarioByEmail(req.body.email)
+    await updateUsuarioEmpleadoId(req.body.id, user.id, user.rol);
+
     // API: 201 Created
     res.status(201).json(nuevoEmpleado)
   } catch (error) {
@@ -124,6 +128,9 @@ export const actualizarEmpleado = async (req, res) => {
         message: 'Empleado no encontrado para actualizar',
       })
     }
+    const user = await getUsuarioByEmail(req.body.email);
+
+    await updateUsuarioEmpleadoId(user.id, user.empleado_id, req.body);
 
     if (!esPeticionAPI(req)) {
       return res.redirect(`/api/empleados?empresa_id=${empresa_id}`)

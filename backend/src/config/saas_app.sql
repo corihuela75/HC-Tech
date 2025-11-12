@@ -27,6 +27,7 @@ CREATE TABLE
 CREATE TABLE
     usuarios (
         id INT AUTO_INCREMENT PRIMARY KEY,
+        empleado_id INT NULL,
         nombre VARCHAR(100) NOT NULL,
         email VARCHAR(100) UNIQUE NOT NULL,
         imagen MEDIUMTEXT DEFAULT NULL,
@@ -166,37 +167,32 @@ CREATE TABLE
 
 -- Usuario administrador
 INSERT INTO
-    usuarios ( nombre, email, password, rol)
+    usuarios ( nombre, email, password)
 VALUES
     (
         'Super-Admin',
         'super@super',
-        '$2b$10$QNJhcJ3BW4O2prVo5fqai.4pzQOh4gZGGHAWytTEGGJUM9bYFy0vO',
-        'superadmin'
+        '$2b$10$QNJhcJ3BW4O2prVo5fqai.4pzQOh4gZGGHAWytTEGGJUM9bYFy0vO'
     ),
     (
         'Admin',
         'admin@admin',
-        '$2b$10$AzxhOGE3xDkKwTckSh5kh.gdPq8uTZ5zqj6qbrnvQIarABDeohhui',
-        'admin'
+        '$2b$10$AzxhOGE3xDkKwTckSh5kh.gdPq8uTZ5zqj6qbrnvQIarABDeohhui'
     ),
     (
         'Empleado',
         'empleado@empleado',
-        '$2b$10$jE8ljBHh/u9/Y16PdxRFjuuATX3wS15o45PyhY1.exLGQouSoGNJW',
-        'empleado'
+        '$2b$10$jE8ljBHh/u9/Y16PdxRFjuuATX3wS15o45PyhY1.exLGQouSoGNJW'
     ),
     (
         'Administrador 2',
         'admin2@admin2',
-        '$2b$10$PANUXEqDhFJxYHGIC6b5beLZTNumTI.GVTL8LpX8sEY5DWVnzeEcG',
-        'admin'
+        '$2b$10$PANUXEqDhFJxYHGIC6b5beLZTNumTI.GVTL8LpX8sEY5DWVnzeEcG'
     ),
     (
         'Empleado 2',
         'empleado2@empleado2',
-        '$2b$10$bsFtSaV/4eI0TdpPB6vx/unyhIyVD0ig5LhTQ3e4gkohCgiQAJaCq',
-        'empleado'
+        '$2b$10$bsFtSaV/4eI0TdpPB6vx/unyhIyVD0ig5LhTQ3e4gkohCgiQAJaCq'
     );
 
 

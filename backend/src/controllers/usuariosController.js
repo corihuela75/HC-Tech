@@ -6,6 +6,7 @@
 import { getUsuariosByEmpresa, getUsuarioById, createUsuario, updateUsuario, deleteUsuario, getUsuarioByEmail } from '../models/UsuariosModel.js'
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
+import { getEmpleadoById } from '../models/empleadosModel.js'
 
 // Helper para manejar y reportar errores de manera consistente
 const manejarError = (res, funcion, error) => {
@@ -78,8 +79,7 @@ export const obtenerUsuario = async (req, res) => {
 // Crear Usuario
 export const crearUsuario = async (req, res) => {
   try {
-    const empresa_id = req.empresaId; 
-    const nuevoUsuario = await createUsuario({ ...req.body, empresa_id })
+    const nuevoUsuario = await createUsuario(req.body)
 
     if (!esPeticionAPI(req)) {
       return res.redirect(`/api/Usuarios?empresa_id=${empresa_id}`)
@@ -230,6 +230,7 @@ export const procesarLogin = async (req, res) => {
         token,
         usuario: {
           id: user.id,
+          empleado_id:user.empleado_id,
           nombre: user.nombre,
           email: user.email,
           empresa_id: user.empresa_id,
@@ -251,6 +252,7 @@ export const procesarLogin = async (req, res) => {
         message: 'Login exitoso',
         usuario: {
           id: user.id,
+          empleado_id:user.empleado_id,
           nombre: user.nombre,
           email: user.email,
           empresa_id: user.empresa_id,
