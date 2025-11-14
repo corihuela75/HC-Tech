@@ -57,9 +57,9 @@ export const updateUsuario = async (id, empresa_id, data) => {
 }
 
 // Actualizar usuario
-export const updateUsuarioEmpleadoId = async (id, empleado_id,data) => {
-  const {rol, imagen} = data;
-  const [result] = await pool.query('UPDATE usuarios SET empleado_id = ?, rol = ?, imagen = ? WHERE id = ?', empleado_id,rol,imagen,id)
+
+export const updateUsuarioEmpleadoId = async (empleado_id,id) => {
+  const [result] = await pool.query('UPDATE usuarios SET empleado_id = ? WHERE id = ?', [empleado_id,id])
   return result.affectedRows
 }
 

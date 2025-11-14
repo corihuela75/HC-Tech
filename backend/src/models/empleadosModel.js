@@ -47,9 +47,10 @@ export const createEmpleado = async (empleado) => {
   const fechaFormateada = fecha_ingreso ? fecha_ingreso.split('T')[0] : null
   const [result] = await pool.query('INSERT INTO empleados (empresa_id, nombre, telefono, email, direccion, fecha_nac, turno, dni, estado, imagen, puesto, fecha_ingreso, fecha_egreso, created_at, rol, activo) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? )', [
     empresa_id, nombre, telefono, email, direccion, new Date(fecha_nac), turno, dni, estado, imagen, puesto, fechaFormateada, fecha_egreso, new Date(created_at), rol, activo ])
+    const {id,obj} = empleado
   return {
+    ...obj,
     id: result.insertId,
-    ...empleado,
   }
 }
 

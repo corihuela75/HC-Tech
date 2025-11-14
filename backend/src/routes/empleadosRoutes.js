@@ -22,7 +22,7 @@ router.get("/:id", verificarTokenYRol('admin', 'empleado'), obtenerEmpleado);
 router.post("/statics", verificarTokenYRol('admin', 'empleado'), obtenerEstadisticas);
 
 // Crear, actualizar, eliminar: solo admin
-router.post("/", verificarTokenYRol('admin'), crearEmpleado);                     
+router.post("/:id", verificarTokenYRol('admin'), crearEmpleado);                     
 router.put("/", verificarTokenYRol('admin'), actualizarEmpleado);              
 router.delete("/:id", verificarTokenYRol('admin'), eliminarEmpleado);             
 
