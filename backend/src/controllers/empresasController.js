@@ -48,6 +48,16 @@ export const listarEmpresas = async (req, res) => {
   }
 }
 
+export const listarEmpresasByUser = async (req, res) => {
+  try {
+    const empresas = await getEmpresas(req.body.user_id)
+    res.status(200).json(empresas);
+  } catch (error) {
+    console.error('Error en listarEmpresas:', error.message)
+    return manejarRespuestaError(req, res, 500, 'Error al obtener empresas')
+  }
+}
+
 // Mostrar formulario para editar
 export const mostrarFormularioEditar = async (req, res) => {
   try {
@@ -108,8 +118,7 @@ export const crearEmpresa = async (req, res) => {
 // Actualizar empresa
 export const actualizarEmpresa = async (req, res) => {
   try {
-    const { id } = req.params
-    const empresaActualizada = await updateEmpresa(id, req.body)
+    const empresaActualizada = await updateEmpresa(req.body)
 
     if (!empresaActualizada) {
       // Usa el helper para 404

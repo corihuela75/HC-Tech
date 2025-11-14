@@ -16,8 +16,11 @@ import turnosRoutes from "./routes/turnosRoutes.js";
 import asignacionesRoutes from "./routes/asignacionesRoutes.js";
 import marcajesRoutes from "./routes/marcajesRoutes.js";
 import ausenciasRoutes from "./routes/ausenciasRoutes.js";
+import reportesRoutes from "./routes/reportesRoutes.js";
 import parametrosRoutes from "./routes/parametrosRoutes.js";
 import dashboardRoutes from "./routes/dashboardRoutes.js";
+import tramitesRoutes from "./routes/tramitesRoutes.js";
+import calendarioRoutes from "./routes/calendarioRoutes.js";
 import cargarUsuarioParaVistas from "./middlewares/localsMiddleware.js";
 import cors from 'cors';
 
@@ -28,7 +31,7 @@ const PORT = 3000;
 // --- Middlewares (el ORDEN importa) ---
 
 //  JSON y Formularios
-app.use(express.json());
+app.use(express.json({ limit: '2mb' }));
 app.use(express.urlencoded({ extended: true }));
 
 // Middleware para parsear cookies
@@ -62,6 +65,9 @@ app.use("/api/marcajes", marcajesRoutes);
 app.use("/api/ausencias", ausenciasRoutes);
 app.use("/api/parametros", parametrosRoutes);
 app.use("/api/dashboard", dashboardRoutes);
+app.use("/api/tramites", tramitesRoutes);
+app.use("/api/calendario", calendarioRoutes);
+app.use("/api/reportes", reportesRoutes);
 
 
 

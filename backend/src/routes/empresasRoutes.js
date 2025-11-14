@@ -7,6 +7,7 @@
 import { Router } from 'express';
 import {
   listarEmpresas,
+  listarEmpresasByUser,
   obtenerEmpresa,
   mostrarFormularioEditar,
   crearEmpresa,
@@ -19,10 +20,11 @@ const router = Router();
 
 // Listar y ver empresas: Solo superadmin
 router.get('/', verificarTokenYRol(), listarEmpresas);
-router.get('/:id', verificarTokenYRol(), obtenerEmpresa);
+router.get('/:id', verificarTokenYRol('admin', 'empleado'), obtenerEmpresa);
 router.get('/:id/edit', verificarTokenYRol(), mostrarFormularioEditar); // solo admin
 router.post('/', verificarTokenYRol(), crearEmpresa);
-router.put('/:id', verificarTokenYRol(), actualizarEmpresa);
+router.post('/empresaById', verificarTokenYRol("admin","empleado"), listarEmpresasByUser);
+router.put('/', verificarTokenYRol(), actualizarEmpresa);
 router.delete('/:id', verificarTokenYRol(), borrarEmpresa);
 
 export default router;

@@ -119,8 +119,6 @@ components:
           description: ID de la empresa a la que pertenece.
         nombre:
           type: string
-        apellido:
-          type: string
         dni:
           type: string
           description: Número de identificación (DNI/Cédula).
@@ -137,7 +135,6 @@ components:
       required:
         - empresa_id
         - nombre
-        - apellido
         - dni
         - puesto
         - fecha_ingreso
@@ -152,8 +149,6 @@ components:
           description: ID de la empresa.
         nombre:
           type: string
-        apellido:
-          type: string
         dni:
           type: string
         puesto:
@@ -164,7 +159,6 @@ components:
       required:
         - empresa_id
         - nombre
-        - apellido
         - dni
         - puesto
         - fecha_ingreso
@@ -175,8 +169,6 @@ components:
       description: Campos para actualizar completamente un empleado existente.
       properties:
         nombre:
-          type: string
-        apellido:
           type: string
         dni:
           type: string
@@ -189,7 +181,6 @@ components:
           type: boolean
       required:
         - nombre
-        - apellido
         - dni
         - puesto
         - fecha_ingreso
