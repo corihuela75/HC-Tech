@@ -6,7 +6,7 @@
 import { getUsuariosByEmpresa, getUsuarioById, createUsuario, updateUsuario, deleteUsuario, getUsuarioByEmail } from '../models/UsuariosModel.js'
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
-import { getEmpleadoById } from '../models/empleadosModel.js'
+import { getEmpleadoByEmail, getEmpleadoById } from '../models/empleadosModel.js'
 
 // Helper para manejar y reportar errores de manera consistente
 const manejarError = (res, funcion, error) => {
@@ -79,7 +79,12 @@ export const obtenerUsuario = async (req, res) => {
 // Crear Usuario
 export const crearUsuario = async (req, res) => {
   try {
-    const nuevoUsuario = await createUsuario(req.body)
+    const empleado = await getEmpleadoByEmail(req.body.email);
+    if(!empleado){
+      throw new Error('El empleado con ese email no existe');
+    }
+    let data = {...req.body, empleado_id: empleado.id, rol:empleado.rol};
+    const nuevoUsuario = await createUsuario(data);
 
     if (!esPeticionAPI(req)) {
       return res.redirect(`/api/Usuarios?empresa_id=${empresa_id}`)

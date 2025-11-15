@@ -4,6 +4,7 @@
  */
 
 
+import { empleadoById, getEmpleadoById } from '../models/empleadosModel.js'
 import { getEmpresas, getEmpresaById, createEmpresa, updateEmpresa, deleteEmpresa } from '../models/empresasModel.js'
 
 // Helper para decidir respuesta (API vs Vistas)
@@ -50,7 +51,8 @@ export const listarEmpresas = async (req, res) => {
 
 export const listarEmpresasByUser = async (req, res) => {
   try {
-    const empresas = await getEmpresas(req.body.user_id)
+        const empleado = await empleadoById(req.body.user_id);
+    const empresas = await getEmpresas(empleado.empresa_id);
     res.status(200).json(empresas);
   } catch (error) {
     console.error('Error en listarEmpresas:', error.message)

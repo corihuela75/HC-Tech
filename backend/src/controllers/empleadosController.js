@@ -104,9 +104,9 @@ export const crearEmpleado = async (req, res) => {
       return res.redirect(`/api/empleados?empresa_id=${req.body.empresa_id}`)
     }
 
-    const user = await getUsuarioById(id);
-    if(user.email === req.body.email ){
-      await updateUsuarioEmpleadoId(nuevoEmpleado.id, user.id);
+    const userMail = await getUsuarioByEmail(req.body.email);
+    if(userMail === req.body.email ){
+      await updateUsuarioEmpleadoId(nuevoEmpleado.id, userMail.id);
     }
     
 
@@ -132,9 +132,6 @@ export const actualizarEmpleado = async (req, res) => {
         message: 'Empleado no encontrado para actualizar',
       })
     }
-    const user = await getUsuarioByEmail(req.body.email);
-
-    await updateUsuarioEmpleadoId(user.id, user.empleado_id, req.body);
 
     if (!esPeticionAPI(req)) {
       return res.redirect(`/api/empleados?empresa_id=${empresa_id}`)

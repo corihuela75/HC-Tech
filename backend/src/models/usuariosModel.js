@@ -25,14 +25,14 @@ export const getUsuarioById = async (id) => {
 
 // Crear nuevo usuario
 export const createUsuario = async (usuario) => {
-  const {  nombre, email, password } = usuario
+  const { empleado_id, nombre, email, password, rol } = usuario;
 
   // Hashear password
   const hashedPassword = await bcrypt.hash(password, 10)
 
   const [result] = await pool.query(
-    'INSERT INTO usuarios ( nombre, email, password) VALUES ( ?, ?, ?)',
-    [nombre, email, hashedPassword]
+    'INSERT INTO usuarios ( empleado_id, nombre, email, password, rol) VALUES ( ?, ?, ?, ?, ?)',
+    [empleado_id, nombre, email, hashedPassword, rol]
   )
 
   return { id: result.insertId, ...usuario, password: undefined }
