@@ -3,8 +3,8 @@
  * Descripción: Controlador para gestionar las operaciones CRUD de marcajes.
  */
 
-import { getMarcajesByEmpresa, getMarcajesByEmpleado, getMarcajeById, createMarcaje, updateMarcaje, deleteMarcaje } from '../models/marcajesModel.js'
-import { servicioEliminarMarcaje, servicioModificarMarcaje, servicioRegistrarMarcaje } from '../services/marcajesService.js'
+import { getMarcajesByEmpresa, getMarcajesByEmpleado, getMarcajeById, createMarcaje, updateMarcaje, deleteMarcaje, getCurrentMarcajesByEmpresa } from '../models/marcajesModel.js'
+import { servicioCrearMarcaje, servicioEliminarMarcaje, servicioModificarMarcaje, servicioRegistrarEntrada, servicioRegistrarMarcaje, servicioRegistrarSalida } from '../services/marcajesService.js'
 
 const esPeticionAPI = (req) => {
   const accept = req.headers.accept || ''
@@ -30,6 +30,21 @@ export const listarMarcajes = async (req, res) => {
     const empleado_id = req.query.empleado_id
 
     const marcajes = empleado_id ? await getMarcajesByEmpleado(empleado_id, empresa_id) : await getMarcajesByEmpresa(empresa_id)
+
+    if (!esPeticionAPI(req)) {
+      return res.render('marcajes', { titulo: 'Gestión de Marcajes', marcajes })
+    }
+
+    res.json(marcajes)
+  } catch (error) {
+    manejarError(res, 'listarMarcajes', error)
+  }
+}
+
+//Listar marcajes (por empresa o por empleado)
+export const listarMarcajesByCompany = async (req, res) => {
+  try {
+    const marcajes = await getCurrentMarcajesByEmpresa(req.body);
 
     if (!esPeticionAPI(req)) {
       return res.render('marcajes', { titulo: 'Gestión de Marcajes', marcajes })
@@ -78,11 +93,10 @@ export const obtenerMarcaje = async (req, res) => {
 //Crear un nuevo marcaje
 export const crearMarcaje = async (req, res) => {
   try {
-    const empresa_id = req.query.empresa_id || 1
-    const nuevoMarcaje = await servicioRegistrarMarcaje({ ...req.body, empresa_id })
+    const nuevoMarcaje = await servicioCrearMarcaje(req.body );
 
     if (!esPeticionAPI(req)) {
-      return res.redirect(`/api/marcajes?empresa_id=${empresa_id}`)
+      return res.redirect(`/api/marcajes?empresa_id`)
     }
 
     res.status(201).json(nuevoMarcaje)
@@ -117,13 +131,39 @@ export const actualizarMarcaje = async (req, res) => {
   }
 }
 
+export const actualizarEntradaMarcaje = async (req, res) => {
+  try {
+    const filasAfectadas = await servicioRegistrarEntrada(req.body)
+    if (filasAfectadas === 0) {
+      return res.status(404).json({ message: 'Marcaje no encontrado para actualizar' })
+    }
+
+    const marcajeActualizado = await getMarcajeById(req.body.id)
+    res.status(200).json(marcajeActualizado)
+  } catch (error) {
+    manejarError(res, 'actualizarMarcaje', error)
+  }
+}
+
+export const actualizarSalidaMarcaje = async (req, res) => {
+  try {
+    const filasAfectadas = await servicioRegistrarSalida(req.body)
+    if (filasAfectadas === 0) {
+      return res.status(404).json({ message: 'Marcaje no encontrado para actualizar' })
+    }
+    const marcajeActualizado = await getMarcajeById(req.body.id)
+    res.status(200).json(marcajeActualizado)
+  } catch (error) {
+    manejarError(res, 'actualizarMarcaje', error)
+  }
+}
+
 //Eliminar un marcaje
 export const eliminarMarcaje = async (req, res) => {
   try {
     const id = parseInt(req.params.id, 10)
-    const empresa_id = parseInt(req.query.empresa_id, 10) || 1
 
-    const filasAfectadas = await servicioEliminarMarcaje(id, empresa_id)
+    const filasAfectadas = await servicioEliminarMarcaje(id)
 
     if (filasAfectadas === 0) {
       if (!esPeticionAPI(req)) {
@@ -133,7 +173,7 @@ export const eliminarMarcaje = async (req, res) => {
     }
 
     if (!esPeticionAPI(req)) {
-      return res.redirect(`/api/marcajes?empresa_id=${empresa_id}`)
+      return res.redirect(`/api/marcajes?empresa_id=${id}`)
     }
 
     res.status(200).json({ message: 'Marcaje eliminado correctamente', id })

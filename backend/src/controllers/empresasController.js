@@ -4,6 +4,7 @@
  */
 
 
+import { empleadoById, getEmpleadoById } from '../models/empleadosModel.js'
 import { getEmpresas, getEmpresaById, createEmpresa, updateEmpresa, deleteEmpresa } from '../models/empresasModel.js'
 
 // Helper para decidir respuesta (API vs Vistas)
@@ -45,6 +46,17 @@ export const listarEmpresas = async (req, res) => {
   } catch (error) {
     console.error('Error en listarEmpresas:', error.message)
     return manejarRespuestaError(req, res, 500, 'Error al obtener empresas') // Usa el helper para 500
+  }
+}
+
+export const listarEmpresasByUser = async (req, res) => {
+  try {
+        const empleado = await empleadoById(req.body.user_id);
+    const empresas = await getEmpresas(empleado.empresa_id);
+    res.status(200).json(empresas);
+  } catch (error) {
+    console.error('Error en listarEmpresas:', error.message)
+    return manejarRespuestaError(req, res, 500, 'Error al obtener empresas')
   }
 }
 
@@ -108,8 +120,7 @@ export const crearEmpresa = async (req, res) => {
 // Actualizar empresa
 export const actualizarEmpresa = async (req, res) => {
   try {
-    const { id } = req.params
-    const empresaActualizada = await updateEmpresa(id, req.body)
+    const empresaActualizada = await updateEmpresa(req.body)
 
     if (!empresaActualizada) {
       // Usa el helper para 404

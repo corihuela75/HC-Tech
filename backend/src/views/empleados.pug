@@ -94,7 +94,6 @@ block content
         tr
           th ID
           th Nombre 
-          th Apellido 
           th Puesto
           th Ingreso
           th DNI
@@ -105,7 +104,6 @@ block content
           tr
             td #{emp.id}
             td #{emp.nombre} 
-            td #{emp.apellido} 
             td #{emp.puesto || '-'}
             td #{emp.fecha_ingreso ? emp.fecha_ingreso.toISOString().split('T')[0] : '-'}
             td #{emp.dni || '-'}
@@ -132,9 +130,6 @@ block content
       label(for="nombre") Nombre
       input(type="text" name="nombre" id="nombre" required value=empleado.nombre)
 
-      label(for="apellido") Apellido
-      input(type="text" name="apellido" id="apellido" required value=empleado.apellido)
-
       label(for="dni") DNI
       input(type="text" name="dni" id="dni" value=empleado.dni)
 
@@ -159,9 +154,6 @@ block content
     form(action="/api/empleados" method="POST")
       label(for="nombre") Nombre
       input(type="text" name="nombre" id="nombre" required)
-
-      label(for="apellido") Apellido
-      input(type="text" name="apellido" id="apellido" required)
 
       label(for="dni") DNI
       input(type="text" name="dni" id="dni")

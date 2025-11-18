@@ -8,7 +8,9 @@ import {
   getMarcajeById,
   createMarcaje,
   updateMarcaje,
-  deleteMarcaje
+  deleteMarcaje,
+  updateSalidaMarcaje,
+  updateEntradaMarcaje
 } from '../models/marcajesModel.js'
 
 // Validación: tipos de marcaje válidos
@@ -59,6 +61,26 @@ export const servicioRegistrarMarcaje = async (data) => {
   return nuevoMarcaje
 }
 
+const validateDate = (date,init) => {
+    const hours = init.split(":")[0];
+    const newDate = new Date(date)
+    newDate.setHours(Number(hours), 0, 0, 0);
+    return new Date() >= newDate
+}
+
+export const servicioCrearMarcaje = async (data) => {
+  const { dia, hora_inicio } = data
+
+    if (validateDate(dia,hora_inicio)) {
+      throw new Error('La fecha/hora del marcaje no puede ser anterior a hoy.')
+    }
+
+  // Crear el marcaje si pasa las validaciones
+  const nuevoMarcaje = await createMarcaje(data)
+
+  return nuevoMarcaje;
+}
+
 
 // Valida y asctualiza un marcaje existente
 export const servicioModificarMarcaje = async (id, empresa_id, data) => {
@@ -84,10 +106,24 @@ export const servicioModificarMarcaje = async (id, empresa_id, data) => {
   return await getMarcajeById(id, empresa_id)
 }
 
+export const servicioRegistrarEntrada = async (data) => {
+
+  const {entrada} = data;
+  data.entrada = new Date(entrada);
+    return await updateEntradaMarcaje(data)
+}
+
+export const servicioRegistrarSalida = async (data) => {
+  const {salida} = data;
+  data.salida = new Date(salida);
+
+    return await updateSalidaMarcaje(data)
+}
+
 
 // Valida y elimina un marcaje existente
 export const servicioEliminarMarcaje = async (id, empresa_id) => {
-  const marcaje = await getMarcajeById(id, empresa_id)
+  const marcaje = await getMarcajeById(id)
   if (!marcaje) {
     throw new Error('El marcaje no existe o no pertenece a la empresa.')
   }
@@ -100,6 +136,6 @@ export const servicioEliminarMarcaje = async (id, empresa_id) => {
 //     throw new Error('No se pueden eliminar marcajes con más de 7 días de antigüedad.')
 //   }
 
-  const filas = await deleteMarcaje(id, empresa_id)
+  const filas = await deleteMarcaje(id)
   return filas
 }

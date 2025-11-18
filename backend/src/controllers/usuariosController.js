@@ -6,6 +6,7 @@
 import { getUsuariosByEmpresa, getUsuarioById, createUsuario, updateUsuario, deleteUsuario, getUsuarioByEmail } from '../models/UsuariosModel.js'
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
+import { getEmpleadoByEmail, getEmpleadoById } from '../models/empleadosModel.js'
 
 // Helper para manejar y reportar errores de manera consistente
 const manejarError = (res, funcion, error) => {
@@ -78,8 +79,12 @@ export const obtenerUsuario = async (req, res) => {
 // Crear Usuario
 export const crearUsuario = async (req, res) => {
   try {
-    const empresa_id = req.empresaId; 
-    const nuevoUsuario = await createUsuario({ ...req.body, empresa_id })
+    const empleado = await getEmpleadoByEmail(req.body.email);
+    if(!empleado){
+      throw new Error('El empleado con ese email no existe');
+    }
+    let data = {...req.body, empleado_id: empleado.id, rol:empleado.rol};
+    const nuevoUsuario = await createUsuario(data);
 
     if (!esPeticionAPI(req)) {
       return res.redirect(`/api/Usuarios?empresa_id=${empresa_id}`)
@@ -164,6 +169,25 @@ export const mostrarLogin = (req, res) => {
   res.render('Login', { titulo: 'Login de Usuarios' })
 }
 
+export const verificarToken = async (req, res) => {
+    const token = req.cookies.token;
+
+    try {
+        const {id, empresa_id} = jwt.verify(token, JWT_SECRET);
+        const user = await getUsuarioById(id, empresa_id);
+
+        return res.status(200).json({
+        message: 'User verificado',
+        usuario: user
+      })
+    } catch (error) {
+      res.clearCookie('token'); 
+      return res.status(401).json({ 
+            mensaje: 'Sesión expirada o token inválido.' 
+        });
+    }
+};
+
 // Procesar login
 export const procesarLogin = async (req, res) => {
   const { email, password } = req.body
@@ -211,6 +235,7 @@ export const procesarLogin = async (req, res) => {
         token,
         usuario: {
           id: user.id,
+          empleado_id:user.empleado_id,
           nombre: user.nombre,
           email: user.email,
           empresa_id: user.empresa_id,
@@ -232,6 +257,7 @@ export const procesarLogin = async (req, res) => {
         message: 'Login exitoso',
         usuario: {
           id: user.id,
+          empleado_id:user.empleado_id,
           nombre: user.nombre,
           email: user.email,
           empresa_id: user.empresa_id,
@@ -269,5 +295,11 @@ export const procesarLogin = async (req, res) => {
 // Logout Usuario
 export const logoutUsuario = (req, res) => {
   res.clearCookie('token') // elimina la cookie del JWT
+
+  if(req.get('X-Requested-From')?.includes('hctech-front')){
+
+        return res.status(200);
+      }
+
   res.redirect('/api/usuarios/login')    // redirige al login
 }

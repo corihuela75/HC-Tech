@@ -17,23 +17,22 @@ export const getUsuariosByEmpresa = async (empresa_id) => {
 
 // Obtener un usuario por ID
 
-export const getUsuarioById = async (id, empresa_id) => { 
-  const [rows] = await pool.query('SELECT * FROM usuarios WHERE id = ? AND empresa_id = ?', [id, empresa_id])
+export const getUsuarioById = async (id) => { 
+  const [rows] = await pool.query('SELECT * FROM usuarios WHERE id = ?', [id])
   return rows[0]
 }
 
 
-
 // Crear nuevo usuario
 export const createUsuario = async (usuario) => {
-  const { empresa_id, nombre, email, password, rol } = usuario
+  const { empleado_id, nombre, email, password, rol } = usuario;
 
   // Hashear password
   const hashedPassword = await bcrypt.hash(password, 10)
 
   const [result] = await pool.query(
-    'INSERT INTO usuarios (empresa_id, nombre, email, password, rol) VALUES (?, ?, ?, ?, ?)',
-    [empresa_id, nombre, email, hashedPassword, rol]
+    'INSERT INTO usuarios ( empleado_id, nombre, email, password, rol) VALUES ( ?, ?, ?, ?, ?)',
+    [empleado_id, nombre, email, hashedPassword, rol]
   )
 
   return { id: result.insertId, ...usuario, password: undefined }
@@ -54,6 +53,13 @@ export const updateUsuario = async (id, empresa_id, data) => {
     : [nombre, email, rol, id, empresa_id]
 
   const [result] = await pool.query(query, params)
+  return result.affectedRows
+}
+
+// Actualizar usuario
+
+export const updateUsuarioEmpleadoId = async (empleado_id,id) => {
+  const [result] = await pool.query('UPDATE usuarios SET empleado_id = ? WHERE id = ?', [empleado_id,id])
   return result.affectedRows
 }
 
