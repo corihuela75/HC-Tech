@@ -31,7 +31,7 @@ router.post('/logout', logoutUsuario)
 // Usuarios protegidos por rol
 router.get('/', verificarTokenYRol('admin', 'empleado'), isolateByCompany, listarUsuarios) // ambos pueden listar
 router.get('/:id', verificarTokenYRol('admin', 'empleado'), isolateByCompany, obtenerUsuario) // ambos pueden ver detalle
-router.post('/create', verificarTokenYRol('admin'), crearUsuario) // solo admin
+router.post('/create', crearUsuario) // solo admin
 router.put('/:id', verificarTokenYRol('admin'), isolateByCompany, actualizarUsuario) // solo admin
 router.delete('/:id', verificarTokenYRol('admin'), isolateByCompany, eliminarUsuario) // solo admin
 

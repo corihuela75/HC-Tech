@@ -22,6 +22,11 @@ export const getUsuarioById = async (id) => {
   return rows[0]
 }
 
+export const getUsuarioByEmpleadoId = async (empleado_id) => { 
+  const [rows] = await pool.query('SELECT * FROM usuarios WHERE empleado_id = ?', [empleado_id])
+  return rows[0]
+}
+
 
 // Crear nuevo usuario
 export const createUsuario = async (usuario) => {

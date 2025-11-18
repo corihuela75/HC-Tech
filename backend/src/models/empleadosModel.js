@@ -10,6 +10,7 @@ import { get_statics, listarEmpleadosQuery } from '../querys/empleados.js'
 // Listar empleados por empresa
 
 export const getEmpleadosByEmpresa = async (empresa_id) => {
+  
   const [rows] = await pool.query(listarEmpleadosQuery, [empresa_id])
   return rows
 }

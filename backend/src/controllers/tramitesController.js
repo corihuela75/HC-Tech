@@ -1,6 +1,6 @@
 import { empleadoById, getEmpleadoById } from '../models/empleadosModel.js'
 import { cerrarTramite, crearTramite, deleteTramite, obtenerTotalTramites, obtenerTramiteById, obtenerTramitesByUser, tomarTramite } from '../models/tramitesModel.js'
-import { getUsuarioByEmail, getUsuarioById } from '../models/UsuariosModel.js'
+import { getUsuarioByEmail, getUsuarioByEmpleadoId, getUsuarioById } from '../models/UsuariosModel.js'
 import { servicioRegistrarAusencia } from '../services/ausenciasServices.js'
 
 const manejarError = (res, funcion, error) => {
@@ -51,7 +51,7 @@ export const tomarTramiteController = async (req, res) => {
       throw new Error('Campos faltantes')
     }
     
-    const user = await getUsuarioById(encargado);
+    const user = await getUsuarioByEmpleadoId(encargado);
     if (!user.rol || !['admin', 'superadmin'].includes(user.rol)) {
         res.status(401).message("No posee permisos")
     }
@@ -80,7 +80,9 @@ export const cerrarTramiteController = async (req, res) => {
 
       const { empleado_id, empresa_id, asunto} = tramite;
       const request = {empleado_id, empresa_id, tipo:asunto, fecha_inicio, fecha_fin, estado }
-      await servicioRegistrarAusencia(request);
+      if(['Vacaciones','Día libre','Enfermedad','Licencia','Capacitación'].includes(asunto)) {
+        await servicioRegistrarAusencia(request);
+      }
 
     res.json(tramite)
   } catch (error) {
