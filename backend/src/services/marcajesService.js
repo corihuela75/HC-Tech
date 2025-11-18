@@ -71,9 +71,9 @@ const validateDate = (date,init) => {
 export const servicioCrearMarcaje = async (data) => {
   const { dia, hora_inicio } = data
 
-    // if (validateDate(dia,hora_inicio)) {
-    //   throw new Error('La fecha/hora del marcaje no puede ser anterior a hoy.')
-    // }
+    if (validateDate(dia,hora_inicio)) {
+      throw new Error('La fecha/hora del marcaje no puede ser anterior a hoy.')
+    }
 
   // Crear el marcaje si pasa las validaciones
   const nuevoMarcaje = await createMarcaje(data)
