@@ -11,24 +11,25 @@ WHERE m.empleado_id = ?
     export const listarEmpleadosQuery = `
 SELECT 
     e.*,
+    a.fecha_inicio,
+    a.fecha_fin,
     CASE 
         WHEN e.fecha_egreso IS NOT NULL THEN 'Inactivo'
-        WHEN EXISTS (
-            SELECT 1 FROM ausencias a 
-            WHERE a.empleado_id = e.id 
-            AND a.tipo = 'vacaciones' 
-            AND a.estado = 'aprobada'
-            AND CURDATE() BETWEEN a.fecha_inicio AND a.fecha_fin
-        ) THEN 'Vacaciones'
-        
+        WHEN a.id IS NOT NULL AND CURDATE() BETWEEN a.fecha_inicio AND a.fecha_fin THEN 'Vacaciones'
         WHEN EXISTS (
             SELECT 1 FROM marcajes m 
             WHERE m.empleado_id = e.id 
-            AND TIME(NOW()) > m.hora_inicio
+            AND DATE(m.dia) = CURDATE()
             AND m.entrada IS NOT NULL
+            AND (m.salida IS NULL OR m.salida = '')
         ) THEN 'Activo'
-        
         ELSE 'Ausente'
     END as estado
 FROM empleados e
-WHERE empresa_id = ?;`
+LEFT JOIN ausencias a ON (
+    a.empleado_id = e.id 
+    AND a.tipo = 'Vacaciones' 
+    AND a.estado = 'Aprobado'
+    AND CURDATE() BETWEEN a.fecha_inicio AND a.fecha_fin
+)
+WHERE e.empresa_id = ?;`;

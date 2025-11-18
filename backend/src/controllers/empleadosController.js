@@ -40,7 +40,7 @@ const manejarError = (res, funcion, error) => {
 // Listar empleados
 export const listarEmpleados = async (req, res) => {
   try {
-    const empresa_id = req.query.empresa_id || 1 // fijo en 1 para vistas
+    const empresa_id = parseInt(req.query.empresa_id,10) || 1 // fijo en 1 para vistas
     const empleados = await getEmpleadosByEmpresa(empresa_id)
 
     if (!esPeticionAPI(req)) {

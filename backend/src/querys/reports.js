@@ -59,7 +59,7 @@ SELECT
         'dia_libre', COALESCE(MAX(ad.dia_libre), 0),
         'asistido', COALESCE(MAX(md.porcentaje_asistido), 0),
         'vacaciones', COALESCE(MAX(ad.vacaciones), 0),
-        'ausencia', 100 - COALESCE(MAX(md.porcentaje_asistido), 0),
+        'ausencia', 100 - COALESCE(MAX(md.porcentaje_asistido), 100),
         'licencia', COALESCE(MAX(ad.licencia), 0),
         'enfermedad', COALESCE(MAX(ad.enfermedad), 0),
         'capacitación', COALESCE(MAX(ad.capacitacion), 0)
